@@ -1,14 +1,25 @@
 <?php
+namespace PhpMarshaller\Config\Annotations;
+
+use PhpAnnotation\Annotations\Annotation;
+use PhpAnnotation\Annotations\AnnotationCreator;
+use PhpAnnotation\Annotations\Parameter;
+
 /**
- * Created by JetBrains PhpStorm.
- * User: User
- * Date: 12/05/12
- * Time: 17:53
- * To change this template use File | Settings | File Templates.
+ * @Annotation(on={"property", "method"})
  */
 class JsonSerialize
 {
 
-    public $as;
+    protected $as;
+
+    /**
+     * @param string $as
+     * @AnnotationCreator(@Parameter(name="as", type="string", required=true))
+     */
+    public function __construct($as)
+    {
+        $this->as = $as;
+    }
 
 }

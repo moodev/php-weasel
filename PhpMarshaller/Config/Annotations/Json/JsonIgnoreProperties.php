@@ -1,16 +1,29 @@
 <?php
+namespace PhpMarshaller\Config\Annotations;
+
+use PhpAnnotation\Annotations\Annotation;
+use PhpAnnotation\Annotations\AnnotationCreator;
+use PhpAnnotation\Annotations\Parameter;
+
 /**
- * Created by JetBrains PhpStorm.
- * User: User
- * Date: 12/05/12
- * Time: 17:50
- * To change this template use File | Settings | File Templates.
+ * @Annotation(on="class")
  */
 class JsonIgnoreProperties
 {
 
-    public $names;
+    /**
+     * @param $names
+     * @param $ignoreUnknown
+     * @AnnotationCreator({@Parameter(name="names", type="string[]", required=false), @Parameter(name="ignoreUnknown", type="boolean", required=false)})
+     */
+    public function __construct($names, $ignoreUnknown)
+    {
+        $this->names = isset($names) ? $names : null;
+        $this->ignoreUnknown = isset($ignoreUnknown) ? $ignoreUnknown : false;
+    }
 
-    public $ignoreUnknown;
+    protected $names;
+
+    protected $ignoreUnknown;
 
 }

@@ -7,14 +7,25 @@ namespace PhpAnnotation\Annotations;
 class AnnotationCreator
 {
 
-    protected $params = array();
+    /**
+     * @var array|null|\PhpAnnotation\Annotations\Parameter[]
+     */
+    protected $params;
 
     /**
      * @param \PhpAnnotation\Annotations\Parameter[]|null $params
      * @AnnotationCreator(@Parameter(name="params", type="\PhpAnnotation\Annotations\Parameter[]", required=false))
      */
-    public function __construct(array $params = array()) {
-        $this->params = $params;
+    public function __construct(array $params) {
+        $this->params = isset($params) ? $params : null;
+    }
+
+    /**
+     * @return array|null|\PhpAnnotation\Annotations\Parameter[]
+     */
+    public function getParams()
+    {
+        return $this->params;
     }
 
 }

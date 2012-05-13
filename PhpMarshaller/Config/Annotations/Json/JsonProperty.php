@@ -1,16 +1,39 @@
 <?php
+namespace PhpMarshaller\Config\Annotations;
+
+use PhpAnnotation\Annotations\Annotation;
+use PhpAnnotation\Annotations\AnnotationCreator;
+use PhpAnnotation\Annotations\Parameter;
+
 /**
- * Created by JetBrains PhpStorm.
- * User: User
- * Date: 12/05/12
- * Time: 17:47
- * To change this template use File | Settings | File Templates.
+ * @Annotation(on={"property", "method", "\PhpMarshaller\Config\Annotations\JsonCreator})
  */
 class JsonProperty
 {
 
-    public $name;
+    protected $name;
+    protected $type;
 
-    public $type;
+    /**
+     * @param string $name
+     * @param string $type
+     * @AnnotationCreator({@Parameter(name="name", type="string", required=false), @Parameter(name="type", type="string", required=false)})
+     */
+    public function __construct($name, $type)
+    {
+        $this->name = isset($name) ? $name : null;
+        $this->type = isset($name) ? $name : "string";
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
 
 }
+

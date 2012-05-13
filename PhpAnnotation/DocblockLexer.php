@@ -7,7 +7,7 @@ namespace PhpAnnotation;
  * Time: 18:48
  * To change this template use File | Settings | File Templates.
  */
-class AnnotationLexer
+class DocblockLexer
 {
 
     const T_MEH = 1;

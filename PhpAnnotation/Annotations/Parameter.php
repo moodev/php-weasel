@@ -7,9 +7,9 @@ namespace PhpAnnotation\Annotations;
 class Parameter
 {
 
-    protected $name = null;
-    protected $type = "string";
-    protected $required = false;
+    protected $name;
+    protected $type;
+    protected $required;
 
     /**
      * @param string $name
@@ -17,11 +17,26 @@ class Parameter
      * @param bool $required
      * @AnnotationCreator({@Parameter(name="name", type="string", required=false), @Parameter(name="type", type="string", required=false), @Parameter(name="required", type="boolean", required=false)})
      */
-    public function __construct($name = null, $type = "string", $required = false)
+    public function __construct($name, $type, $required)
     {
-        $this->name = $name;
-        $this->type = $type;
-        $this->required = $required;
+        $this->name = isset($name) ? $name : null;
+        $this->type = isset($name) ? $name : "string";
+        $this->name = isset($required) ? $name : false;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getRequired()
+    {
+        return $this->required;
+    }
+
+    public function getType()
+    {
+        return $this->type;
     }
 
 }
