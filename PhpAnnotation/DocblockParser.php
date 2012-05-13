@@ -20,7 +20,7 @@ class DocblockParser
             $exploded = explode('\\', $name, 2);
 
             if (!isset($namespaces[$exploded[0]])) {
-                throw new \Exception("Failed to find namespace for $name");
+                return null;
             }
             $namespace = $namespaces[$exploded[0]];
 
@@ -58,6 +58,7 @@ class DocblockParser
             }
             $lexer->readAndCheck(DocblockLexer::T_COMMA);
         }
+        $lexer->readAndCheck(DocblockLexer::T_CLOSE_BRACE);
         return $elements;
     }
 
@@ -78,13 +79,13 @@ class DocblockParser
                 break;
             case DocblockLexer::T_AT:
                 $object = $this->_Annotation($lexer, $location, $namespaces);
-                return array(get_class($object), $object);
+                return array($object[0], $object[1]);
                 break;
             case DocblockLexer::T_OPEN_BRACE:
                 $array = $this->_Array($lexer, $location, $namespaces);
                 return array('array', $array);
             default:
-                throw new \Exception('Parse error');
+                throw new \Exception("Parse error got {$cur["type"]} ({$cur['token']})");
         }
         return $param;
     }
@@ -145,6 +146,8 @@ class DocblockParser
                 if ($next === DocblockLexer::T_IDENTIFIER) {
                     list($name, $param) = $this->_NamedParam($lexer, $meta['class'], $namespaces);
                     $namedParams[$name] = $param;
+                } elseif ($next === DocblockLexer::T_COMMA) {
+                    $lexer->readAndCheck(DocblockLexer::T_COMMA);
                 } else {
                     $anonParams[] = $this->_ParamValue($lexer, $meta['class'], $namespaces);
                 }
@@ -169,8 +172,9 @@ class DocblockParser
                 reset($anonParams);
                 foreach($expectedParams as $paramConfig) {
                     $param = each($anonParams);
-                    if ($param === false) {
-                        if ($paramConfig['required'] === true) {
+                    $param = ($param === false) ? null : $param['value'];
+                    if ($param === null) {
+                        if (isset($paramConfig['required']) && $paramConfig['required'] === true) {
                             throw new \Exception('Missing required parameter ' . $paramConfig['name']);
                         }
                         $actualParams[] = null;
@@ -181,7 +185,7 @@ class DocblockParser
             } elseif (!empty($namedParams)) {
                 foreach($expectedParams as $paramConfig) {
                     if (!isset($namedParams[$paramConfig['name']])) {
-                        if ($paramConfig['required'] === true) {
+                        if (isset($paramConfig['required']) && $paramConfig['required'] === true) {
                             throw new \Exception('Missing required parameter ' . $paramConfig['name']);
                         }
                         $actualParams[] = null;
@@ -203,7 +207,7 @@ class DocblockParser
             $annotation = new $class();
         }
 
-        if (!empty($namedParams)) {
+        if (!empty($namedParams) && isset($meta['properties'])) {
             foreach ($meta['properties'] as $name => $type) {
                 if (isset($namedParams[$name])) {
                     $annotation->$name = $this->_collapseAndCheckType($namedParams[$name], $type);
@@ -216,7 +220,8 @@ class DocblockParser
 
     protected function _collapseAndCheckType($param, $type) {
         list($paramType, $paramValue) = $param;
-        if ($paramType !== 'array') {
+        $matches = array();
+        if (!preg_match('/^(.*)\\[(int|integer|string|bool|boolean|float|)\\]$/i', $type, $matches)) {
             switch ($type) {
                 case "bool":
                 case "boolean":
@@ -250,10 +255,6 @@ class DocblockParser
             throw new \Exception("Type mismatch, expected $type but got $paramType");
         }
 
-        $matches = array();
-        if (!preg_match('/^(.*)\\[(int|integer|string|bool|boolean|float|)\\]$/i', $type, $matches)) {
-            throw new \Exception("Unable to parse type $type as an array type");
-        }
         $elementType = $matches[1];
 
         // TODO: Not currently supported.
@@ -261,7 +262,7 @@ class DocblockParser
 
         $result = array();
         if (!is_array($paramValue)) {
-            $paramValue = array($paramValue);
+            $paramValue = array(array($paramType, $paramValue));
         }
         foreach ($paramValue as $element) {
             $result[] = $this->_collapseAndCheckType($element, $elementType);
