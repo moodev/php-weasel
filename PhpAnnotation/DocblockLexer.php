@@ -118,7 +118,7 @@ class DocblockLexer
         }
 
         if ($value[0] === '"' && strlen($value) > 1) {
-            $value = str_replace('""', '', substr($value, 1, -1));
+            $value = str_replace('""', '"', substr($value, 1, -1));
             return self::T_QUOTED_STRING;
         }
 
@@ -137,9 +137,9 @@ class DocblockLexer
     }
 
     public function seekToType($target) {
-        foreach($this->tokens as $token) {
-            if ($token["type"] === $target) {
-                return $token;
+        while ($cur = $this->read()) {
+            if (is_array($cur) && $cur["type"] === $target) {
+                return $cur;
             }
         }
         return null;
@@ -163,8 +163,11 @@ class DocblockLexer
 
     public function readAndCheck($type) {
         $cur = $this->read();
+        if (!is_array($cur)) {
+            throw new \Exception("Parse error got $cur expected $type");
+        }
         if ($cur['type'] !== $type) {
-            throw new \Exception("Parse error");
+            throw new \Exception("Parse error got {$cur['type']} (\"{$cur['token']}\") expected $type");
         }
         return $cur;
     }

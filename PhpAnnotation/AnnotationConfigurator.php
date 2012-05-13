@@ -117,7 +117,7 @@ class AnnotationConfigurator
             if (isset($annotProperty)) {
                 $propertyConfig = array();
                 $propertyConfig['type'] = $annotProperty->getType();
-                $metaConfig['properties'][] = $propertyConfig;
+                $metaConfig['properties'][$property->getName()] = $propertyConfig;
             }
 
         }

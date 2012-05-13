@@ -5,7 +5,7 @@ require_once(__DIR__ . '/../../PhpAnnotation/autoloader.php');
 
 use PhpAnnotation\DocblockLexer;
 
-class AnnotationLexerTest extends \PHPUnit_Framework_TestCase
+class DocblockLexerTest extends \PHPUnit_Framework_TestCase
 {
 
     public function provideSimpleType() {

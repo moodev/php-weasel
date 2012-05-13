@@ -19,13 +19,12 @@ class DocblockParser
         if ($name[0] !== '\\') {
             $exploded = explode('\\', $name, 2);
 
-            $namespace = $namespaces[$exploded[0]];
-
-            if (!isset($namespace)) {
+            if (!isset($namespaces[$exploded[0]])) {
                 throw new \Exception("Failed to find namespace for $name");
             }
+            $namespace = $namespaces[$exploded[0]];
 
-            $name = $namespace . (isset($exploded[1]) ? '\\' . $exploded[1] : '');
+            $name = '\\' . $namespace . (isset($exploded[1]) ? '\\' . $exploded[1] : '');
         }
 
         return $this->annotations->get($name);
@@ -41,7 +40,7 @@ class DocblockParser
         while ($lexer->seekToType(DocblockLexer::T_AT)) {
             $annotation = $this->_Annotation($lexer, $location, $namespaces);
             if (isset($annotation)) {
-                $annotations[$annotation[0]] = $annotation[1];
+                $annotations[$annotation[0]][] = $annotation[1];
             }
         }
         return $annotations;
@@ -66,10 +65,16 @@ class DocblockParser
         $cur = $lexer->read();
         switch ($cur["type"]) {
             case DocblockLexer::T_INTEGER:
+                $param = array('integer', $cur['token']);
+                break;
             case DocblockLexer::T_FLOAT:
+                $param = array('float', $cur['token']);
+                break;
             case DocblockLexer::T_BOOLEAN:
+                $param = array('boolean', $cur['token']);
+                break;
             case DocblockLexer::T_QUOTED_STRING:
-                $param = array($cur['type'], $cur['token']);
+                $param = array('string', $cur['token']);
                 break;
             case DocblockLexer::T_AT:
                 $object = $this->_Annotation($lexer, $location, $namespaces);
@@ -85,7 +90,7 @@ class DocblockParser
     }
 
     protected function _NamedParam(DocblockLexer $lexer, $location, $namespaces) {
-        $nameToken = $lexer->read(DocblockLexer::T_IDENTIFIER);
+        $nameToken = $lexer->readAndCheck(DocblockLexer::T_IDENTIFIER);
 
         $lexer->readAndCheck(DocblockLexer::T_EQUAL);
 
@@ -115,6 +120,7 @@ class DocblockParser
     }
 
     protected function _Annotation(DocblockLexer $lexer, $location, $namespaces) {
+
         $identifier = $this->_ClassName($lexer);
 
         $meta = $this->_getAnnotation($identifier, $namespaces);
@@ -198,7 +204,11 @@ class DocblockParser
         }
 
         if (!empty($namedParams)) {
-            // TODO: Deal with properties
+            foreach ($meta['properties'] as $name => $type) {
+                if (isset($namedParams[$name])) {
+                    $annotation->$name = $this->_collapseAndCheckType($namedParams[$name], $type);
+                }
+            }
         }
 
         return array($class, $annotation);
