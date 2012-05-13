@@ -1,7 +1,8 @@
 <?php
 namespace PhpMarshaller\Config;
 
-use PhpMarshaller\Annotation as Annotation;
+use PhpMarshaller\Config\Annotations as Annotations;
+use PhpAnnotation\AnnotationReader;
 
 /**
  * Created by JetBrains PhpStorm.
