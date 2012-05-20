@@ -4,20 +4,11 @@ namespace PhpMarshaller\Config;
 use PhpMarshaller\Config\Annotations as Annotations;
 use PhpAnnotation\AnnotationReader;
 
-class AnnotationDriver
+class AnnotationDriver implements ConfigProvider
 {
 
     protected $classPaths = array();
     protected $configurator;
-
-    protected function _includeFiles() {
-        foreach ($this->classPaths as $path) {
-            $itt = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
-            foreach(new \RegexIterator($itt, '/.php$/', \RecursiveRegexIterator::GET_MATCH) as $file) {
-                @include($file);
-            }
-        }
-    }
 
     public function __construct() {
         $this->configurator = new \PhpAnnotation\ArrayCachingAnnotationConfigurator();

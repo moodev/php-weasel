@@ -5,7 +5,7 @@ class ClassDeserialization
 {
 
     /**
-     * @var \PhpMarshaller\Config\Deserialization\PropertyDeserialization[string]
+     * @var \PhpMarshaller\Config\Deserialization\PropertyDeserialization[]
      */
     public $properties = array();
 
