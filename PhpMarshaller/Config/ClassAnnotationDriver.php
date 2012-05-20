@@ -19,14 +19,9 @@ class ClassAnnotationDriver
     protected $rClass;
 
     /**
-     * @var Serialization\ClassSerialization
+     * @var ClassMarshaller
      */
-    protected $serializationConfig;
-
-    /**
-     * @var Deserialization\ClassDeserialization
-     */
-    protected $deserializationConfig;
+    protected $config;
 
     public function __construct(\ReflectionClass $rClass, \PhpAnnotation\AnnotationConfigurator $configurator)
     {
@@ -51,7 +46,7 @@ class ClassAnnotationDriver
         }
 
 
-        if (isset($this->serializationConfig->properties[$property])) {
+        if (isset($this->config->serialization->properties[$property])) {
             throw new \Exception("Serialization for property of name $property has already been configured.");
         }
         $getterConfig->method = $name;
@@ -66,7 +61,7 @@ class ClassAnnotationDriver
             $getterConfig->type = $jsonSerialize->getAs();
         }
 
-        $this->serializationConfig->properties[$property] = $getterConfig;
+        $this->config->serialization->properties[$property] = $getterConfig;
     }
 
     protected function _configureSetter(\ReflectionMethod $method) {
@@ -84,20 +79,20 @@ class ClassAnnotationDriver
             $property = lcfirst(substr($name, 3));
         }
 
-        if (isset($this->deserializationConfig->properties[$property])) {
+        if (isset($this->config->deserialization->properties[$property])) {
             throw new \Exception("Deserialization for property of name $property has already been configured.");
         }
         $setterConfig = new Deserialization\SetterDeserialization();
         $setterConfig->method = $name;
         $setterConfig->type = $propertyConfig->getType();
 
-        $this->deserializationConfig->properties[$property] = $setterConfig;
+        $this->config->deserialization->properties[$property] = $setterConfig;
     }
 
     protected function _configureCreator(\ReflectionMethod $method) {
         $name = $method->getName();
         /**
-         * @var \PhpMarshaller\Config\Annotations\JsonProperty $propertyConfig
+         * @var \PhpMarshaller\Config\Annotations\JsonCreator $propertyConfig
          */
         $creatorConfig = $this->annotationReader->getMethodAnnotation($name, self::_ANS . 'JsonCreator');
         if (!isset($creatorConfig)) {
@@ -119,12 +114,52 @@ class ClassAnnotationDriver
         }
     }
 
+    protected function _configureProperty(\ReflectionProperty $property) {
+        $name = $property->getName();
+        /**
+         * @var \PhpMarshaller\Config\Annotations\JsonProperty $propertyConfig
+         */
+        $propertyConfig = $this->annotationReader->getPropertyAnnotation($name, self::_ANS . 'JsonProperty');
+        if (!isset($propertyConfig)) {
+            return;
+        }
+
+        $property = $propertyConfig->getName();
+
+        if (!isset($this->config->deserialization->properties[$property])) {
+            $setterConfig = new Deserialization\DirectDeserialization();
+            $setterConfig->property = $name;
+            $setterConfig->type = $propertyConfig->getType();
+
+            $this->config->deserialization->properties[$property] = $setterConfig;
+        }
+
+
+        if (!isset($this->config->serialization->properties[$property])) {
+            $getterConfig = new Serialization\DirectSerialization();
+            $getterConfig->property = $name;
+            $getterConfig->type = $propertyConfig->getType();
+
+            /**
+             * @var \PhpMarshaller\Config\Annotations\JsonSerialize $jsonSerialize
+             */
+            $jsonSerialize = $this->annotationReader->getMethodAnnotation($name, self::_ANS . 'JsonSerialize');
+            if (isset($jsonSerialize)) {
+                // Type to serialize as has been overridden
+                $getterConfig->type = $jsonSerialize->getAs();
+            }
+
+            $this->config->serialization->properties[$property] = $getterConfig;
+        }
+
+    }
+
     public function getConfig()
     {
 
-        $this->serializationConfig = new Serialization\ClassSerialization();
-        $this->deserializationConfig = new Deserialization\ClassDeserialization();
-        $ignoreUnknown = false;
+        $this->config = new ClassMarshaller();
+        $this->config->serialization = new Serialization\ClassSerialization();
+        $this->config->deserialization = new Deserialization\ClassDeserialization();
 
         $methods = $this->rClass->getMethods(\ReflectionMethod::IS_PUBLIC);
 
@@ -132,8 +167,10 @@ class ClassAnnotationDriver
             $this->_configureMethod($method);
         }
 
-
-        $properties = $this->rClass->getProperties(\ReflectionProperty::IS_PUBLIC);
+        $properties = $this->rClass->getProperties(\ReflectionProperty::IS_PUBLIC &~ \ReflectionProperty::IS_STATIC);
+        foreach ($properties as $property) {
+            $this->_configureProperty($property);
+        }
 
         /**
          * @var \PhpMarshaller\Config\Annotations\JsonIgnoreProperties|null $ignorer
@@ -141,9 +178,15 @@ class ClassAnnotationDriver
         $ignorer = $this->annotationReader->getClassAnnotation(self::_ANS . 'JsonIgnoreProperties');
         if (isset($ignorer)) {
             // The ignorer config affects which properties we will consider.
-            $ignoreUnknown = $ignorer->getIgnoreUnknown();
-            $properties = array_diff($properties, $ignorer->getNames());
+            $this->config->deserialization->ignoreUnknown = $ignorer->getIgnoreUnknown();
+            $this->config->deserialization->ignoreProperties = $ignorer->getNames();
         }
+
+        // TODO polymorphism
+        // TODO creators
+
+        return $this->config;
+
     }
 
 

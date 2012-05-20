@@ -11,4 +11,14 @@ class ClassDeserialization
 
     public $creator = null;
 
+    /**
+     * @var bool
+     */
+    public $ignoreUnknown;
+
+    /**
+     * @var string[]
+     */
+    public $ignoreProperties;
+
 }

@@ -4,6 +4,7 @@ namespace PhpMarshaller\Config\Annotations;
 use PhpAnnotation\Annotations\Annotation;
 use PhpAnnotation\Annotations\AnnotationCreator;
 use PhpAnnotation\Annotations\Parameter;
+use PhpAnnotation\Annotations\Enum;
 
 /**
  * @Annotation(on={"class"})

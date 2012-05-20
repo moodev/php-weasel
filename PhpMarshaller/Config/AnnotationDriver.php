@@ -6,7 +6,6 @@ use PhpAnnotation\AnnotationReader;
 
 class AnnotationDriver
 {
-    const _ANS = '\PhpMarshaller\Config\Annotations\\';
 
     protected $classPaths = array();
     protected $configurator;
@@ -26,11 +25,12 @@ class AnnotationDriver
 
     /**
      * @param string $class
+     * @return \PhpMarshaller\Config\ClassMarshaller
      */
     public function getConfig($class) {
         $rClass = new \ReflectionClass($class);
 
-        $classDriver = new ClassAnnotationDriver($class, $this->configurator);
+        $classDriver = new ClassAnnotationDriver($rClass, $this->configurator);
 
         return $classDriver->getConfig();
 
