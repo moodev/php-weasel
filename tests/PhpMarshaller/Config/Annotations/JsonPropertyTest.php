@@ -43,6 +43,9 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
         $found = array();
         foreach ($rClass->getMethods() as $method) {
+            /**
+             * @var \ReflectionMethod $method
+             */
             $name = $method->getName();
             $found[$name] = $annotationReader->getMethodAnnotations($name);
         }
