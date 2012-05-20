@@ -171,7 +171,7 @@ class DocblockLexer
         if ($ret === false) {
             return null;
         }
-        return $ret;
+        return $ret['type'];
     }
 
     public function readAndCheck($type) {

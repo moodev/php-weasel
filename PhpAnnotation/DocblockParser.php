@@ -180,6 +180,8 @@ class DocblockParser
                 throw new \Exception('Named or anonymous params, pick one.');
             }
 
+            $lexer->readAndCheck(DocblockLexer::T_CLOSE_PAREN);
+
         }
 
         $class = $meta['class'];

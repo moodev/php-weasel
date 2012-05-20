@@ -90,10 +90,25 @@ class PhpParser
 
 
     protected function _readPrologue(\ReflectionClass $class) {
+        // TODO: Check that this is actually right. Also handle silly corner cases where someone has decided to play PHP Golf.
         $file = $class->getFileName();
         $line = $class->getStartLine();
 
-        return file_get_contents($file, null, null, 0, $line);
+        $buffer = "";
+        $handle = @fopen($file, "r");
+        if ($handle) {
+            for ($curLine = 0; $curLine <= $line; $curLine++) {
+                $data = fgets($handle);
+                if ($data === false) {
+                    break;
+                }
+                $buffer .= $data;
+            }
+            fclose($handle);
+        }
+
+        return $buffer;
+
     }
 
 }

@@ -26,6 +26,7 @@ class ClassAnnotationDriver
     public function __construct(\ReflectionClass $rClass, \PhpAnnotation\AnnotationConfigurator $configurator)
     {
         $this->annotationReader = new AnnotationReader($rClass, $configurator);
+        $this->rClass = $rClass;
     }
 
     protected function _configureGetter(\ReflectionMethod $method) {
@@ -51,15 +52,6 @@ class ClassAnnotationDriver
         }
         $getterConfig->method = $name;
         $getterConfig->type = $propertyConfig->getType();
-
-        /**
-         * @var \PhpMarshaller\Config\Annotations\JsonSerialize $jsonSerialize
-         */
-        $jsonSerialize = $this->annotationReader->getMethodAnnotation($name, self::_ANS . 'JsonSerialize');
-        if (isset($jsonSerialize)) {
-            // Type to serialize as has been overridden
-            $getterConfig->type = $jsonSerialize->getAs();
-        }
 
         $this->config->serialization->properties[$property] = $getterConfig;
     }
@@ -139,15 +131,6 @@ class ClassAnnotationDriver
             $getterConfig = new Serialization\DirectSerialization();
             $getterConfig->property = $name;
             $getterConfig->type = $propertyConfig->getType();
-
-            /**
-             * @var \PhpMarshaller\Config\Annotations\JsonSerialize $jsonSerialize
-             */
-            $jsonSerialize = $this->annotationReader->getMethodAnnotation($name, self::_ANS . 'JsonSerialize');
-            if (isset($jsonSerialize)) {
-                // Type to serialize as has been overridden
-                $getterConfig->type = $jsonSerialize->getAs();
-            }
 
             $this->config->serialization->properties[$property] = $getterConfig;
         }

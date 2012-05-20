@@ -15,7 +15,7 @@ function autoLoad($name) {
         return;
     }
     $exploded = explode("\\", $name);
-    $vendor = array_shift($exploded);
+    $vendor = $exploded[0];
     if ($vendor != "PhpMarshaller" && $vendor != "PhpAnnotation") {
         return;
     }
@@ -24,5 +24,5 @@ function autoLoad($name) {
     return;
 }
 
-spl_autoload_register('\MooPhp\autoLoad');
+spl_autoload_register('\PhpMarshaller\autoLoad');
 

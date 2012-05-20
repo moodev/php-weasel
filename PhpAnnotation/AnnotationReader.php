@@ -30,7 +30,8 @@ class AnnotationReader
     {
         $this->class = $class;
         $this->parser = new DocblockParser($annotations);
-        $this->namespaces = new PhpParser();
+        $nsParser = new PhpParser();
+        $this->namespaces = $nsParser->parseClass($class);
     }
 
     public function getClassAnnotations()
@@ -56,16 +57,16 @@ class AnnotationReader
 
     public function getMethodAnnotations($method)
     {
-        if (isset($this->methodAnnotations)) {
-            return $this->methodAnnotations;
+        if (isset($this->methodAnnotations[$method])) {
+            return $this->methodAnnotations[$method];
         }
 
         $this->methodAnnotations[$method] = array();
         $docblock = $this->class->getMethod($method)->getDocComment();
         if ($docblock !== false) {
-            $this->methodAnnotations = $this->parser->parse($docblock, "method", $this->namespaces);
+            $this->methodAnnotations[$method] = $this->parser->parse($docblock, "method", $this->namespaces);
         }
-        return $this->methodAnnotations;
+        return $this->methodAnnotations[$method];
 
     }
 
@@ -78,16 +79,16 @@ class AnnotationReader
 
     public function getPropertyAnnotations($property)
     {
-        if (isset($this->propertyAnnotations)) {
-            return $this->propertyAnnotations;
+        if (isset($this->propertyAnnotations[$property])) {
+            return $this->propertyAnnotations[$property];
         }
 
         $this->propertyAnnotations[$property] = array();
         $docblock = $this->class->getProperty($property)->getDocComment();
         if ($docblock !== false) {
-            $this->propertyAnnotations = $this->parser->parse($docblock, "property", $this->namespaces);
+            $this->propertyAnnotations[$property] = $this->parser->parse($docblock, "property", $this->namespaces);
         }
-        return $this->propertyAnnotations;
+        return $this->propertyAnnotations[$property];
 
     }
 
@@ -95,6 +96,16 @@ class AnnotationReader
     {
         $properties = $this->getPropertyAnnotations($property);
         return isset($properties[$annotation]) ? $properties[$annotation] : null;
+    }
+
+    public function getGetterForProperty($property)
+    {
+
+    }
+
+    public function getSetterForProperty($property)
+    {
+
     }
 
 }
