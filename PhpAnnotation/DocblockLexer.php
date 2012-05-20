@@ -11,6 +11,7 @@ class DocblockLexer
 {
 
     const T_MEH = 1;
+    const T_WHITESPACE = 2;
     const T_NULL = 10;
     const T_QUOTED_STRING = 11;
     const T_INTEGER = 12;
@@ -53,7 +54,7 @@ class DocblockLexer
                 '("(?:[^"]|"")*")', // Quoted strings
                 '([+-]?[0-9]+(?:\.[0-9]+|[eE][+-]?[0-9]+)?)', // Numeric
                 '([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)', // Identifier
-                '\s+', // Don't capture spaces
+                '(\s+)', // Whitespace
                 '(.)', // Everything else will be split into single chars
                 )) . ')',
             $input,
@@ -133,8 +134,12 @@ class DocblockLexer
             return self::T_INTEGER;
         }
 
-        if (strlen($value) > 1) {
+        if (preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/', $value) > 1) {
             return self::T_IDENTIFIER;
+        }
+
+        if (preg_match('/\s+/', $value) > 1) {
+            return self::T_WHITESPACE;
         }
 
         return self::T_MEH;
@@ -149,7 +154,13 @@ class DocblockLexer
         return null;
     }
 
-    public function read() {
+    public function skip($type = self::T_WHITESPACE) {
+        while ($this->peek() === $type) {
+            $this->read();
+        }
+    }
+
+    public function read($skipWS = false) {
         $cur = $this->cur;
         $this->cur = next($this->tokens);
         if ($this->cur === false) {
