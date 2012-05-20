@@ -28,6 +28,7 @@ class DocblockLexer
     const T_EQUAL = 66;
     const T_BACKSLASH = 67;
     const T_COLON = 68;
+    const T_DOT = 69;
 
     protected $tokens = array();
 
@@ -107,6 +108,9 @@ class DocblockLexer
             case ':':
                 return self::T_COLON;
                 break;
+            case '.':
+                return self::T_DOT;
+                break;
             case 'true':
                 $value = true;
                 return self::T_BOOLEAN;
@@ -154,11 +158,20 @@ class DocblockLexer
         return $cur;
     }
 
-    public function peek() {
+    public function peek($num = 1) {
         if (!isset($this->cur)) {
             return null;
         }
-        return $this->cur['type'];
+        if ($num === 1) {
+            return $this->cur['type'];
+        }
+
+        $ret = next($this->tokens);
+        prev($this->tokens);
+        if ($ret === false) {
+            return null;
+        }
+        return $ret;
     }
 
     public function readAndCheck($type) {

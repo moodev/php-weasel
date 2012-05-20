@@ -20,8 +20,8 @@ class Parameter
     public function __construct($name, $type, $required)
     {
         $this->name = isset($name) ? $name : null;
-        $this->type = isset($name) ? $name : "string";
-        $this->name = isset($required) ? $name : false;
+        $this->type = isset($type) ? $type : "string";
+        $this->name = isset($required) ? $required : false;
     }
 
     public function getName()

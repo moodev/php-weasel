@@ -26,12 +26,9 @@ class AnnotationReader
     protected $parser = null;
     protected $namespaces = array();
 
-    public function __construct(\ReflectionClass $class, AnnotationConfigurator $annotations = null)
+    public function __construct(\ReflectionClass $class, AnnotationConfigurator $annotations)
     {
         $this->class = $class;
-        if (!isset($annotations)) {
-            $annotations = new AnnotationConfigurator();
-        }
         $this->parser = new DocblockParser($annotations);
         $this->namespaces = new PhpParser();
     }
@@ -98,16 +95,6 @@ class AnnotationReader
     {
         $properties = $this->getPropertyAnnotations($property);
         return isset($properties[$annotation]) ? $properties[$annotation] : null;
-    }
-
-    public function getGetterForProperty($property)
-    {
-
-    }
-
-    public function getSetterForProperty($property)
-    {
-
     }
 
 }

@@ -6,6 +6,10 @@ use PhpAnnotation\Annotations\AnnotationCreator;
 use PhpAnnotation\Annotations\Parameter;
 
 /**
+ * Sets a property up to be serialized/deserialized explicitly.
+ * The name sets the json field name to use for this property.
+ * The type specifies the type to use.
+ * Because PHP is not strongly typed we can only make best guesses about types if you do not provide type inof!
  * @Annotation(on={"property", "method", "\PhpMarshaller\Config\Annotations\JsonCreator})
  */
 class JsonProperty

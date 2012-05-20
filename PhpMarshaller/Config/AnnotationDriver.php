@@ -4,19 +4,36 @@ namespace PhpMarshaller\Config;
 use PhpMarshaller\Config\Annotations as Annotations;
 use PhpAnnotation\AnnotationReader;
 
-/**
- * Created by JetBrains PhpStorm.
- * User: User
- * Date: 12/05/12
- * Time: 17:24
- * To change this template use File | Settings | File Templates.
- */
 class AnnotationDriver
 {
+    const _ANS = '\PhpMarshaller\Config\Annotations\\';
 
-    public function configure() {
+    protected $classPaths = array();
+    protected $configurator;
 
+    protected function _includeFiles() {
+        foreach ($this->classPaths as $path) {
+            $itt = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
+            foreach(new \RegexIterator($itt, '/.php$/', \RecursiveRegexIterator::GET_MATCH) as $file) {
+                @include($file);
+            }
+        }
     }
 
+    public function __construct() {
+        $this->configurator = new \PhpAnnotation\ArrayCachingAnnotationConfigurator();
+    }
+
+    /**
+     * @param string $class
+     */
+    public function getConfig($class) {
+        $rClass = new \ReflectionClass($class);
+
+        $classDriver = new ClassAnnotationDriver($class, $this->configurator);
+
+        return $classDriver->getConfig();
+
+    }
 
 }

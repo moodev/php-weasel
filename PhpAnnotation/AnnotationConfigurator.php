@@ -5,7 +5,7 @@ namespace PhpAnnotation;
 class AnnotationConfigurator
 {
 
-     protected $knownAnnotations = array(
+     protected $builtIn = array(
         '\PhpAnnotation\Annotations\Annotation' => array(
             'class' => '\PhpAnnotation\Annotations\Annotation',
             'on' => array('class'),
@@ -65,8 +65,8 @@ class AnnotationConfigurator
 
     public function get($name)
     {
-        if (isset($this->knownAnnotations[$name])) {
-            return $this->knownAnnotations[$name];
+        if (isset($this->builtIn[$name])) {
+            return $this->builtIn[$name];
         }
 
         $class = new \ReflectionClass($name);
@@ -120,11 +120,29 @@ class AnnotationConfigurator
                 $metaConfig['properties'][$property->getName()] = $propertyConfig;
             }
 
+            /**
+             * @var \PhpAnnotation\Annotations\Enum $annotEnum
+             */
+            $annotEnum = $reader->getPropertyAnnotation($property, '\PhpAnnotation\Annotations\Enum');
+
+            if (isset($annotEnum)) {
+                if (!$property->isStatic()) {
+                    throw new \Exception("Enums must be static properties");
+                }
+                $name = $annotEnum->getName();
+                if (!isset($name)) {
+                    $name = $property->getName();
+                }
+                $value = $property->getValue(null);
+                if (!is_array($value)) {
+                    throw new \Exception("Enum must be an array");
+                }
+                $metaConfig['enums'][$name] = $value;
+            }
+
         }
 
-        $this->knownAnnotations[$name] = $metaConfig;
-        return $this->knownAnnotations[$name];
-
+        return $metaConfig;
     }
 
 }

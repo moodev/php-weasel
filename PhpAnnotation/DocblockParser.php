@@ -79,11 +79,15 @@ class DocblockParser
                 break;
             case DocblockLexer::T_AT:
                 $object = $this->_Annotation($lexer, $location, $namespaces);
-                return array($object[0], $object[1]);
+                return $object;
                 break;
             case DocblockLexer::T_OPEN_BRACE:
                 $array = $this->_Array($lexer, $location, $namespaces);
                 return array('array', $array);
+            case DocblockLexer::T_IDENTIFIER:
+                // Might be an enum then...
+                $enum = $this->_Enum($lexer, $location, $namespaces);
+                return $enum;
             default:
                 throw new \Exception("Parse error got {$cur["type"]} ({$cur['token']})");
         }
@@ -120,6 +124,26 @@ class DocblockParser
         return $class;
     }
 
+    protected function _Enum(DocblockLexer $lexer, $location, $namespaces) {
+        $class = $this->_ClassName($lexer);
+        $meta = $this->_getAnnotation($class, $namespaces);
+        if (!$meta) {
+            throw new \Exception("Unable to resolve enum class $class");
+        }
+
+        $lexer->readAndCheck(DocblockLexer::T_DOT);
+        $enum = $lexer->readAndCheck(DocblockLexer::T_IDENTIFIER);
+        $lexer->readAndCheck(DocblockLexer::T_DOT);
+        $index = $lexer->readAndCheck(DocblockLexer::T_IDENTIFIER);
+
+        if (!isset($meta["enums"][$enum][$index])) {
+            throw new \Exception("Unable to lookup enum value for $class : $enum : $index");
+        }
+
+        return array("integer", $meta["enums"][$enum][$index]);
+
+    }
+
     protected function _Annotation(DocblockLexer $lexer, $location, $namespaces) {
 
         $identifier = $this->_ClassName($lexer);
@@ -129,7 +153,7 @@ class DocblockParser
             return null;
         }
 
-        if (isset($meta->on) && !in_array($location, $meta->on)) {
+        if (isset($meta["on"]) && !in_array($location, $meta["on"])) {
             throw new \Exception("Found annotation in wrong location");
         }
 
@@ -143,7 +167,7 @@ class DocblockParser
                 if ($next === null) {
                     throw new \Exception('Unmatched parentheses');
                 }
-                if ($next === DocblockLexer::T_IDENTIFIER) {
+                if ($next === DocblockLexer::T_IDENTIFIER && $lexer->peek(2) === DocblockLexer::T_EQUAL) {
                     list($name, $param) = $this->_NamedParam($lexer, $meta['class'], $namespaces);
                     $namedParams[$name] = $param;
                 } elseif ($next === DocblockLexer::T_COMMA) {
