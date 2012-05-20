@@ -5,7 +5,7 @@ class ClassSerialization
 {
 
     /**
-     * @var \PhpMarshaller\Config\Serialization\PropertySerialization[string]
+     * @var \PhpMarshaller\Config\Serialization\PropertySerialization[]
      */
     public $properties = array();
 
