@@ -168,6 +168,7 @@ class DocblockLexer
                 return $cur;
             }
         } while ($cur = $this->next());
+        return null;
     }
 
     public function next($skipWS = false) {
