@@ -33,7 +33,7 @@ class DocblockLexer
 
     protected $tokens = array();
 
-    protected $cur = null;
+    protected $pos;
 
     public function __construct($input) {
         $this->_scan($input);
@@ -70,13 +70,7 @@ class DocblockLexer
             $tokens['pos'] = $position;
             $this->tokens[] = $tokens;
         }
-        $cur = reset($this->tokens);
-        if ($cur === false) {
-            $this->cur = null;
-        } else {
-            $this->cur = $cur;
-        }
-
+        $this->pos = 0;
     }
 
     protected function _processToken(&$value) {
@@ -134,66 +128,85 @@ class DocblockLexer
             return self::T_INTEGER;
         }
 
-        if (preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/', $value) > 1) {
+        if (preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $value)) {
             return self::T_IDENTIFIER;
         }
 
-        if (preg_match('/\s+/', $value) > 1) {
+        if (preg_match('/^\s+$/', $value)) {
             return self::T_WHITESPACE;
         }
 
         return self::T_MEH;
     }
 
-    public function seekToType($target) {
-        while ($cur = $this->read()) {
-            if (is_array($cur) && $cur["type"] === $target) {
+    public function skipToType($target) {
+        if (!$cur = $this->get()) {
+            return null;
+        }
+        do {
+            if ($cur["type"] === $target) {
                 return $cur;
             }
-        }
+        } while ($cur = $this->next());
         return null;
     }
 
+    public function get() {
+        if (!isset($this->tokens[$this->pos])) {
+            return null;
+        } else {
+            return $this->tokens[$this->pos];
+        }
+    }
+
     public function skip($type = self::T_WHITESPACE) {
-        while ($this->peek() === $type) {
-            $this->read();
-        }
-    }
-
-    public function read($skipWS = false) {
-        $cur = $this->cur;
-        $this->cur = next($this->tokens);
-        if ($this->cur === false) {
-            $this->cur = null;
-        }
-        return $cur;
-    }
-
-    public function peek($num = 1) {
-        if (!isset($this->cur)) {
+        if (!$cur = $this->get()) {
             return null;
         }
-        if ($num === 1) {
-            return $this->cur['type'];
-        }
-
-        $ret = next($this->tokens);
-        prev($this->tokens);
-        if ($ret === false) {
-            return null;
-        }
-        return $ret['type'];
+        do {
+            if ($cur["type"] !== $type) {
+                return $cur;
+            }
+        } while ($cur = $this->next());
     }
 
-    public function readAndCheck($type) {
-        $cur = $this->read();
-        if (!is_array($cur)) {
-            throw new \Exception("Parse error got $cur expected $type");
+    public function next($skipWS = false) {
+        $this->pos++;
+        if ($skipWS) {
+            return $this->skip();
         }
-        if ($cur['type'] !== $type) {
-            throw new \Exception("Parse error got {$cur['type']} (\"{$cur['token']}\") expected $type");
+        return $this->get();
+    }
+
+    public function seek($to = 0) {
+        if ($to < 0) {
+            $to = count($this->pos)-$to;
         }
-        return $cur;
+        if (!isset($this->tokens[$to])) {
+            return null;
+        }
+        $this->pos = $to;
+        return $this->get();
+    }
+
+    public function cur() {
+        return $this->pos;
+    }
+
+    public function peek($num = 1, $skipWS = false) {
+        $pos = $this->pos;
+        if ($this->seek($pos+$num)) {
+            if ($ret = $this->get()) {
+                if ($skipWS && $ret["type"] === self::T_WHITESPACE) {
+                    if ($ret = $this->next(true)) {
+                        $this->seek($pos);
+                        return $ret["type"];
+                    }
+                }
+            }
+        }
+        $this->seek($pos);
+        return null;
     }
 
 }
