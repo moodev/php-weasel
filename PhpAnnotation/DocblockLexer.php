@@ -144,7 +144,7 @@ class DocblockLexer
             return null;
         }
         do {
-            if ($cur["type"] === $target) {
+            if ($cur['type'] === $target) {
                 return $cur;
             }
         } while ($cur = $this->next());
@@ -164,7 +164,7 @@ class DocblockLexer
             return null;
         }
         do {
-            if ($cur["type"] !== $type) {
+            if ($cur['type'] !== $type) {
                 return $cur;
             }
         } while ($cur = $this->next());
@@ -198,11 +198,14 @@ class DocblockLexer
         $pos = $this->pos;
         if ($this->seek($pos+$num)) {
             if ($ret = $this->get()) {
-                if ($skipWS && $ret["type"] === self::T_WHITESPACE) {
+                if ($skipWS && $ret['type'] === self::T_WHITESPACE) {
                     if ($ret = $this->next(true)) {
                         $this->seek($pos);
-                        return $ret["type"];
+                        return $ret['type'];
                     }
+                } else {
+                    $this->seek($pos);
+                    return $ret['type'];
                 }
             }
         }

@@ -37,10 +37,21 @@ class DocblockParser
 
     protected function _DocBlock(DocblockLexer $lexer, $location, $namespaces) {
         $annotations = array();
-        while ($lexer->seekToType(DocblockLexer::T_AT)) {
-            $annotation = $this->_Annotation($lexer, $location, $namespaces);
-            if (isset($annotation)) {
-                $annotations[$annotation[0]][] = $annotation[1];
+        while ($lexer->skipToType(DocblockLexer::T_AT)) {
+            $pos = $lexer->cur();
+            try {
+                $annotation = $this->_Annotation($lexer, $location, $namespaces);
+                if (isset($annotation)) {
+                    $annotations[$annotation[0]][] = $annotation[1];
+                } else {
+                    // If not then it parsed fine, but it isn't something we know about
+                }
+            } catch (\Exception $e) {
+                // OK, try starting 1 char after the @ to find the next annotation.
+                $lexer->seek($pos);
+                if (!$lexer->next()) {
+                    break;
+                }
             }
         }
         return $annotations;
@@ -50,21 +61,21 @@ class DocblockParser
 
         $elements = array();
 
-        while (($next = $lexer->peek()) !== DocblockLexer::T_CLOSE_BRACE) {
+        while (($next = $lexer->peek(1, true)) !== DocblockLexer::T_CLOSE_BRACE) {
             $elements[] = $this->_ParamValue($lexer, $location, $namespaces);
 
-            if ($lexer->peek() === DocblockLexer::T_CLOSE_BRACE) {
+            if ($lexer->peek(1, true) === DocblockLexer::T_CLOSE_BRACE) {
                 break;
             }
-            $lexer->readAndCheck(DocblockLexer::T_COMMA);
+            $this->_expectNext($lexer, DocblockLexer::T_COMMA, true);
         }
-        $lexer->readAndCheck(DocblockLexer::T_CLOSE_BRACE);
+        $this->_expectNext($lexer, DocblockLexer::T_CLOSE_BRACE, true);
         return $elements;
     }
 
     protected function _ParamValue(DocblockLexer $lexer, $location, $namespaces) {
-        $cur = $lexer->read();
-        switch ($cur["type"]) {
+        $cur = $lexer->next(true);
+        switch ($cur['type']) {
             case DocblockLexer::T_INTEGER:
                 $param = array('integer', $cur['token']);
                 break;
@@ -95,30 +106,41 @@ class DocblockParser
     }
 
     protected function _NamedParam(DocblockLexer $lexer, $location, $namespaces) {
-        $nameToken = $lexer->readAndCheck(DocblockLexer::T_IDENTIFIER);
+        $nameToken = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER, true);
 
-        $lexer->readAndCheck(DocblockLexer::T_EQUAL);
+        $this->_expectNext($lexer, DocblockLexer::T_EQUAL, true);
 
         $value = $this->_ParamValue($lexer, $location, $namespaces);
 
-        return array($nameToken["token"], $value);
+        return array($nameToken['token'], $value);
 
     }
 
+    protected function _expectNext(DocblockLexer $lexer, $types, $skipWS = false) {
+        if (!is_array($types)) {
+            $types = array($types);
+        }
+        $next = $lexer->next($skipWS);
+        if (!$next || !in_array($next['type'], $types, true)) {
+            throw new \Exception('Parse error, expected one of '. implode(',', $types) .' but got ' . ($next ? $next['type'] : 'EOF') );
+        }
+        return $next;
+    }
+
     protected function _ClassName(DocblockLexer $lexer) {
-        $next = $lexer->read();
+        $next = $lexer->next();
 
         $class = '';
         if ($next['type'] === DocblockLexer::T_BACKSLASH) {
             $class .= '\\';
-            $next = $lexer->readAndCheck(DocblockLexer::T_IDENTIFIER);
+            $next = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER);
         }
 
         $class .= $next['token'];
 
         while ($lexer->peek() === DocblockLexer::T_BACKSLASH) {
             $class .= '\\';
-            $part = $lexer->readAndCheck(DocblockLexer::T_IDENTIFIER);
+            $part = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER);
             $class .= $part['token'];
         }
         return $class;
@@ -131,10 +153,10 @@ class DocblockParser
             throw new \Exception("Unable to resolve enum class $class");
         }
 
-        $lexer->readAndCheck(DocblockLexer::T_DOT);
-        $enum = $lexer->readAndCheck(DocblockLexer::T_IDENTIFIER);
-        $lexer->readAndCheck(DocblockLexer::T_DOT);
-        $index = $lexer->readAndCheck(DocblockLexer::T_IDENTIFIER);
+        $this->_expectNext($lexer, DocblockLexer::T_DOT);
+        $enum = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER);
+        $this->_expectNext($lexer, DocblockLexer::T_DOT);
+        $index = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER);
 
         if (!isset($meta["enums"][$enum][$index])) {
             throw new \Exception("Unable to lookup enum value for $class : $enum : $index");
@@ -154,33 +176,55 @@ class DocblockParser
         }
 
         if (isset($meta["on"]) && !in_array($location, $meta["on"])) {
-            throw new \Exception("Found annotation in wrong location");
+            throw new \Exception("Found annotation in wrong location, got $location but expected one of " . implode(", ", $meta["on"]));
         }
 
-        if ($lexer->peek() === DocblockLexer::T_OPEN_PAREN) {
-            $lexer->read();
+        $next = $this->_expectNext($lexer, array(DocblockLexer::T_OPEN_PAREN, DocblockLexer::T_WHITESPACE));
+        if ($next['type'] === DocblockLexer::T_OPEN_PAREN) {
+            // There are params to read
 
             $anonParams = array();
             $namedParams = array();
 
-            while (($next = $lexer->peek()) !== DocblockLexer::T_CLOSE_PAREN) {
+            $expectingComma = false;
+            while (($next = $lexer->peek(1, true)) !== DocblockLexer::T_CLOSE_PAREN) {
                 if ($next === null) {
                     throw new \Exception('Unmatched parentheses');
                 }
-                if ($next === DocblockLexer::T_IDENTIFIER && $lexer->peek(2) === DocblockLexer::T_EQUAL) {
-                    list($name, $param) = $this->_NamedParam($lexer, $meta['class'], $namespaces);
-                    $namedParams[$name] = $param;
-                } elseif ($next === DocblockLexer::T_COMMA) {
-                    $lexer->readAndCheck(DocblockLexer::T_COMMA);
-                } else {
-                    $anonParams[] = $this->_ParamValue($lexer, $meta['class'], $namespaces);
+                switch ($next) {
+                    case DocblockLexer::T_IDENTIFIER:
+                        if ($expectingComma) {
+                            throw new \Exception('Unexpected identifier, expecting comma or close paren');
+                        }
+                        list($name, $param) = $this->_NamedParam($lexer, $meta['class'], $namespaces);
+                        $namedParams[$name] = $param;
+                        $expectingComma = true;
+                        break;
+                    case DocblockLexer::T_COMMA:
+                        if (!$expectingComma) {
+                            throw new \Exception('Unexpected comma');
+                        }
+                        $this->_expectNext($lexer, DocblockLexer::T_COMMA, true);
+                        $expectingComma = false;
+                        break;
+                    default:
+                        if ($expectingComma) {
+                            throw new \Exception('Unexpected value, expecting comma or close paren');
+                        }
+                        $anonParams[] = $this->_ParamValue($lexer, $meta['class'], $namespaces);
+                        $expectingComma = true;
                 }
             }
             if (!empty($anonParams) && !empty($namedParams)) {
                 throw new \Exception('Named or anonymous params, pick one.');
             }
 
-            $lexer->readAndCheck(DocblockLexer::T_CLOSE_PAREN);
+            $this->_expectNext($lexer, DocblockLexer::T_CLOSE_PAREN, true);
+
+            if ($expectingComma === false) {
+                // There has been a comma followed by a close paren...
+                throw new \Exception('Unexpected close paren after comma');
+            }
 
         }
 
