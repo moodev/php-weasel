@@ -7,7 +7,7 @@ use PhpAnnotation\Annotations\Parameter;
 
 /**
  * The list of subtypes of this base class
- * @Annotation(on={"class"})
+ * @Annotation(on={"class", "method", "property"})
  */
 class JsonSubTypes
 {
@@ -19,7 +19,7 @@ class JsonSubTypes
 
     /**
      * @param \PhpMarshaller\Config\Annotations\JsonSubTypes\Type[] $value
-     * @AnnotationCreator(@Parameter(name="value", type=\PhpMarshaller\Config\Annotations\JsonSubTypes\Type[], required=true))
+     * @AnnotationCreator(@Parameter(name="value", type="\PhpMarshaller\Config\Annotations\JsonSubTypes\Type[]", required=true))
      */
     public function __construct($value)
     {

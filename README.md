@@ -6,6 +6,6 @@ written for PHP.
 
 Today is not that day.
 
-Currently PhpAnnotation is probably mostly complete, providing a general "annotation" parsing library. I'm not 100%
-happy with the design.
-
+This is in serious need of tests, there's a load of TODO items.
+There's no XML implementation yet.
+Blah, blah, etc.

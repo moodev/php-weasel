@@ -16,4 +16,8 @@ class ClassSerialization
 
     public $include = self::INCLUDE_ALWAYS;
 
+    /**
+     * @var \PhpMarshaller\Config\Serialization\TypeInfo
+     */
+    public $typeInfo;
 }

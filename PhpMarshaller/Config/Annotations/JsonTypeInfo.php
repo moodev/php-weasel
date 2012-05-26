@@ -7,7 +7,7 @@ use PhpAnnotation\Annotations\Parameter;
 use PhpAnnotation\Annotations\Enum;
 
 /**
- * @Annotation(on={"class"})
+ * @Annotation(on={"class", "method", "property"})
  */
 class JsonTypeInfo
 {
@@ -31,7 +31,8 @@ class JsonTypeInfo
     public static $enumAs = array(
         "PROPERTY" => 1,
         "WRAPPER_ARRAY" => 2,
-        "WRAPPER_OBJECT" => 3
+        "WRAPPER_OBJECT" => 3,
+        "EXTERNAL_PROPERTY" => 4
     );
 
     /**
@@ -50,16 +51,30 @@ class JsonTypeInfo
     protected $property;
 
     /**
-     * @AnnotationCreator({@Parameter(name="use", type="integer", required=true), @Parameter(name="include", type="integer", required=false), @Parameter(name="property", type="string", required=false)})
-     * @param $use
-     * @param $include
-     * @param $property
+     * @var bool
      */
-    public function __construct($use, $include, $property)
+    protected $visible;
+
+    /**
+     * @var string
+     */
+    protected $defaultImpl;
+
+    /**
+     * @AnnotationCreator({@Parameter(name="use", type="integer", required=true), @Parameter(name="include", type="integer", required=false), @Parameter(name="property", type="string", required=false), @Parameter(name="visible", type="bool", required=false), @Parameter(name="defaultImpl", type="string", required=false)})
+     * @param int $use
+     * @param int $include
+     * @param string $property
+     * @param bool $visible
+     * @param string $defaultImpl
+     */
+    public function __construct($use, $include = null, $property = null, $visible = false, $defaultImpl = null)
     {
         $this->use = $use;
-        $this->include = $include;
-        $this->property = $property;
+        $this->include = isset($include) ? $include : self::$enumAs["PROPERTY"];
+        $this->property = empty($property) ? null : $property;
+        $this->visible = isset($visible) && $visible;
+        $this->defaultImpl = $defaultImpl;
     }
 
     /**
@@ -84,5 +99,18 @@ class JsonTypeInfo
     public function getUse()
     {
         return $this->use;
+    }
+
+    public function getVisible()
+    {
+        return $this->visible;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultImpl()
+    {
+        return $this->defaultImpl;
     }
 }

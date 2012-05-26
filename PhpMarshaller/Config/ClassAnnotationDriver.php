@@ -19,12 +19,18 @@ class ClassAnnotationDriver
     protected $rClass;
 
     /**
+     * @var \PhpAnnotation\AnnotationConfigurator
+     */
+    protected $configurator;
+
+    /**
      * @var ClassMarshaller
      */
     protected $config;
 
     public function __construct(\ReflectionClass $rClass, \PhpAnnotation\AnnotationConfigurator $configurator)
     {
+        $this->configurator = $configurator;
         $this->annotationReader = new AnnotationReader($rClass, $configurator);
         $this->rClass = $rClass;
     }
@@ -45,7 +51,10 @@ class ClassAnnotationDriver
         if (!isset($property)) {
             $property = lcfirst(substr($name, 3));
         }
+        $typeInfo = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonTypeInfo');
+        $subTypes = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonSubTypes');
 
+        $getterConfig->typeInfo = $this->_getSerializationTypeInfo($typeInfo, $subTypes);
         $includer = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonInclude');
         $getterConfig->include = $this->_getIncluderValue($includer);
 
@@ -73,12 +82,15 @@ class ClassAnnotationDriver
             $property = lcfirst(substr($name, 3));
         }
 
+        $typeInfo = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonTypeInfo');
+        $subTypes = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonSubTypes');
         if (isset($this->config->deserialization->properties[$property])) {
             throw new \Exception("Deserialization for property of name $property has already been configured.");
         }
         $setterConfig = new Deserialization\SetterDeserialization();
         $setterConfig->method = $name;
         $setterConfig->type = $propertyConfig->getType();
+        $setterConfig->typeInfo = $this->_getDeserializationTypeInfo($typeInfo, $subTypes);
 
         $this->config->deserialization->properties[$property] = $setterConfig;
     }
@@ -155,11 +167,14 @@ class ClassAnnotationDriver
             $propertyName = $name;
         }
 
+        $typeInfo = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonTypeInfo');
+        $subTypes = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonSubTypes');
 
         if (!isset($this->config->deserialization->properties[$propertyName])) {
             $setterConfig = new Deserialization\DirectDeserialization();
             $setterConfig->property = $name;
             $setterConfig->type = $propertyConfig->getType();
+            $setterConfig->typeInfo = $this->_getDeserializationTypeInfo($typeInfo, $subTypes);
 
             $this->config->deserialization->properties[$propertyName] = $setterConfig;
         }
@@ -172,6 +187,7 @@ class ClassAnnotationDriver
 
             $includer = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonInclude');
             $getterConfig->include = $this->_getIncluderValue($includer);
+            $getterConfig->typeInfo = $this->_getSerializationTypeInfo($typeInfo, $subTypes);
 
             $this->config->serialization->properties[$propertyName] = $getterConfig;
         }
@@ -204,6 +220,190 @@ class ClassAnnotationDriver
         return $val;
     }
 
+    protected function _getSubClassName(\ReflectionClass $rClass) {
+        $subClassReader = new AnnotationReader($rClass, $this->configurator);
+        /**
+         * @var Annotations\JsonTypeName $subNameA
+         */
+        $subNameA = $subClassReader->getSingleClassAnnotation(self::_ANS . 'JsonTypeName');
+        if (isset($subNameA)) {
+            return $subNameA->getName();
+        } else {
+            return $rClass->getName();
+        }
+
+    }
+
+    /**
+     * @param Annotations\JsonTypeInfo $typeInfo
+     * @param Annotations\JsonSubTypes $subTypes
+     * @throws \Exception
+     * @return Deserialization\TypeInfo|null
+     */
+    protected function _getSerializationTypeInfo($typeInfo, $subTypes) {
+
+        if (!isset($typeInfo)) {
+            return null;
+        }
+
+        $typeConfig = new Serialization\TypeInfo();
+        switch ($typeInfo->getUse()) {
+            case Annotations\JsonTypeInfo::$enumId['CLASS']:
+                $typeConfig->typeInfo = Serialization\TypeInfo::TI_USE_CLASS;
+                $typeConfig->typeInfoProperty = '@class';
+                break;
+            case Annotations\JsonTypeInfo::$enumId['CUSTOM']:
+                $typeConfig->typeInfo = Serialization\TypeInfo::TI_USE_CUSTOM;
+                break;
+            case Annotations\JsonTypeInfo::$enumId['MINIMAL_CLASS']:
+                $typeConfig->typeInfo = Serialization\TypeInfo::TI_USE_MINIMAL_CLASS;
+                $typeConfig->typeInfoProperty = '@class';
+                break;
+            case Annotations\JsonTypeInfo::$enumId['NAME']:
+                $typeConfig->typeInfo = Serialization\TypeInfo::TI_USE_NAME;
+                $typeConfig->typeInfoProperty = '@name';
+                break;
+            case Annotations\JsonTypeInfo::$enumId['NONE']:
+                $typeConfig->typeInfo = Serialization\TypeInfo::TI_USE_NONE;
+                return null;
+                break;
+
+        }
+
+        if ($typeInfo->getProperty() !== null) {
+            $typeConfig->typeInfoProperty = $typeInfo->getProperty();
+        }
+
+        switch ($typeInfo->getInclude()) {
+            case Annotations\JsonTypeInfo::$enumAs["PROPERTY"]:
+                $typeConfig->typeInfoAs = Serialization\TypeInfo::TI_AS_PROPERTY;
+                break;
+            case Annotations\JsonTypeInfo::$enumAs["WRAPPER_ARRAY"]:
+                $typeConfig->typeInfoAs = Serialization\TypeInfo::TI_AS_WRAPPER_ARRAY;
+                break;
+            case Annotations\JsonTypeInfo::$enumAs["WRAPPER_OBJECT"]:
+                $typeConfig->typeInfoAs = Serialization\TypeInfo::TI_AS_WRAPPER_OBJECT;
+                break;
+            case Annotations\JsonTypeInfo::$enumAs["EXTERNAL_PROPERTY"]:
+                $typeConfig->typeInfoAs = Serialization\TypeInfo::TI_AS_EXTERNAL_PROPERTY;
+                break;
+        }
+
+        if (isset($subTypes)) {
+            foreach ($subTypes->getValue() as $type) {
+                switch ($typeConfig->typeInfo) {
+                    case Serialization\TypeInfo::TI_USE_CLASS:
+                        $subName = $type->getValue();
+                        break;
+                    case Serialization\TypeInfo::TI_USE_MINIMAL_CLASS:
+                        $exploded = explode('\\', $type->getValue(), 2);
+                        $subName = $exploded[0];
+                        break;
+                    case Serialization\TypeInfo::TI_USE_NAME:
+                        $subName = $type->getName();
+                        if (empty($subName)) {
+                            $subName = $this->_getSubClassName(new \ReflectionClass($type->getValue()));
+                        }
+                        break;
+                    case Serialization\TypeInfo::TI_USE_CUSTOM:
+                    default:
+                        throw new \Exception("Unsupported typeinfo mode");
+                }
+                $typeConfig->subTypes[$type->getValue()] = $subName;
+            }
+        }
+
+        return $typeConfig;
+
+
+    }
+    /**
+     * @param Annotations\JsonTypeInfo $typeInfo
+     * @param Annotations\JsonSubTypes $subTypes
+     * @throws \Exception
+     * @return Deserialization\TypeInfo|null
+     */
+    protected function _getDeserializationTypeInfo($typeInfo, $subTypes) {
+
+        if (!isset($typeInfo)) {
+            return null;
+        }
+
+        $typeConfig = new Deserialization\TypeInfo();
+        switch ($typeInfo->getUse()) {
+            case Annotations\JsonTypeInfo::$enumId['CLASS']:
+                $typeConfig->typeInfo = Deserialization\TypeInfo::TI_USE_CLASS;
+                $typeConfig->typeInfoProperty = '@class';
+                break;
+            case Annotations\JsonTypeInfo::$enumId['CUSTOM']:
+                $typeConfig->typeInfo = Deserialization\TypeInfo::TI_USE_CUSTOM;
+                break;
+            case Annotations\JsonTypeInfo::$enumId['MINIMAL_CLASS']:
+                $typeConfig->typeInfo = Deserialization\TypeInfo::TI_USE_MINIMAL_CLASS;
+                $typeConfig->typeInfoProperty = '@class';
+                break;
+            case Annotations\JsonTypeInfo::$enumId['NAME']:
+                $typeConfig->typeInfo = Deserialization\TypeInfo::TI_USE_NAME;
+                $typeConfig->typeInfoProperty = '@name';
+                break;
+            case Annotations\JsonTypeInfo::$enumId['NONE']:
+                $typeConfig->typeInfo = Deserialization\TypeInfo::TI_USE_NONE;
+                return null;
+                break;
+
+        }
+
+        if ($typeInfo->getProperty() !== null) {
+            $typeConfig->typeInfoProperty = $typeInfo->getProperty();
+        }
+
+        $typeConfig->typeInfoVisible = $typeInfo->getVisible();
+        $typeConfig->defaultImpl = $typeInfo->getDefaultImpl();
+
+        switch ($typeInfo->getInclude()) {
+            case Annotations\JsonTypeInfo::$enumAs["PROPERTY"]:
+                $typeConfig->typeInfoAs = Deserialization\TypeInfo::TI_AS_PROPERTY;
+                break;
+            case Annotations\JsonTypeInfo::$enumAs["WRAPPER_ARRAY"]:
+                $typeConfig->typeInfoAs = Deserialization\TypeInfo::TI_AS_WRAPPER_ARRAY;
+                break;
+            case Annotations\JsonTypeInfo::$enumAs["WRAPPER_OBJECT"]:
+                $typeConfig->typeInfoAs = Deserialization\TypeInfo::TI_AS_WRAPPER_OBJECT;
+                break;
+            case Annotations\JsonTypeInfo::$enumAs["EXTERNAL_PROPERTY"]:
+                $typeConfig->typeInfoAs = Deserialization\TypeInfo::TI_AS_EXTERNAL_PROPERTY;
+                break;
+        }
+
+        if (isset($subTypes)) {
+            foreach ($subTypes->getValue() as $type) {
+                switch ($typeConfig->typeInfo) {
+                    case Deserialization\TypeInfo::TI_USE_CLASS:
+                        $subName = $type->getValue();
+                        break;
+                    case Deserialization\TypeInfo::TI_USE_MINIMAL_CLASS:
+                        $exploded = explode('\\', $type->getValue(), 2);
+                        $subName = $exploded[0];
+                        break;
+                    case Deserialization\TypeInfo::TI_USE_NAME:
+                        $subName = $type->getName();
+                        if (empty($subName)) {
+                            $subName = $this->_getSubClassName(new \ReflectionClass($type->getValue()));
+                        }
+                        break;
+                    case Deserialization\TypeInfo::TI_USE_CUSTOM:
+                    default:
+                        throw new \Exception("Unsupported typeinfo mode");
+                }
+                $typeConfig->subTypes[$subName] = $type->getValue();
+            }
+        }
+
+        return $typeConfig;
+
+
+    }
+
     public function getConfig()
     {
 
@@ -216,6 +416,25 @@ class ClassAnnotationDriver
          */
         $includer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonInclude');
         $this->config->serialization->include = $this->_getIncluderValue($includer);
+
+        /**
+         * @var \PhpMarshaller\Config\Annotations\JsonTypeName $typeNamer
+         */
+        $typeNamer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonTypeName');
+        $name = null;
+        if (isset($typeNamer)) {
+            $name = $typeNamer->getName();
+        }
+        if (empty($name)) {
+            // Default to the unqualified class name
+            $name = $this->rClass->getName();
+        }
+        $this->config->deserialization->name = $name;
+
+        $typeInfo = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonTypeInfo');
+        $subTypes = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonSubTypes');
+        $this->config->deserialization->typeInfo = $this->_getDeserializationTypeInfo($typeInfo, $subTypes);
+        $this->config->serialization->typeInfo = $this->_getSerializationTypeInfo($typeInfo, $subTypes);
 
         $methods = $this->rClass->getMethods(\ReflectionMethod::IS_PUBLIC);
 

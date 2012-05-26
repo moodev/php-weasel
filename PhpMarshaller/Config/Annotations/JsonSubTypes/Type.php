@@ -25,7 +25,7 @@ class Type
     /**
      * @param string $value
      * @param string|null $name
-     * @AnnotationCreator({@Parameter(name="value", type="string", required=true), @Parameter(name="name", type="string", required=false})
+     * @AnnotationCreator({@Parameter(name="value", type="string", required=true), @Parameter(name="name", type="string", required=false)})
      */
     public function __construct($value, $name)
     {

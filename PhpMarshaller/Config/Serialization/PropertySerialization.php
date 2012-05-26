@@ -14,4 +14,8 @@ class PropertySerialization
      */
     public $type;
 
+    /**
+     * @var \PhpMarshaller\Config\Serialization\TypeInfo
+     */
+    public $typeInfo;
 }

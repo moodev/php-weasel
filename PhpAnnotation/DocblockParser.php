@@ -158,6 +158,7 @@ class DocblockParser
         $class .= $next['token'];
 
         while ($lexer->peek() === DocblockLexer::T_BACKSLASH) {
+            $this->_expectNext($lexer, DocblockLexer::T_BACKSLASH);
             $class .= '\\';
             $part = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER);
             $class .= $part['token'];

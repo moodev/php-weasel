@@ -9,4 +9,8 @@ abstract class PropertyDeserialization
      */
     public $type;
 
+    /**
+     * @var \PhpMarshaller\Config\Deserialization\TypeInfo
+     */
+    public $typeInfo;
 }

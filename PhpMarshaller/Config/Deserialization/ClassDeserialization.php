@@ -24,4 +24,14 @@ class ClassDeserialization
      */
     public $ignoreProperties;
 
+    /**
+     * @var string
+     */
+    public $name;
+
+    /**
+     * @var \PhpMarshaller\Config\Deserialization\TypeInfo
+     */
+    public $typeInfo;
+
 }
