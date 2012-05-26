@@ -14,6 +14,10 @@ class DocblockParser
      */
     protected $logger;
 
+    static $silentlyDiscard = array(
+        "param", "author", "copyright", "var", "return", "package", "throws"
+    );
+
     public function parse($docBlock, $location, $namespaces) {
         return $this->_parse($docBlock, $location, $namespaces);
     }
@@ -190,7 +194,9 @@ class DocblockParser
         $meta = $this->_getAnnotation($identifier, $namespaces);
         if (!$meta) {
             if ($this->logger) {
-                $this->logger->logDebug("Skipping unknown annotation: $identifier");
+                if (!in_array($identifier, self::$silentlyDiscard)) {
+                    $this->logger->logDebug("Skipping unknown annotation: $identifier");
+                }
             }
             return null;
         }

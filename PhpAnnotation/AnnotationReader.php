@@ -49,9 +49,9 @@ class AnnotationReader
     {
         $this->class = $class;
         $this->parser = new DocblockParser($annotations);
-        $this->nsParser = new PhpParser();
-        $this->namespaces = $this->nsParser->parseClass($class);
         $this->logger = $annotations->getLogger();
+        $this->nsParser = new PhpParser($this->logger);
+        $this->namespaces = $this->nsParser->parseClass($class);
     }
 
     /**

@@ -4,16 +4,29 @@ namespace PhpAnnotation;
 class PhpParser
 {
 
-    public function __construct() {
+    /**
+     * @var \PhpLogger\Logger
+     */
+    protected $logger;
+
+    public function __construct($logger = null) {
+        $this->logger = $logger;
     }
 
     public function parseClass(\ReflectionClass $class) {
+        if (isset($this->logger)) {
+            $this->logger->logDebug("Parsing file " . $class->getFileName() . " for " . $class->getName());
+        }
         return $this->_parse($class);
     }
 
     protected function _parse(\ReflectionClass $class) {
         // Read PHP file up to the point the class is defined
         $data = $this->_readPrologue($class);
+
+        if (isset($this->logger)) {
+            $this->logger->logDebug("Read: ~~~~$data~~~~~");
+        }
 
         $tokens = token_get_all('<?php ' . $data);
         $namespaces = array();
@@ -90,14 +103,14 @@ class PhpParser
 
 
     protected function _readPrologue(\ReflectionClass $class) {
-        // TODO: Check that this is actually right. Also handle silly corner cases where someone has decided to play PHP Golf.
+        // TODO: Handle silly corner cases where someone has decided to play PHP Golf.
         $file = $class->getFileName();
         $line = $class->getStartLine();
 
         $buffer = "";
         $handle = @fopen($file, "r");
         if ($handle) {
-            for ($curLine = 0; $curLine <= $line; $curLine++) {
+            for ($curLine = 0; $curLine < $line; $curLine++) {
                 $data = fgets($handle);
                 if ($data === false) {
                     break;
