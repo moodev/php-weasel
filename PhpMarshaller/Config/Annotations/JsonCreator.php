@@ -12,16 +12,24 @@ class JsonCreator
 {
 
     /**
-     * @var array|null|\PhpMarshaller\Config\Annotations\JsonProperty[]
+     * @var \PhpMarshaller\Config\Annotations\JsonProperty[]
      */
-    protected $params;
+    protected $params = array();
 
     /**
-     * @param array|null|\PhpMarshaller\Config\Annotations\JsonProperty[] params
-     * @AnnotationCreator(@Parameter(name="params", type="\PhpMarshaller\Config\Annotations\JsonProperty", required=false))
+     * @param null|\PhpMarshaller\Config\Annotations\JsonProperty[] params
+     * @AnnotationCreator(@Parameter(name="params", type="\PhpMarshaller\Config\Annotations\JsonProperty[]", required=false))
      */
     public function __construct(array $params) {
-        $this->params = isset($params) ? $params : null;
+        $this->params = isset($params) ? $params : array();
+    }
+
+    /**
+     * @return array|JsonProperty[]
+     */
+    public function getParams()
+    {
+        return $this->params;
     }
 
 

@@ -5,6 +5,11 @@ class PropertySerialization
 {
 
     /**
+     * @var integer
+     */
+    public $include;
+
+    /**
      * @var string
      */
     public $type;

@@ -1,6 +1,9 @@
 <?php
 namespace PhpAnnotation\Annotations;
 
+use PhpAnnotation\Annotations\Annotation;
+use PhpAnnotation\Annotations\AnnotationCreator;
+
 /**
  * @Annotation(on="\PhpAnnotation\Annotations\AnnotationCreator")
  */
@@ -21,7 +24,7 @@ class Parameter
     {
         $this->name = isset($name) ? $name : null;
         $this->type = isset($type) ? $type : "string";
-        $this->name = isset($required) ? $required : false;
+        $this->required = isset($required) ? $required : false;
     }
 
     public function getName()

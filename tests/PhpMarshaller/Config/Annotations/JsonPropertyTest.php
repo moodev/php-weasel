@@ -66,4 +66,10 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $found);
 
     }
+
+    public function testCreate() {
+        $test = new JsonProperty("foo", "bar");
+        $this->assertEquals("foo", $test->getName());
+        $this->assertEquals("bar", $test->getType());
+    }
 }

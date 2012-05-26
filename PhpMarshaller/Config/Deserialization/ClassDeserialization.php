@@ -9,6 +9,9 @@ class ClassDeserialization
      */
     public $properties = array();
 
+    /**
+     * @var \PhpMarshaller\Config\Deserialization\Creator
+     */
     public $creator = null;
 
     /**

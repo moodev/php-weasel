@@ -1,12 +1,12 @@
 <?php
 namespace PhpMarshaller\Config\Deserialization;
 
-abstract class PropertyDeserialization
+class Param extends PropertyDeserialization
 {
 
     /**
      * @var string
      */
-    public $type;
+    public $name;
 
 }

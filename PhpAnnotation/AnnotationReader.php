@@ -32,6 +32,15 @@ class AnnotationReader
     protected $parser = null;
     protected $namespaces = array();
 
+    protected $otherNamespaces = array();
+
+    protected $logger;
+
+    /**
+     * @var PhpParser
+     */
+    protected $nsParser;
+
     /**
      * @param \ReflectionClass $class
      * @param AnnotationConfigurator $annotations
@@ -40,8 +49,9 @@ class AnnotationReader
     {
         $this->class = $class;
         $this->parser = new DocblockParser($annotations);
-        $nsParser = new PhpParser();
-        $this->namespaces = $nsParser->parseClass($class);
+        $this->nsParser = new PhpParser();
+        $this->namespaces = $this->nsParser->parseClass($class);
+        $this->logger = $annotations->getLogger();
     }
 
     /**
@@ -97,6 +107,26 @@ class AnnotationReader
     }
 
     /**
+     * @param \Reflection|\ReflectionMethod|\ReflectionProperty $rThing
+     * @return array
+     */
+    protected function _getDeclaredNamespaces($rThing) {
+        /**
+         * @var \ReflectionClass $dClass
+         */
+        $dClass = $rThing->getDeclaringClass();
+
+        if ($dClass != $this->class) {
+            $fullName = $dClass->getNamespaceName() . '\\' . $dClass->getName();
+            if (!isset($this->otherNamespaces[$fullName])) {
+                $this->otherNamespaces[$fullName] = $this->nsParser->parseClass($dClass);
+            }
+            return $this->otherNamespaces[$fullName];
+        }
+        return $this->namespaces;
+    }
+
+    /**
      * @param string $method
      * @return array[]
      */
@@ -107,9 +137,10 @@ class AnnotationReader
         }
 
         $this->methodAnnotations[$method] = array();
-        $docblock = $this->class->getMethod($method)->getDocComment();
+        $rMethod = $this->class->getMethod($method);
+        $docblock = $rMethod->getDocComment();
         if ($docblock !== false) {
-            $this->methodAnnotations[$method] = $this->parser->parse($docblock, "method", $this->namespaces);
+            $this->methodAnnotations[$method] = $this->parser->parse($docblock, "method", $this->_getDeclaredNamespaces($rMethod));
         }
         return $this->methodAnnotations[$method];
 
@@ -147,9 +178,10 @@ class AnnotationReader
         }
 
         $this->propertyAnnotations[$property] = array();
-        $docblock = $this->class->getProperty($property)->getDocComment();
+        $rProperty = $this->class->getProperty($property);
+        $docblock = $rProperty->getDocComment();
         if ($docblock !== false) {
-            $this->propertyAnnotations[$property] = $this->parser->parse($docblock, "property", $this->namespaces);
+            $this->propertyAnnotations[$property] = $this->parser->parse($docblock, "property", $this->_getDeclaredNamespaces($rProperty));
         }
         return $this->propertyAnnotations[$property];
 

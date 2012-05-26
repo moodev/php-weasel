@@ -1,12 +1,12 @@
 <?php
 namespace PhpMarshaller\Config\Deserialization;
 
-abstract class PropertyDeserialization
+abstract class Creator
 {
 
     /**
      * @var string
      */
-    public $type;
+    public $method;
 
 }

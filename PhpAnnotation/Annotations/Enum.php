@@ -1,6 +1,10 @@
 <?php
 namespace PhpAnnotation\Annotations;
 
+use PhpAnnotation\Annotations\Annotation;
+use PhpAnnotation\Annotations\AnnotationCreator;
+use PhpAnnotation\Annotations\Parameter;
+
 /**
  * @Annotation(on="property")
  */

@@ -9,7 +9,7 @@ use PhpAnnotation\Annotations\Parameter;
  * Sets a property up to be serialized/deserialized explicitly.
  * The name sets the json field name to use for this property.
  * The type specifies the type to use.
- * Because PHP is not strongly typed we can only make best guesses about types if you do not provide type inof!
+ * Because PHP is not strongly typed we can only make best guesses about types if you do not provide type info!
  * @Annotation(on={"property", "method", "\PhpMarshaller\Config\Annotations\JsonCreator"})
  */
 class JsonProperty
@@ -26,7 +26,7 @@ class JsonProperty
     public function __construct($name, $type)
     {
         $this->name = isset($name) ? $name : null;
-        $this->type = isset($name) ? $name : "string";
+        $this->type = isset($type) ? $type : "string";
     }
 
     public function getName()

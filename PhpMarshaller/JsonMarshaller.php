@@ -52,9 +52,21 @@ class JsonMarshaller
                 $value = $object->$meth();
             }
 
-            // TODO: handle nulls.
-
             // TODO polymorphism
+
+            switch ($propConfig->include) {
+                case Config\Serialization\ClassSerialization::INCLUDE_NON_EMPTY:
+                    if (empty($value)) {
+                        continue 2;
+                    }
+                    break;
+                case Config\Serialization\ClassSerialization::INCLUDE_NON_DEFAULT:
+                    throw new \Exception("Not currently supported");
+                case Config\Serialization\ClassSerialization::INCLUDE_NON_NULL:
+                    if (is_null($value)) {
+                        continue 2;
+                    }
+            }
 
             $result[$key] = $this->_encodeValue($value, $propConfig->type);
         }
@@ -64,13 +76,55 @@ class JsonMarshaller
     }
 
 
+    protected function _instantiateClassFromPropertyCreator($array, $class, Config\Deserialization\PropertyCreator $creator) {
+        $args = array();
+        foreach ($creator->params as $param) {
+            $val = null;
+            if (isset($array[$param->name])) {
+                $val = $this->_decodeValue($array[$param->name], $param->type);
+            }
+            $args[] = $val;
+        }
+
+        // TODO: Avoid reflectors up to N (4?) args
+        if ($creator->method === '__construct') {
+
+            $rClass = new \ReflectionClass($class);
+            return $rClass->newInstanceArgs($args);
+        } else {
+            $rMethod = new \ReflectionMethod($class, $creator->method);
+            return $rMethod->invokeArgs(null, $args);
+        }
+    }
+
     protected function _decodeClass($array, $class) {
         $classconfig = $this->configProvider->getConfig($class);
         // Todo: polymorphism
         $deconfig = $classconfig->deserialization;
 
-        // Todo: creators
-        $object = new $class();
+        $ignoreProperties = array();
+        if ($deconfig->creator) {
+            if ($deconfig->creator instanceof Config\Deserialization\DelegateCreator) {
+                return new $class($array);
+            } else {
+                $creator = $deconfig->creator;
+                /**
+                 * @var Config\Deserialization\PropertyCreator $creator
+                 */
+                $object = $this->_instantiateClassFromPropertyCreator($array, $class, $creator);
+                foreach ($creator->params as $param) {
+                    $ignoreProperties[$param->name] = true;
+                }
+            }
+        } else {
+            $object = new $class();
+        }
+
+        if (!empty($deconfig->ignoreProperties)) {
+            foreach ($deconfig->ignoreProperties as $ignore) {
+                $ignoreProperties[$ignore] = true;
+            }
+        }
 
         foreach ($array as $key => $value) {
             if (isset($deconfig->properties[$key])) {
@@ -97,9 +151,8 @@ class JsonMarshaller
                     $object->$meth($decodedValue);
 
                 }
-                $object->$key = $value;
             } elseif (!$deconfig->ignoreUnknown) {
-                if (empty($deconfig->ignoreProperties) || !in_array($key, $deconfig->ignoreProperties)) {
+                if (!isset($ignoreProperties[$key])) {
                     trigger_error("Unknown property: $key", E_USER_WARNING);
                 }
             }
@@ -123,10 +176,10 @@ class JsonMarshaller
                     if (is_bool($value)) {
                         return (bool)$value;
                     }
-                    if ($value === "true") {
+                    if ($value === "true" || $value === 1) {
                         return true;
                     }
-                    if ($value === "false") {
+                    if ($value === "false" || $value === 0) {
                         return false;
                     }
                     throw new \Exception("Type error");
@@ -134,23 +187,23 @@ class JsonMarshaller
                 case "int":
                 case "integer":
                     if (!is_numeric($value)) {
-                        throw new \Exception("Type error");
+                        throw new \Exception("Type error, expected numeric but got " . $value);
                     }
                     return (int)$value;
                     break;
                 case "string":
                     if (!is_string($value)) {
-                        throw new \Exception("Type error");
+                        throw new \Exception("Type error, expected string but got " . gettype($value));
                     }
                     return (string)$value;
                 case "float":
                     if (!is_numeric($value)) {
-                        throw new \Exception("Type error");
+                        throw new \Exception("Type error, expected numeric but got " . $value);
                     }
                     return (float)$value;
                 default:
                     if (!is_array($value)) {
-                        throw new \Exception("Expected array but found something else (or type $type is bad)");
+                        throw new \Exception("Expected array but found something else (or type $type is bad) got: " . gettype($value));
                     }
                     return $this->_decodeClass($value, $type);
             }

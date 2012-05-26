@@ -1,6 +1,9 @@
 <?php
 namespace PhpAnnotation\Annotations;
 
+use PhpAnnotation\Annotations\Annotation;
+use PhpAnnotation\Annotations\Parameter;
+
 /**
  * @Annotation(on="method", max=1)
  */

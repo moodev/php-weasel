@@ -10,8 +10,8 @@ class AnnotationDriver implements ConfigProvider
     protected $classPaths = array();
     protected $configurator;
 
-    public function __construct() {
-        $this->configurator = new \PhpAnnotation\ArrayCachingAnnotationConfigurator();
+    public function __construct($logger = null) {
+        $this->configurator = new \PhpAnnotation\ArrayCachingAnnotationConfigurator($logger);
     }
 
     /**

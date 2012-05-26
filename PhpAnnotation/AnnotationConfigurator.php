@@ -63,6 +63,12 @@ class AnnotationConfigurator
 
     );
 
+    protected $logger;
+
+    public function __construct(\PhpLogger\Logger $logger = null) {
+        $this->logger = $logger;
+    }
+
     public function get($name)
     {
         if (isset($this->builtIn[$name])) {
@@ -77,7 +83,7 @@ class AnnotationConfigurator
          */
         $annotation = $reader->getSingleClassAnnotation('\PhpAnnotation\Annotations\Annotation');
         if (!isset($annotation)) {
-            throw new \Exception("erm");
+            throw new \Exception("Did not find an @Annotation annotation on $name");
         }
 
         $metaConfig = array();
@@ -93,14 +99,23 @@ class AnnotationConfigurator
             $creator = $reader->getSingleMethodAnnotation($method->getName(), '\PhpAnnotation\Annotations\AnnotationCreator');
             if (isset($creator)) {
                 $metaConfig['creatorMethod'] = $method->getName();
+                $creatorArgs = $method->getParameters();
+                if (count($creatorArgs) != count($creator->getParams())) {
+                    throw new \Exception("Creator args don't match with method args");
+                }
                 $creatorParams = array();
+                $i = 0;
                 foreach ($creator->getParams() as $param) {
                     $creatorParam = array();
                     $creatorParam['name'] = $param->getName();
+                    if (!isset($creatorParam['name'])) {
+                        $creatorParam['name'] = $creatorArgs[$i]->getName();
+                    }
                     $creatorParam['type'] = $param->getType();
                     $creatorParam['required'] = $param->getRequired();
                     $creatorParams[] = $creatorParam;
                 }
+                $i++;
                 $metaConfig['creatorParams'] = $creatorParams;
 
             }
@@ -143,6 +158,11 @@ class AnnotationConfigurator
         }
 
         return $metaConfig;
+    }
+
+    public function getLogger()
+    {
+        return $this->logger;
     }
 
 }

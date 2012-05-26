@@ -49,10 +49,11 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
             array('\PhpAnnotation\Annotations\AnnotationCreator' => array(
                 new \PhpAnnotation\Annotations\AnnotationCreator(
                     array(
-                        new \PhpAnnotation\Annotations\Parameter("params", '\PhpMarshaller\Config\Annotations\JsonProperty', false),
+                        new \PhpAnnotation\Annotations\Parameter("params", '\PhpMarshaller\Config\Annotations\JsonProperty[]', false),
                     )
                 )
-            ))
+            )),
+            "getParams" => array(),
         );
 
         $this->assertEquals($expected, $found);

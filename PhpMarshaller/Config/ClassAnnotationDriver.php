@@ -46,6 +46,8 @@ class ClassAnnotationDriver
             $property = lcfirst(substr($name, 3));
         }
 
+        $includer = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonInclude');
+        $getterConfig->include = $this->_getIncluderValue($includer);
 
         if (isset($this->config->serialization->properties[$property])) {
             throw new \Exception("Serialization for property of name $property has already been configured.");
@@ -84,13 +86,45 @@ class ClassAnnotationDriver
     protected function _configureCreator(\ReflectionMethod $method) {
         $name = $method->getName();
         /**
-         * @var \PhpMarshaller\Config\Annotations\JsonCreator $propertyConfig
+         * @var \PhpMarshaller\Config\Annotations\JsonCreator $creatorConfig
          */
-        $creatorConfigs = $this->annotationReader->getMethodAnnotation($name, self::_ANS . 'JsonCreator');
+        $creatorConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonCreator');
         if (empty($creatorConfig)) {
             return;
         }
-
+        if (isset($this->config->deserialization->creator)) {
+            throw new \Exception("Found more than one creator method! Last was $name");
+        }
+        $rParams = $creatorConfig->getParams();
+        if (count($rParams) === 0) {
+            $creator = new Deserialization\DelegateCreator();
+            $creator->method = $name;
+        } else {
+            $creator = new Deserialization\PropertyCreator();
+            $creator->method = $name;
+            $i = 0;
+            $paramNames = array();
+            foreach ($rParams as $rParam) {
+                $paramNames[] = $rParam->getName();
+            }
+            foreach ($creatorConfig->getParams() as $paramConfig) {
+                $param = new Deserialization\Param();
+                $param->name = $paramConfig->getName();
+                $param->type = $paramConfig->getType();
+                if (!isset($param->name)) {
+                    if (!isset($paramNames[$i])) {
+                        throw new \Exception("Unable to establish name of param $i of $name");
+                    }
+                    $param->name = $paramNames[$i];
+                }
+                $creator->params[] = $param;
+                $i++;
+            }
+            if (count($creator->params) !== count($paramNames)) {
+                throw new \Exception('Expected ' . count($paramNames) . ' params but found ' . count($creator->params));
+            }
+        }
+        $this->config->deserialization->creator = $creator;
     }
 
     protected function _configureMethod(\ReflectionMethod $method) {
@@ -116,25 +150,58 @@ class ClassAnnotationDriver
             return;
         }
 
-        $property = $propertyConfig->getName();
+        $propertyName = $propertyConfig->getName();
+        if (!isset($propertyName)) {
+            $propertyName = $name;
+        }
 
-        if (!isset($this->config->deserialization->properties[$property])) {
+
+        if (!isset($this->config->deserialization->properties[$propertyName])) {
             $setterConfig = new Deserialization\DirectDeserialization();
             $setterConfig->property = $name;
             $setterConfig->type = $propertyConfig->getType();
 
-            $this->config->deserialization->properties[$property] = $setterConfig;
+            $this->config->deserialization->properties[$propertyName] = $setterConfig;
         }
 
 
-        if (!isset($this->config->serialization->properties[$property])) {
+        if (!isset($this->config->serialization->properties[$propertyName])) {
             $getterConfig = new Serialization\DirectSerialization();
             $getterConfig->property = $name;
             $getterConfig->type = $propertyConfig->getType();
 
-            $this->config->serialization->properties[$property] = $getterConfig;
+            $includer = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonInclude');
+            $getterConfig->include = $this->_getIncluderValue($includer);
+
+            $this->config->serialization->properties[$propertyName] = $getterConfig;
         }
 
+    }
+
+    /**
+     * @param Annotations\JsonInclude $includer
+     * @return int
+     */
+    protected function _getIncluderValue($includer) {
+        $val = $this->config->serialization->include;
+        if (isset($includer)) {
+            switch ($includer->getValue()) {
+                case (Annotations\JsonInclude::$enumInclude["ALWAYS"]):
+                    $val = Serialization\ClassSerialization::INCLUDE_ALWAYS;
+                    break;
+                case (Annotations\JsonInclude::$enumInclude["NON_DEFAULT"]):
+                    $val = Serialization\ClassSerialization::INCLUDE_NON_DEFAULT;
+                    break;
+                case (Annotations\JsonInclude::$enumInclude["NON_EMPTY"]):
+                    $val = Serialization\ClassSerialization::INCLUDE_NON_EMPTY;
+                    break;
+                case (Annotations\JsonInclude::$enumInclude["NON_NULL"]):
+                    $val = Serialization\ClassSerialization::INCLUDE_NON_NULL;
+                    break;
+                default:
+            }
+        }
+        return $val;
     }
 
     public function getConfig()
@@ -165,8 +232,11 @@ class ClassAnnotationDriver
             $this->config->deserialization->ignoreProperties = $ignorer->getNames();
         }
 
-        // TODO polymorphism
-        // TODO creators
+        /**
+         * @var \PhpMarshaller\Config\Annotations\JsonInclude $includer
+         */
+        $includer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonInclude');
+        $this->config->serialization->include = $this->_getIncluderValue($includer);
 
         return $this->config;
 

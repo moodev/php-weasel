@@ -194,20 +194,26 @@ class DocblockLexer
         return $this->pos;
     }
 
-    public function peek($num = 1, $skipWS = false) {
+    protected function _wsSkippingPeek($num = 1) {
         $pos = $this->pos;
-        if ($this->seek($pos+$num)) {
-            if ($ret = $this->get()) {
-                if ($skipWS && $ret['type'] === self::T_WHITESPACE) {
-                    if ($ret = $this->next(true)) {
-                        $this->seek($pos);
-                        return $ret['type'];
-                    }
-                } else {
-                    $this->seek($pos);
-                    return $ret['type'];
-                }
-            }
+        $ret = null;
+        $i = 0;
+        do {
+            $ret = $this->next(true);
+            $i++;
+        } while ($i < $num && $ret !== null);
+        $this->seek($pos);
+        return isset($ret) ? $ret["type"] : null;
+    }
+
+    public function peek($num = 1, $skipWS = false) {
+        if ($skipWS) {
+            return $this->_wsSkippingPeek($num);
+        }
+        $pos = $this->pos;
+        if ($ret = $this->seek($pos+$num)) {
+            $this->seek($pos);
+            return $ret['type'];
         }
         $this->seek($pos);
         return null;

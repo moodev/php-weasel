@@ -4,7 +4,15 @@ namespace PhpAnnotation;
 class DocblockParser
 {
 
+    /**
+     * @var AnnotationConfigurator
+     */
     protected $annotations;
+
+    /**
+     * @var null|\PhpLogger\Logger
+     */
+    protected $logger;
 
     public function parse($docBlock, $location, $namespaces) {
         return $this->_parse($docBlock, $location, $namespaces);
@@ -12,6 +20,7 @@ class DocblockParser
 
     public function __construct(AnnotationConfigurator $annotations) {
         $this->annotations = $annotations;
+        $this->logger = $annotations->getLogger();
     }
 
     protected function _getAnnotation($name, $namespaces) {
@@ -48,6 +57,9 @@ class DocblockParser
                 }
             } catch (\Exception $e) {
                 // OK, try starting 1 char after the @ to find the next annotation.
+                if ($this->logger) {
+                    $this->logger->logDebug("Skipping syntax error: " . $e->getMessage());
+                }
                 $lexer->seek($pos);
                 if (!$lexer->next()) {
                     break;
@@ -74,6 +86,13 @@ class DocblockParser
     }
 
     protected function _ParamValue(DocblockLexer $lexer, $location, $namespaces) {
+        $next = $lexer->peek(1, true);
+        if ($next === DocblockLexer::T_IDENTIFIER) {
+            // Might be an enum then...
+            $enum = $this->_Enum($lexer, $location, $namespaces);
+            return $enum;
+        }
+
         $cur = $lexer->next(true);
         switch ($cur['type']) {
             case DocblockLexer::T_INTEGER:
@@ -95,10 +114,6 @@ class DocblockParser
             case DocblockLexer::T_OPEN_BRACE:
                 $array = $this->_Array($lexer, $location, $namespaces);
                 return array('array', $array);
-            case DocblockLexer::T_IDENTIFIER:
-                // Might be an enum then...
-                $enum = $this->_Enum($lexer, $location, $namespaces);
-                return $enum;
             default:
                 throw new \Exception("Parse error got {$cur["type"]} ({$cur['token']})");
         }
@@ -154,9 +169,11 @@ class DocblockParser
         }
 
         $this->_expectNext($lexer, DocblockLexer::T_DOT);
-        $enum = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER);
+        $enumTok = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER);
+        $enum = $enumTok["token"];
         $this->_expectNext($lexer, DocblockLexer::T_DOT);
-        $index = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER);
+        $indexTok = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER);
+        $index = $indexTok["token"];
 
         if (!isset($meta["enums"][$enum][$index])) {
             throw new \Exception("Unable to lookup enum value for $class : $enum : $index");
@@ -172,6 +189,9 @@ class DocblockParser
 
         $meta = $this->_getAnnotation($identifier, $namespaces);
         if (!$meta) {
+            if ($this->logger) {
+                $this->logger->logDebug("Skipping unknown annotation: $identifier");
+            }
             return null;
         }
 
@@ -191,28 +211,25 @@ class DocblockParser
                 if ($next === null) {
                     throw new \Exception('Unmatched parentheses');
                 }
-                switch ($next) {
-                    case DocblockLexer::T_IDENTIFIER:
-                        if ($expectingComma) {
-                            throw new \Exception('Unexpected identifier, expecting comma or close paren');
-                        }
-                        list($name, $param) = $this->_NamedParam($lexer, $meta['class'], $namespaces);
-                        $namedParams[$name] = $param;
-                        $expectingComma = true;
-                        break;
-                    case DocblockLexer::T_COMMA:
-                        if (!$expectingComma) {
-                            throw new \Exception('Unexpected comma');
-                        }
-                        $this->_expectNext($lexer, DocblockLexer::T_COMMA, true);
-                        $expectingComma = false;
-                        break;
-                    default:
-                        if ($expectingComma) {
-                            throw new \Exception('Unexpected value, expecting comma or close paren');
-                        }
-                        $anonParams[] = $this->_ParamValue($lexer, $meta['class'], $namespaces);
-                        $expectingComma = true;
+                if ($next === DocblockLexer::T_IDENTIFIER && $lexer->peek(2, true) === DocblockLexer::T_EQUAL) {
+                    if ($expectingComma) {
+                        throw new \Exception('Unexpected identifier, expecting comma or close paren');
+                    }
+                    list($name, $param) = $this->_NamedParam($lexer, $meta['class'], $namespaces);
+                    $namedParams[$name] = $param;
+                    $expectingComma = true;
+                } elseif ($next === DocblockLexer::T_COMMA) {
+                    if (!$expectingComma) {
+                        throw new \Exception('Unexpected comma');
+                    }
+                    $this->_expectNext($lexer, DocblockLexer::T_COMMA, true);
+                    $expectingComma = false;
+                } else {
+                    if ($expectingComma) {
+                        throw new \Exception('Unexpected value, expecting comma or close paren');
+                    }
+                    $anonParams[] = $this->_ParamValue($lexer, $meta['class'], $namespaces);
+                    $expectingComma = true;
                 }
             }
             if (!empty($anonParams) && !empty($namedParams)) {

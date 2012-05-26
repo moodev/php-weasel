@@ -1,7 +1,7 @@
 <?php
 namespace PhpAnnotation\Tests;
 
-require_once(__DIR__ . '/../../PhpAnnotation/autoloader.php');
+require_once(__DIR__ . '/../../PhpMarshallerAutoloader.php');
 
 use PhpAnnotation\DocblockParser;
 use PhpAnnotation\AnnotationConfigurator;
@@ -261,6 +261,85 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function testEnumAnnotation() {
+
+        $mockConfigurator = new MockConfigurator();
+        $mockConfigurator->types['\PhpAnnotation\Tests\Gloop'] =
+            array(
+                'class' => '\PhpAnnotation\Tests\Gloop',
+                'on' => array('class'),
+                'properties' => array(
+                    'foo' => 'integer'
+                ),
+                'enums' => array(
+                    'Snorks' => array(
+                        "FOO" => 1,
+                        "BAR" => 2,
+                        "BAZ" => 3,
+                    )
+                )
+            );
+
+        $parser = new DocblockParser($mockConfigurator);
+
+        $parsed = $parser->parse(
+            '/**
+              * @Gloop(foo=Gloop.Snorks.BAR)
+              */',
+            "class",
+            array('Gloop' => 'PhpAnnotation\Tests\Gloop')
+        );
+
+        $gloop = new Gloop();
+        $gloop->foo = 2;
+
+        $this->assertEquals(array('\PhpAnnotation\Tests\Gloop' => array($gloop)), $parsed);
+
+    }
+
+    public function testEnumAnnotationNoName() {
+
+        $mockConfigurator = new MockConfigurator();
+        $mockConfigurator->types['\PhpAnnotation\Tests\Gloop'] =
+            array(
+                'class' => '\PhpAnnotation\Tests\Gloop',
+                'on' => array('class'),
+                'creatorMethod' => '__construct',
+                'creatorParams' => array(
+                    array(
+                        'name' => 'foo',
+                        'type' => 'integer'
+                    ),
+                    array(
+                        'name' => 'baz',
+                        'type' => 'integer'
+                    )
+                ),
+                'enums' => array(
+                    'Snorks' => array(
+                        "FOO" => 1,
+                        "BAR" => 2,
+                        "BAZ" => 3,
+                    )
+                )
+            );
+
+        $parser = new DocblockParser($mockConfigurator);
+
+        $parsed = $parser->parse(
+            '/**
+              * @Gloop(Gloop.Snorks.BAR)
+              */',
+            "class",
+            array('Gloop' => 'PhpAnnotation\Tests\Gloop')
+        );
+
+        $gloop = new Gloop();
+        $gloop->fromca = 2;
+
+        $this->assertEquals(array('\PhpAnnotation\Tests\Gloop' => array($gloop)), $parsed);
+
+    }
 }
 
 class Gloop {
@@ -296,6 +375,11 @@ class MockConfigurator extends AnnotationConfigurator{
 
     public function get($type) {
         return $this->types[$type];
+    }
+
+    public function getLogger() {
+        $logger = new \PhpLogger\FileLogger();
+        $logger->setLogLevel(\PhpLogger\Logger::LOG_LEVEL_DEBUG);
     }
 
 }
