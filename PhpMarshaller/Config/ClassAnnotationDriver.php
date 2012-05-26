@@ -211,6 +211,12 @@ class ClassAnnotationDriver
         $this->config->serialization = new Serialization\ClassSerialization();
         $this->config->deserialization = new Deserialization\ClassDeserialization();
 
+        /**
+         * @var \PhpMarshaller\Config\Annotations\JsonInclude $includer
+         */
+        $includer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonInclude');
+        $this->config->serialization->include = $this->_getIncluderValue($includer);
+
         $methods = $this->rClass->getMethods(\ReflectionMethod::IS_PUBLIC);
 
         foreach ($methods as $method) {
@@ -232,11 +238,6 @@ class ClassAnnotationDriver
             $this->config->deserialization->ignoreProperties = $ignorer->getNames();
         }
 
-        /**
-         * @var \PhpMarshaller\Config\Annotations\JsonInclude $includer
-         */
-        $includer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonInclude');
-        $this->config->serialization->include = $this->_getIncluderValue($includer);
 
         return $this->config;
 
