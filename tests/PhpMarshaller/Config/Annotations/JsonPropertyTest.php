@@ -1,18 +1,18 @@
 <?php
-namespace PhpMarshaller\Config\Annotations;
+namespace PhpJsonMarshaller\Config\Annotations;
 
-require_once(__DIR__ . '/../../../../PhpMarshallerAutoloader.php');
+require_once(__DIR__ . '/../../../../PhpJsonMarshallerAutoloader.php');
 
 class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testParseClassAnnotations() {
 
-        $annotationReader = new \PhpAnnotation\AnnotationReader(new \ReflectionClass('\PhpMarshaller\Config\Annotations\JsonProperty'), new \PhpAnnotation\AnnotationConfigurator());
+        $annotationReader = new \PhpAnnotation\AnnotationReader(new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonProperty'), new \PhpAnnotation\AnnotationConfigurator());
 
         $expected = array(
             '\PhpAnnotation\Annotations\Annotation' => array(
-                new \PhpAnnotation\Annotations\Annotation(array("property", "method", '\PhpMarshaller\Config\Annotations\JsonCreator'), null)
+                new \PhpAnnotation\Annotations\Annotation(array("property", "method", '\PhpJsonMarshaller\Config\Annotations\JsonCreator'), null)
             ),
         );
 
@@ -22,7 +22,7 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     public function testParsePropertyAnnotations() {
 
-        $rClass = new \ReflectionClass('\PhpMarshaller\Config\Annotations\JsonProperty');
+        $rClass = new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonProperty');
         $annotationReader = new \PhpAnnotation\AnnotationReader($rClass, new \PhpAnnotation\AnnotationConfigurator());
 
 
@@ -38,7 +38,7 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     public function testParseMethodAnnotations() {
 
-        $rClass = new \ReflectionClass('\PhpMarshaller\Config\Annotations\JsonProperty');
+        $rClass = new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonProperty');
         $annotationReader = new \PhpAnnotation\AnnotationReader($rClass, new \PhpAnnotation\AnnotationConfigurator());
 
         $found = array();

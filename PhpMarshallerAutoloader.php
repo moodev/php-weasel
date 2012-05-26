@@ -1,5 +1,5 @@
 <?php
-namespace PhpMarshaller;
+namespace PhpJsonMarshaller;
 /**
  * @package MooPhp
  * @author Jonathan Oddy <jonathan at woaf.net>
@@ -16,7 +16,7 @@ function autoLoad($name) {
     }
     $exploded = explode("\\", $name);
     $vendor = $exploded[0];
-    if ($vendor != "PhpMarshaller" && $vendor != "PhpAnnotation" && $vendor != "PhpLogger") {
+    if ($vendor != "PhpJsonMarshaller" && $vendor != "PhpAnnotation" && $vendor != "PhpLogger") {
         return;
     }
     $path = implode('/', $exploded);
@@ -24,5 +24,5 @@ function autoLoad($name) {
     return;
 }
 
-spl_autoload_register('\PhpMarshaller\autoLoad');
+spl_autoload_register('\PhpJsonMarshaller\autoLoad');
 
