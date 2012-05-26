@@ -1,19 +1,17 @@
 <?php
 namespace PhpJsonMarshaller\Config\Annotations;
 
-require_once(__DIR__ . '/../../../../PhpJsonMarshallerAutoloader.php');
+require_once(__DIR__ . '/../../../../PhpMarshallerAutoloader.php');
 
-class JsonPropertyTest extends \PHPUnit_Framework_TestCase
+class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testParseClassAnnotations() {
 
-        $annotationReader = new \PhpAnnotation\AnnotationReader(new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonProperty'), new \PhpAnnotation\AnnotationConfigurator());
+        $annotationReader = new \PhpAnnotation\AnnotationReader(new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonCreator'), new \PhpAnnotation\AnnotationConfigurator());
 
         $expected = array(
-            '\PhpAnnotation\Annotations\Annotation' => array(
-                new \PhpAnnotation\Annotations\Annotation(array("property", "method", '\PhpJsonMarshaller\Config\Annotations\JsonCreator'), null)
-            ),
+            '\PhpAnnotation\Annotations\Annotation' => array(new \PhpAnnotation\Annotations\Annotation(array("method"), 1)),
         );
 
         $this->assertEquals($expected, $annotationReader->getClassAnnotations());
@@ -22,7 +20,7 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     public function testParsePropertyAnnotations() {
 
-        $rClass = new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonProperty');
+        $rClass = new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonCreator');
         $annotationReader = new \PhpAnnotation\AnnotationReader($rClass, new \PhpAnnotation\AnnotationConfigurator());
 
 
@@ -32,13 +30,13 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
             $found[$name] = $annotationReader->getPropertyAnnotations($name);
         }
 
-        $this->assertEquals(array("name" => array(), "type" => array()), $found);
+        $this->assertEquals(array("params" => array()), $found);
 
     }
 
     public function testParseMethodAnnotations() {
 
-        $rClass = new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonProperty');
+        $rClass = new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonCreator');
         $annotationReader = new \PhpAnnotation\AnnotationReader($rClass, new \PhpAnnotation\AnnotationConfigurator());
 
         $found = array();
@@ -54,22 +52,14 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
             array('\PhpAnnotation\Annotations\AnnotationCreator' => array(
                 new \PhpAnnotation\Annotations\AnnotationCreator(
                     array(
-                        new \PhpAnnotation\Annotations\Parameter("name", 'string', false),
-                        new \PhpAnnotation\Annotations\Parameter("type", 'string', false),
+                        new \PhpAnnotation\Annotations\Parameter("params", '\PhpJsonMarshaller\Config\Annotations\JsonProperty[]', false),
                     )
                 )
             )),
-            'getName' => array(),
-            'getType' => array(),
+            "getParams" => array(),
         );
 
         $this->assertEquals($expected, $found);
 
-    }
-
-    public function testCreate() {
-        $test = new JsonProperty("foo", "bar");
-        $this->assertEquals("foo", $test->getName());
-        $this->assertEquals("bar", $test->getType());
     }
 }

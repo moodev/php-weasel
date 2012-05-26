@@ -1,7 +1,7 @@
 <?php
 namespace PhpAnnotation\Tests;
 
-require_once(__DIR__ . '/../../PhpJsonMarshallerAutoloader.php');
+require_once(__DIR__ . '/../../PhpMarshallerAutoloader.php');
 
 use PhpAnnotation\DocblockLexer;
 
