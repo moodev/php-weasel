@@ -16,16 +16,26 @@ class AnnotationReader
      */
     protected $class;
 
+    /**
+     * @var null|array[]
+     */
     protected $classAnnotations = null;
+    /**
+     * @var null|array[]
+     */
     protected $methodAnnotations = null;
+    /**
+     * @var null|array[]
+     */
     protected $propertyAnnotations = null;
-
-    protected $propertyGetters = null;
-    protected $propertySetters = null;
 
     protected $parser = null;
     protected $namespaces = array();
 
+    /**
+     * @param \ReflectionClass $class
+     * @param AnnotationConfigurator $annotations
+     */
     public function __construct(\ReflectionClass $class, AnnotationConfigurator $annotations)
     {
         $this->class = $class;
@@ -34,6 +44,9 @@ class AnnotationReader
         $this->namespaces = $nsParser->parseClass($class);
     }
 
+    /**
+     * @return array[]
+     */
     public function getClassAnnotations()
     {
         if (isset($this->classAnnotations)) {
@@ -49,12 +62,44 @@ class AnnotationReader
         return $this->classAnnotations;
     }
 
+    /**
+     * @param string $annotation
+     * @return null|object[]
+     */
     public function getClassAnnotation($annotation)
     {
         $classes = $this->getClassAnnotations();
         return isset($classes[$annotation]) ? $classes[$annotation] : null;
     }
 
+    /**
+     * @param object[] $annotations
+     * @return object|null
+     * @throws \Exception
+     */
+    protected function _singleAnnotation($annotations) {
+        if (empty($annotations)) {
+            return null;
+        }
+        if (count($annotations) > 1) {
+            throw new \Exception("Attempt to get single annotation when there are multiple");
+        }
+        return array_shift($annotations);
+    }
+
+    /**
+     * @param string $annotation
+     * @return object
+     */
+    public function getSingleClassAnnotation($annotation)
+    {
+        return $this->_singleAnnotation($this->getClassAnnotation($annotation));
+    }
+
+    /**
+     * @param string $method
+     * @return array[]
+     */
     public function getMethodAnnotations($method)
     {
         if (isset($this->methodAnnotations[$method])) {
@@ -70,13 +115,31 @@ class AnnotationReader
 
     }
 
+    /**
+     * @param string $method
+     * @param string $annotation
+     * @return null|object[]
+     */
     public function getMethodAnnotation($method, $annotation)
     {
         $methods = $this->getMethodAnnotations($method);
-        return isset($methods[$annotation]) ? $methods[$annotation] : null;
+        return (isset($methods[$annotation]) ? $methods[$annotation] : null);
 
     }
 
+    /**
+     * @param string $method
+     * @param string $annotation
+     * @return null|object
+     */
+    public function getSingleMethodAnnotation($method, $annotation) {
+        return $this->_singleAnnotation($this->getMethodAnnotation($method, $annotation));
+    }
+
+    /**
+     * @param string $property
+     * @return array[]
+     */
     public function getPropertyAnnotations($property)
     {
         if (isset($this->propertyAnnotations[$property])) {
@@ -92,20 +155,24 @@ class AnnotationReader
 
     }
 
+    /**
+     * @param string $property
+     * @param string $annotation
+     * @return null|object[]
+     */
     public function getPropertyAnnotation($property, $annotation)
     {
         $properties = $this->getPropertyAnnotations($property);
         return isset($properties[$annotation]) ? $properties[$annotation] : null;
     }
 
-    public function getGetterForProperty($property)
-    {
-
-    }
-
-    public function getSetterForProperty($property)
-    {
-
+    /**
+     * @param string $property
+     * @param string $annotation
+     * @return null|object
+     */
+    public function getSinglePropertyAnnotation($property, $annotation) {
+        return $this->_singleAnnotation($this->getPropertyAnnotation($property, $annotation));
     }
 
 }

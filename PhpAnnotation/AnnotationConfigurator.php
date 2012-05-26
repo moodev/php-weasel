@@ -75,7 +75,7 @@ class AnnotationConfigurator
         /**
          * @var \PhpAnnotation\Annotations\Annotation $annotation
          */
-        $annotation = $reader->getClassAnnotation('\PhpAnnotation\Annotations\Annotation');
+        $annotation = $reader->getSingleClassAnnotation('\PhpAnnotation\Annotations\Annotation');
         if (!isset($annotation)) {
             throw new \Exception("erm");
         }
@@ -90,7 +90,7 @@ class AnnotationConfigurator
              * @var \ReflectionMethod $method
              * @var \PhpAnnotation\Annotations\AnnotationCreator $creator
              */
-            $creator = $reader->getMethodAnnotation($method, '\PhpAnnotation\Annotations\AnnotationCreator');
+            $creator = $reader->getSingleMethodAnnotation($method->getName(), '\PhpAnnotation\Annotations\AnnotationCreator');
             if (isset($creator)) {
                 $metaConfig['creatorMethod'] = $method->getName();
                 $creatorParams = array();
@@ -112,7 +112,7 @@ class AnnotationConfigurator
              * @var \ReflectionProperty $property
              * @var \PhpAnnotation\Annotations\Property $annotProperty
              */
-            $annotProperty = $reader->getPropertyAnnotation($property, '\PhpAnnotation\Annotations\Property');
+            $annotProperty = $reader->getSinglePropertyAnnotation($property->getName(), '\PhpAnnotation\Annotations\Property');
 
             if (isset($annotProperty)) {
                 $propertyConfig = array();
@@ -123,7 +123,7 @@ class AnnotationConfigurator
             /**
              * @var \PhpAnnotation\Annotations\Enum $annotEnum
              */
-            $annotEnum = $reader->getPropertyAnnotation($property, '\PhpAnnotation\Annotations\Enum');
+            $annotEnum = $reader->getSinglePropertyAnnotation($property->getName(), '\PhpAnnotation\Annotations\Enum');
 
             if (isset($annotEnum)) {
                 if (!$property->isStatic()) {

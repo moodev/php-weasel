@@ -34,7 +34,7 @@ class ClassAnnotationDriver
         /**
          * @var \PhpMarshaller\Config\Annotations\JsonProperty $propertyConfig
          */
-        $propertyConfig = $this->annotationReader->getMethodAnnotation($name, self::_ANS . 'JsonProperty');
+        $propertyConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonProperty');
         if (!isset($propertyConfig)) {
             return;
         }
@@ -61,7 +61,7 @@ class ClassAnnotationDriver
         /**
          * @var \PhpMarshaller\Config\Annotations\JsonProperty $propertyConfig
          */
-        $propertyConfig = $this->annotationReader->getMethodAnnotation($name, self::_ANS . 'JsonProperty');
+        $propertyConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonProperty');
         if (!isset($propertyConfig)) {
             return;
         }
@@ -86,8 +86,8 @@ class ClassAnnotationDriver
         /**
          * @var \PhpMarshaller\Config\Annotations\JsonCreator $propertyConfig
          */
-        $creatorConfig = $this->annotationReader->getMethodAnnotation($name, self::_ANS . 'JsonCreator');
-        if (!isset($creatorConfig)) {
+        $creatorConfigs = $this->annotationReader->getMethodAnnotation($name, self::_ANS . 'JsonCreator');
+        if (empty($creatorConfig)) {
             return;
         }
 
@@ -111,7 +111,7 @@ class ClassAnnotationDriver
         /**
          * @var \PhpMarshaller\Config\Annotations\JsonProperty $propertyConfig
          */
-        $propertyConfig = $this->annotationReader->getPropertyAnnotation($name, self::_ANS . 'JsonProperty');
+        $propertyConfig = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonProperty');
         if (!isset($propertyConfig)) {
             return;
         }
@@ -158,8 +158,8 @@ class ClassAnnotationDriver
         /**
          * @var \PhpMarshaller\Config\Annotations\JsonIgnoreProperties|null $ignorer
          */
-        $ignorer = $this->annotationReader->getClassAnnotation(self::_ANS . 'JsonIgnoreProperties');
-        if (isset($ignorer)) {
+        $ignorer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonIgnoreProperties');
+        if (!empty($ignorer)) {
             // The ignorer config affects which properties we will consider.
             $this->config->deserialization->ignoreUnknown = $ignorer->getIgnoreUnknown();
             $this->config->deserialization->ignoreProperties = $ignorer->getNames();
