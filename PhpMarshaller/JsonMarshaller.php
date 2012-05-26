@@ -99,8 +99,8 @@ class JsonMarshaller
                 }
                 $object->$key = $value;
             } elseif (!$deconfig->ignoreUnknown) {
-                if (!in_array($key, $deconfig->ignoreProperties)) {
-                    // TODO: lob warning somewhere
+                if (empty($deconfig->ignoreProperties) || !in_array($key, $deconfig->ignoreProperties)) {
+                    trigger_error("Unknown property: $key", E_USER_WARNING);
                 }
             }
         }
