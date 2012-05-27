@@ -1,7 +1,7 @@
 <?php
 namespace PhpJsonMarshaller;
 
-class JsonMarshaller
+class JsonMapper
 {
 
     /**
