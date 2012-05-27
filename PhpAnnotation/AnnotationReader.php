@@ -1,13 +1,6 @@
 <?php
 namespace PhpAnnotation;
 
-/**
- * Created by JetBrains PhpStorm.
- * User: User
- * Date: 12/05/12
- * Time: 18:09
- * To change this template use File | Settings | File Templates.
- */
 class AnnotationReader
 {
 
