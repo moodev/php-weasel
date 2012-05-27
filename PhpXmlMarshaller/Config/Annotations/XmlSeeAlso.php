@@ -16,7 +16,7 @@ class XmlSeeAlso
 
     /**
      * @param string[] $value
-     * @AnnotationCreator(@Parameter(name="value", type="string[]", required=true))
+     * @AnnotationCreator({@Parameter(name="value", type="string[]", required=true)})
      */
     public function __construct($value)
     {

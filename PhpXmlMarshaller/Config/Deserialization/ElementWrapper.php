@@ -10,4 +10,20 @@ class ElementWrapper
      */
     public $nillable = false;
 
+
+    /**
+     * @var \PhpXmlMarshaller\Config\Deserialization\ElementDeserialization
+     */
+    public $wraps;
+
+    /**
+     * @var string
+     */
+    public $name;
+
+    /**
+     * @var string
+     */
+    public $namespace;
+
 }

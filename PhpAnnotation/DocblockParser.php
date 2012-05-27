@@ -287,6 +287,8 @@ class DocblockParser
                         $actualParams[] = $this->_collapseAndCheckType($namedParams[$paramConfig['name']], $paramConfig['type']);
                     }
                 }
+            } else {
+                $actualParams = array_fill(0, count($expectedParams), null);
             }
 
             if ($meta['creatorMethod'] === '__construct') {

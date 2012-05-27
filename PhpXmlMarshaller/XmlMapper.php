@@ -15,7 +15,7 @@ class XmlMapper
 
     public function readString($string, $class) {
         $reader = new \XMLReader();
-        $reader->setParserProperty(\XMLReader::VALIDATE, true);
+//        $reader->setParserProperty(\XMLReader::VALIDATE, true);
         $reader->xml($string);
         $ret = $this->readXml($reader, $class);
         $reader->close();
@@ -31,20 +31,24 @@ class XmlMapper
     }
 
     protected function _readObject(\XMLReader $xml, $class, $root = false) {
-        if ($xml->isEmptyElement) {
-            return null;
-        }
-
         $deConfig = $this->configProvider->getConfig($class)->deserialization;
+        if (!isset($deConfig)) {
+            throw new \Exception("No config count for $class");
+        }
         // TODO handle simple value objecty things (XmlValue)
+
+        $ignorableAttributes = array();
 
         if (!empty($deConfig->subClasses)) {
             if (!empty($deConfig->discriminator)) {
                 if (substr($deConfig->discriminator, 0, 1) !== '@') {
                     throw new \Exception("Unsupported discriminator, currently only attributes (denoted with @) are supported. Found: " . $deConfig->discriminator);
                 }
+                $discrimName = substr($deConfig->discriminator, 1);
+                $attrNS = ($xml->namespaceURI) ? $xml->namespaceURI . ':' : '';
+                $ignorableAttributes[$attrNS . $discrimName] = true;
 
-                $discrimValue = $xml->getAttribute(substr($deConfig->discriminator, 1));
+                $discrimValue = $xml->getAttribute($discrimName);
                 foreach ($deConfig->subClasses as $subClass) {
                     $subConfig = $this->configProvider->getConfig($subClass)->deserialization;
                     if ($subConfig->discriminatorValue == $discrimValue) {
@@ -53,26 +57,26 @@ class XmlMapper
                         break;
                     }
                 }
-            } elseif ($root) {
-                $matchName = $xml->localName;
+            } elseif ($root && ($xml->name != $deConfig->name || $xml->namespaceURI != $deConfig->namespace)) {
+                $matchName = $xml->name;
                 $matchNS = $xml->namespaceURI;
 
                 foreach ($deConfig->subClasses as $subClass) {
                     $subConfig = $this->configProvider->getConfig($subClass)->deserialization;
-                    if ($root) {
-                        if ($subConfig->name == $matchName && $subConfig->namespace == $matchNS) {
-                            $class = $subClass;
-                            $deConfig = $subConfig;
-                            break;
-                        }
+                    if ($subConfig->name == $matchName && $subConfig->namespace == $matchNS) {
+                        $class = $subClass;
+                        $deConfig = $subConfig;
+                        break;
                     }
                 }
             }
 
         }
 
-        if ($root && ($xml->localName != $deConfig->name || $xml->namespaceURI != $deConfig->namespace)) {
-            throw new \Exception("Unable to resolve root node for {$xml->namespaceURI}:{$xml->localName}");
+        $fullName = $xml->namespaceURI . ':' . $xml->name;
+
+        if ($root && ($xml->name != $deConfig->name || $xml->namespaceURI != $deConfig->namespace)) {
+            throw new \Exception("Unable to resolve root node for {$fullName}");
         }
 
         $creatorClass = $class;
@@ -90,63 +94,71 @@ class XmlMapper
         $seenAttributes = array();
         $seenElements = array();
 
+        $namespace = $xml->namespaceURI;
 
 		if ($xml->hasAttributes) {
             while ($xml->moveToNextAttribute()) {
-                $seenAttributes[] = $xml->name;
-                if (!isset($deConfig->attributes[$xml->namespaceURI][$xml->localName])) {
-                    throw new \Exception("Unknown attribute found in {$class}: {$xml->name}");
+                $attrNS = (($xml->namespaceURI) ? $xml->namespaceURI . ':' : (isset($namespace) ? $namespace . ':' : ''));
+                $fullName = $attrNS . $xml->name;
+                if ($xml->name === 'xmlns') {
+                    continue;
                 }
-                $val = $this->_readAttribute($xml, $deConfig->attributes[$xml->name]);
-                $this->_setProperty($object, $deConfig->attributes[$xml->name]->property, $val);
-                break;
+                if (isset($ignorableAttributes[$fullName])) {
+                    continue;
+                }
+                if (!isset($deConfig->attributes[$fullName])) {
+                    throw new \Exception("Unknown attribute found in {$class}: {$fullName}");
+                }
+                $val = $this->_readAttribute($xml, $deConfig->attributes[$fullName]);
+                $this->_setProperty($object, $deConfig->attributes[$fullName]->property, $val);
+                $seenAttributes[] = $deConfig->attributes[$fullName]->property->id;
             }
             $xml->moveToElement();
         }
 
-        $knownArrays = array();
-        do {
-            if (!$xml->read()) {
-                throw new \Exception("XML Read failure parsing for {$class}");
-            }
-            switch ($xml->nodeType) {
-                case \XMLReader::ELEMENT:
-                    if (isset($deConfig->elementWrappers[$xml->name])) {
-                        // TODO
-                        break;
-                    }
-                    if (!isset($deConfig->elements[$xml->name])) {
-                        throw new \Exception("Unknown attribute found in {$class}: {$xml->name}");
-                    }
-                    $seenElements[] = $xml->name;
-                    $val = $this->_readElement($xml, $deConfig->elements[$xml->name]);
-                    if (is_array($val)) {
-                        if (!isset($knownArrays[$xml->name])) {
-                            $knownArrays[$xml->name] = array();
+        $knownValues = array();
+
+        if (!$xml->isEmptyElement) {
+            do {
+                if (!$xml->read()) {
+                    throw new \Exception("XML Read failure parsing for {$class}");
+                }
+                switch ($xml->nodeType) {
+                    case \XMLReader::ELEMENT:
+                        list($propType, $val) = $this->_readElement($xml, $deConfig);
+                        $seenElements[] = $propType->id;
+                        if (is_array($val)) {
+                            if (!isset($knownValues[$propType->id])) {
+                                $knownValues[$propType->id] = array($propType, array());
+                            }
+                            $knownValues[$propType->id][1] = array_merge($knownValues[$propType->id][1], $val);
+                        } else {
+                            $this->_setProperty($object, $propType, $val);
                         }
-                        $knownArrays[$xml->name] = array_merge($knownArrays[$xml->name], $val);
-                    } else {
-                        $this->_setProperty($object, $deConfig->attributes[$xml->name]->property, $val);
-                    }
+                        break;
+                    case \XMLReader::END_ELEMENT:
+                        break;
+                    case \XMLReader::WHITESPACE:
+                    case \XMLReader::COMMENT:
+                    case \XMLReader::SIGNIFICANT_WHITESPACE:
+                        break;
+                    default:
+                        throw new \Exception("XML Parsing error, found unexpected {$xml->nodeType} while parsing for {$class}");
 
-                    break;
-                case \XMLReader::WHITESPACE:
-                case \XMLReader::COMMENT:
-                    break;
-                default:
-                    throw new \Exception("XML Parsing error, found unexpected {$xml->nodeType} while parsing for {$class}");
-
-            }
-        } while ($xml->nodeType != \XMLReader::END_ELEMENT);
-
-        foreach ($knownArrays as $name => $val) {
-            $this->_setProperty($object, $deConfig->attributes[$name]->property, $val);
+                }
+            } while ($xml->nodeType != \XMLReader::END_ELEMENT);
         }
 
         $notSeenAtts = array_diff($deConfig->requiredAttributes, $seenAttributes);
         $notSeenElements = array_diff($deConfig->requiredElements, $seenElements);
         if (!empty($notSeenAtts) || !empty($notSeenElements)) {
+            // TODO fix.
             throw new \Exception("Missing required elements: ".implode(', ', $notSeenElements)." and attributes: " . implode(',', $notSeenAtts) . "on $class");
+        }
+
+        foreach ($knownValues as $typeval) {
+            list ($property, $values) = $typeval;
+            $this->_setProperty($object, $property, $values);
         }
 
         return $object;
@@ -161,6 +173,7 @@ class XmlMapper
 
             $prop = $propConfig->property;
             $object->$prop = $value;
+
         } elseif ($propConfig instanceof Config\Deserialization\SetterDeserialization) {
             /**
              * @var Config\Deserialization\SetterDeserialization $propConfig
@@ -171,21 +184,111 @@ class XmlMapper
         }
     }
 
-    protected function _readElement(\XMLReader $xml, Config\Deserialization\ElementDeserialization $config) {
-        if ($xml->isEmptyElement && !$config->nillable) {
-            throw new \Exception("Found empty {$xml->name} which is not nillable");
+    protected function _readElementWrapper(\XMLReader $xml, Config\Deserialization\ElementWrapper $wrapperConfig) {
+
+        $elementConfig = $wrapperConfig->wraps;
+
+        $collection = array();
+
+        do {
+            if (!$xml->read()) {
+                throw new \Exception("XML Read failure parsing wrapper");
+            }
+            $fullName = $xml->namespaceURI . ':' . $xml->name;
+            switch ($xml->nodeType) {
+                case \XMLReader::ELEMENT:
+                    if ($elementConfig->ref) {
+                        $type = $this->_getRef($elementConfig, $fullName);
+                    } else {
+                        $type = $elementConfig->property->type;
+                    }
+                    if (empty($type)) {
+                        throw new \Exception("Unable to resolve wrapped type for " . $wrapperConfig->name . " base type " . $wrapperConfig->wraps->property->type . " looking for " . $fullName);
+                    }
+                    $collection[] = $this->_readElementAsType($xml, $type);
+                    break;
+                case \XMLReader::END_ELEMENT:
+                    break;
+                case \XMLReader::WHITESPACE:
+                case \XMLReader::SIGNIFICANT_WHITESPACE:
+                case \XMLReader::COMMENT:
+                    break;
+                default:
+                    throw new \Exception("XML Parsing error, found unexpected {$xml->nodeType}");
+
+            }
+        } while ($xml->nodeType != \XMLReader::END_ELEMENT);
+
+        return array($elementConfig->property, $collection);
+    }
+
+    /**
+     * @param \PhpXmlMarshaller\Config\Deserialization\ElementDeserialization $ref
+     * @param string $fullName
+     * @return string the type
+     */
+    protected function _getRef(Config\Deserialization\ElementDeserialization $ref, $fullName) {
+        if (isset($ref->refNameToTypeMap)) {
+            if  (isset($ref->refNameToTypeMap[$fullName])) {
+                return $ref->refNameToTypeMap[$fullName];
+            } else {
+                return null;
+            }
+        }
+        $superConfig = $this->configProvider->getConfig($ref->property->type)->deserialization;
+        $superFullName = (isset($superConfig->namespace) ? $superConfig->namespace . ":" : "") . $superConfig->name;
+        $ref->refNameToTypeMap[$superFullName] = $ref->property->type;
+        foreach ($superConfig->subClasses as $subClass) {
+            $subConfig = $this->configProvider->getConfig($subClass)->deserialization;
+            $subFullName = (isset($subConfig->namespace) ? $subConfig->namespace . ":" : "") . $subConfig->name;
+            $ref->refNameToTypeMap[$subFullName] = $subClass;
+        }
+        if  (isset($ref->refNameToTypeMap[$fullName])) {
+            return $ref->refNameToTypeMap[$fullName];
+        }
+        return null;
+    }
+
+    protected function _readElement(\XMLReader $xml, Config\Deserialization\ClassDeserialization $deConfig) {
+        $fullName = $xml->namespaceURI . ':' . $xml->name;
+        if (isset($deConfig->elementWrappers[$fullName])) {
+            return $this->_readElementWrapper($xml, $deConfig->elementWrappers[$fullName], $deConfig);
         }
 
-        return $this->_readElementAsType($xml, $config->property->type);
+        $type = null;
+        $element = null;
 
+        foreach ($deConfig->elements as $el) {
+            if (!$el->ref && $el->name == $xml->name && $el->namespace == $xml->namespaceURI) {
+                $element = $el;
+                $type = $el->property->type;
+                break;
+            }
+        }
+        if (!isset($element)) {
+            foreach ($deConfig->elements as $el) {
+                if ($el->ref) {
+                    if ($type = $this->_getRef($el, $fullName)) {
+                        $element = $el;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!isset($element)) {
+            throw new \Exception("Unknown element found in {$deConfig->name}: {$fullName}");
+        }
+
+        return array($element->property, $this->_readElementAsType($xml, $type));
     }
 
     /**
      * @param \XMLReader $xml
      * @param string $type
+     * @param bool $root
      * @return mixed
      */
-    protected function _readElementAsType($xml, $type) {
+    protected function _readElementAsType($xml, $type, $root = false) {
         $matches = array();
         $ret = null;
         if (!preg_match('/^(.*)\\[(int|integer|string|bool|boolean|float|)\\]$/i', $type, $matches)) {
@@ -196,11 +299,11 @@ class XmlMapper
                 case "integer":
                 case "float":
                 case "string":
-                    $ret = $this->_decodeSimpleValue($xml->value, $type);
+                    $ret = $this->_decodeSimpleValue($xml->readInnerXml(), $type);
                     break;
                 default:
                     // Object! (hopefully)
-                    $ret = $this->_readObject($xml, $type, false);
+                    $ret = $this->_readObject($xml, $type, $root);
             }
         } else {
             // It's an array
@@ -216,7 +319,7 @@ class XmlMapper
                 // It's an array element, not a map.
                 $ret = array($this->_readElementAsType($xml, $elementType));
             } else {
-                $this->_readMap($xml, $indexType, $elementType);
+                $ret = $this->_readMap($xml, $indexType, $elementType);
             }
 
         }
@@ -240,17 +343,17 @@ class XmlMapper
             }
             switch ($xml->nodeType) {
                 case \XMLReader::ELEMENT:
-                    if (!$inEntry && $xml->localName !== 'entry') {
+                    if (!$inEntry && $xml->name !== 'entry') {
                         throw new \Exception("Expected map entry, got: " . $xml->name);
                     }
-                    if ($xml->localName === 'entry') {
+                    if ($xml->name === 'entry') {
                         $inEntry = true;
-                    } elseif ($xml->localName === 'key') {
+                    } elseif ($xml->name === 'key') {
                         if (isset($key)) {
                             throw new \Exception("Found multiple keys for entry");
                         }
                         $key = $this->_readElementAsType($xml, $indexType);
-                    } elseif ($xml->localName === 'value') {
+                    } elseif ($xml->name === 'value') {
                         if (isset($key)) {
                             throw new \Exception("Found multiple values for entry");
                         }
@@ -260,7 +363,7 @@ class XmlMapper
                     }
                     break;
                 case \XMLReader::END_ELEMENT:
-                    if ($xml->localName === 'entry') {
+                    if ($xml->name === 'entry') {
                         $xml->next();
                         $inEntry = false;
                     }
@@ -282,7 +385,7 @@ class XmlMapper
     }
 
     public function writeString($object) {
-
+        throw new \Exception("Not implemented yet");
     }
 
     protected function _decodeSimpleValue($value, $type) {
@@ -323,68 +426,4 @@ class XmlMapper
 
     }
 
-    /**
-     * @param mixed $value
-     * @param string $type
-     * @throws \Exception
-     * @param Config\Serialization\TypeInfo $typeInfo
-     * @return mixed
-     */
-    /*
-    protected function _encodeValue($value, $type, $typeInfo = null) {
-        $matches = array();
-        if (!isset($value)) {
-            return null;
-        }
-        if (!preg_match('/^(.*)\\[(int|integer|string|bool|boolean|float|)\\]$/i', $type, $matches)) {
-            switch ($type) {
-                case "bool":
-                case "boolean":
-                    if (!is_bool($value)) {
-                        throw new \Exception("Type error");
-                    }
-                    return (bool)$value;
-                    break;
-                case "int":
-                case "integer":
-                    if (!is_int($value)) {
-                        throw new \Exception("Type error");
-                    }
-                    return (int)$value;
-                    break;
-                case "string":
-                    if (!is_string($value)) {
-                        throw new \Exception("Type error");
-                    }
-                    return (string)$value;
-                case "float":
-                    if (!is_float($value)) {
-                        throw new \Exception("Type error");
-                    }
-                    return (float)$value;
-                default:
-                    if (!is_object($value)) {
-                        throw new \Exception("Expected object but found something else (or type $type is bad)");
-                    }
-                    return $this->_encodeObject($value, $typeInfo);
-            }
-        }
-
-        $elementType = $matches[1];
-
-        $indexType = $matches[2];
-        if (empty($indexType)) {
-            $indexType = "int";
-        }
-
-        $result = array();
-        if (!is_array($value)) {
-            $value = array($value);
-        }
-        foreach ($value as $key => $element) {
-            $result[$this->_encodeValue($key, $indexType)] = $this->_encodeValue($element, $elementType);
-        }
-        return $result;
-
-    }   */
 }

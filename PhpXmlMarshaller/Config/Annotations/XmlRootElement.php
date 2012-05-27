@@ -17,7 +17,7 @@ class XmlRootElement
     /**
      * @param $name
      * @param string $namespace
-     * @internal param $ (@Parameter(name="name", type="string", required=false), @Parameter(name="namespace", type="string", required=false))
+     * @AnnotationCreator({@Parameter(name="name", type="string", required=false), @Parameter(name="namespace", type="string", required=false)})
      */
     public function __construct($name, $namespace)
     {

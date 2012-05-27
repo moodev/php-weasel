@@ -7,6 +7,11 @@ abstract class PropertyDeserialization
     /**
      * @var string
      */
+    public $id;
+
+    /**
+     * @var string
+     */
     public $type;
 
 }

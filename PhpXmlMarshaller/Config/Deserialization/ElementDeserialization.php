@@ -14,4 +14,18 @@ class ElementDeserialization
      */
     public $nillable = false;
 
+    /**
+     * @var bool
+     */
+    public $ref = false;
+
+    /**
+     * @var string[]
+     */
+    public $refNameToTypeMap = null;
+
+    public $name;
+
+    public $namespace;
+
 }
