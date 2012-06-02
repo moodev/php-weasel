@@ -1,16 +1,17 @@
 <?php
 namespace Weasel;
-/**
- * @package MooPhp
- * @author Jonathan Oddy <jonathan at woaf.net>
- * @copyright Copyright (c) 2011, Jonathan Oddy
- */
+    /**
+     * @package MooPhp
+     * @author Jonathan Oddy <jonathan at woaf.net>
+     * @copyright Copyright (c) 2011, Jonathan Oddy
+     */
 
 /**
  * @param string $name Class to load
  * @return void
  */
-function autoLoad($name) {
+function autoLoad($name)
+{
     if (class_exists($name) || interface_exists($name)) {
         return;
     }

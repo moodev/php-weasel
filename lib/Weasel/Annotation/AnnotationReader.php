@@ -80,7 +80,8 @@ class AnnotationReader
      * @return object|null
      * @throws \Exception
      */
-    protected function _singleAnnotation($annotations) {
+    protected function _singleAnnotation($annotations)
+    {
         if (empty($annotations)) {
             return null;
         }
@@ -103,7 +104,8 @@ class AnnotationReader
      * @param \Reflection|\ReflectionMethod|\ReflectionProperty $rThing
      * @return array
      */
-    protected function _getDeclaredNamespaces($rThing) {
+    protected function _getDeclaredNamespaces($rThing)
+    {
         /**
          * @var \ReflectionClass $dClass
          */
@@ -156,7 +158,8 @@ class AnnotationReader
      * @param string $annotation
      * @return null|object
      */
-    public function getSingleMethodAnnotation($method, $annotation) {
+    public function getSingleMethodAnnotation($method, $annotation)
+    {
         return $this->_singleAnnotation($this->getMethodAnnotation($method, $annotation));
     }
 
@@ -196,7 +199,8 @@ class AnnotationReader
      * @param string $annotation
      * @return null|object
      */
-    public function getSinglePropertyAnnotation($property, $annotation) {
+    public function getSinglePropertyAnnotation($property, $annotation)
+    {
         return $this->_singleAnnotation($this->getPropertyAnnotation($property, $annotation));
     }
 

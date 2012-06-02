@@ -9,7 +9,8 @@ use Weasel\Annotation\AnnotationConfigurator;
 class DocblockParserTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function provideSimpleClassAnnotation() {
+    public function provideSimpleClassAnnotation()
+    {
         return array(
             array('flibble fish', 'string'),
             array('test "some" quotes', 'string'),
@@ -20,9 +21,10 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    protected function _phpTypeToAnnotationType($type, $value) {
+    protected function _phpTypeToAnnotationType($type, $value)
+    {
         if ($type === 'string') {
-            return '"'.str_replace('"', '""', $value).'"';
+            return '"' . str_replace('"', '""', $value) . '"';
         }
         if ($type === 'boolean') {
             return $value ? "true" : "false";
@@ -36,7 +38,8 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
      * @param $type
      * @dataProvider provideSimpleClassAnnotation
      */
-    public function testSimpleClassAnnotation($value, $type) {
+    public function testSimpleClassAnnotation($value, $type)
+    {
 
         $mockConfigurator = new MockConfigurator();
         $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
@@ -49,7 +52,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
         $parsed = $parser->parse(
             '/**
-              * @Gloop(foo='.$valueQuoted.')
+              * @Gloop(foo=' . $valueQuoted . ')
               */',
             "class",
             array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
@@ -62,7 +65,8 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testArrayClassAnnotation() {
+    public function testArrayClassAnnotation()
+    {
 
         $mockConfigurator = new MockConfigurator();
         $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
@@ -86,7 +90,8 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testArraySingleElementClassAnnotation() {
+    public function testArraySingleElementClassAnnotation()
+    {
 
         $mockConfigurator = new MockConfigurator();
         $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
@@ -115,7 +120,8 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
      * @param $type
      * @dataProvider provideSimpleClassAnnotation
      */
-    public function testNestedClassAnnotation($value, $type) {
+    public function testNestedClassAnnotation($value, $type)
+    {
 
         $mockConfigurator = new MockConfigurator();
         $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
@@ -131,7 +137,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
         $parsed = $parser->parse(
             '/**
-              * @Gloop(foo=@Glarp(bar='.$valueQuoted.'))
+              * @Gloop(foo=@Glarp(bar=' . $valueQuoted . '))
               */',
             "class",
             array(
@@ -154,7 +160,8 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
      * @param $type
      * @dataProvider provideSimpleClassAnnotation
      */
-    public function testSimpleClassAnnotationCreator($value, $type) {
+    public function testSimpleClassAnnotationCreator($value, $type)
+    {
 
         $mockConfigurator = new MockConfigurator();
         $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
@@ -173,10 +180,10 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
         $parsed = $parser->parse(
             '/**
-              * @Gloop(foo='.$valueQuoted.')
-              * @Gloop('.$valueQuoted.')
-              * @Gloop('.$valueQuoted.', '.$valueQuoted.')
-              * @Gloop(baz='.$valueQuoted.')
+              * @Gloop(foo=' . $valueQuoted . ')
+              * @Gloop(' . $valueQuoted . ')
+              * @Gloop(' . $valueQuoted . ', ' . $valueQuoted . ')
+              * @Gloop(baz=' . $valueQuoted . ')
               */',
             "class",
             array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
@@ -207,7 +214,8 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testUnknownAnnotations() {
+    public function testUnknownAnnotations()
+    {
 
         $mockConfigurator = new MockConfigurator();
 
@@ -228,7 +236,8 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testEnumAnnotation() {
+    public function testEnumAnnotation()
+    {
 
         $mockConfigurator = new MockConfigurator();
         $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
@@ -253,7 +262,8 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testEnumAnnotationNoName() {
+    public function testEnumAnnotationNoName()
+    {
 
         $mockConfigurator = new MockConfigurator();
         $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
@@ -281,50 +291,59 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class Gloop {
+class Gloop
+{
 
     public $foo;
 
     public $fromca;
     public $fromcb;
 
-    public function __construct($foo = null, $baz = null) {
+    public function __construct($foo = null, $baz = null)
+    {
         $this->fromca = $foo;
         $this->fromcb = $baz;
     }
 }
 
-class Glarp {
+class Glarp
+{
 
     public $bar;
 
     public $fromca;
     public $fromcb;
 
-    public function __construct($bar = null, $baz = null) {
+    public function __construct($bar = null, $baz = null)
+    {
         $this->fromca = $bar;
         $this->fromcb = $baz;
     }
 
 }
 
-class MockConfigurator extends AnnotationConfigurator{
+class MockConfigurator extends AnnotationConfigurator
+{
 
     protected $config;
 
-    public function addAnnotation($annotation) {
+    public function addAnnotation($annotation)
+    {
         $this->config->addAnnotation($annotation);
     }
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->config = new \Weasel\Annotation\Config\AnnotationConfig();
     }
 
-    public function get($type) {
+    public function get($type)
+    {
         return $this->config->getAnnotation($type);
     }
 
-    public function getLogger() {
+    public function getLogger()
+    {
         $logger = new \Weasel\Logger\FileLogger();
         $logger->setLogLevel(\Weasel\Logger\Logger::LOG_LEVEL_DEBUG);
     }

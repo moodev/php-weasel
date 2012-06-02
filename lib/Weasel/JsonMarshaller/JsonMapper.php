@@ -10,22 +10,26 @@ class JsonMapper
     protected $configProvider;
 
 
-    public function __construct(\Weasel\JsonMarshaller\Config\ConfigProvider $configProvider) {
+    public function __construct(\Weasel\JsonMarshaller\Config\ConfigProvider $configProvider)
+    {
         $this->configProvider = $configProvider;
     }
 
-    public function readString($string, $class) {
+    public function readString($string, $class)
+    {
         $decoded = json_decode($string, true);
         return $this->_decodeClass($decoded, $class);
     }
 
 
-    public function writeString($object) {
+    public function writeString($object)
+    {
 
         return json_encode($this->_encodeObject($object), JSON_FORCE_OBJECT);
     }
 
-    protected function _encodeObject($object, $typeInfo = null) {
+    protected function _encodeObject($object, $typeInfo = null)
+    {
         $class = get_class($object);
 
         $classconfig = $this->configProvider->getConfig($class);
@@ -74,8 +78,9 @@ class JsonMapper
 
             $result[$key] = $this->_encodeValue($value, $propConfig->type, $propConfig->typeInfo);
             if (is_object($value) &&
-              $propConfig->typeInfo &&
-              $propConfig->typeInfo->typeInfoAs === Config\Serialization\TypeInfo::TI_AS_EXTERNAL_PROPERTY) {
+                $propConfig->typeInfo &&
+                $propConfig->typeInfo->typeInfoAs === Config\Serialization\TypeInfo::TI_AS_EXTERNAL_PROPERTY
+            ) {
 
                 $propClass = get_class($object);
                 if (isset($typeInfo->subTypes[$propClass])) {
@@ -133,7 +138,8 @@ class JsonMapper
     }
 
 
-    protected function _instantiateClassFromPropertyCreator($array, $class, Config\Deserialization\PropertyCreator $creator) {
+    protected function _instantiateClassFromPropertyCreator($array, $class, Config\Deserialization\PropertyCreator $creator)
+    {
         $args = array();
         foreach ($creator->params as $param) {
             $val = null;
@@ -155,7 +161,8 @@ class JsonMapper
     }
 
 
-    protected function _decodeClass($array, $class) {
+    protected function _decodeClass($array, $class)
+    {
         $classconfig = $this->configProvider->getConfig($class);
 
         $deconfig = $classconfig->deserialization;
@@ -282,7 +289,8 @@ class JsonMapper
 
     }
 
-    protected function _decodeValue($value, $type) {
+    protected function _decodeValue($value, $type)
+    {
         // TODO: should this be more tolerant of stupidity?
         $matches = array();
         if (!isset($value)) {
@@ -353,7 +361,8 @@ class JsonMapper
      * @param Config\Serialization\TypeInfo $typeInfo
      * @return mixed
      */
-    protected function _encodeValue($value, $type, $typeInfo = null) {
+    protected function _encodeValue($value, $type, $typeInfo = null)
+    {
         $matches = array();
         if (!isset($value)) {
             return null;

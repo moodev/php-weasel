@@ -22,9 +22,9 @@ class XmlElementWrapper
      * @param string $namespace
      * @param bool $required
      * @AnnotationCreator({@Parameter(name="name", type="string", required=false),
-                            @Parameter(name="nillable", type="bool", required=false),
-                            @Parameter(name="namespace", type="string", required=false),
-                            @Parameter(name="required", type="bool", required=false)})
+    @Parameter(name="nillable", type="bool", required=false),
+    @Parameter(name="namespace", type="string", required=false),
+    @Parameter(name="required", type="bool", required=false)})
      */
     public function __construct($name, $nillable, $namespace, $required)
     {

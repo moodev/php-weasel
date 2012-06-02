@@ -6,13 +6,14 @@ namespace Weasel\Logger;
  * @copyright Copyright (c) 2011, Jonathan Oddy
  */
 
-interface Logger {
+interface Logger
+{
 
-	const LOG_LEVEL_OFF = 0;
-	const LOG_LEVEL_DEBUG = 255;
+    const LOG_LEVEL_OFF = 0;
+    const LOG_LEVEL_DEBUG = 255;
 
-	public function setLogLevel($level);
+    public function setLogLevel($level);
 
-	public function logDebug($entry);
+    public function logDebug($entry);
 
 }

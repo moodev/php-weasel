@@ -19,7 +19,8 @@ class AnnotationCreator
      * @param \Weasel\Annotation\Config\Annotations\Parameter[]|null $params
      * @AnnotationCreator(@Parameter(name="params", type="\Weasel\Annotation\Config\Annotations\Parameter[]", required=false))
      */
-    public function __construct(array $params) {
+    public function __construct(array $params)
+    {
         $this->params = isset($params) ? $params : null;
     }
 

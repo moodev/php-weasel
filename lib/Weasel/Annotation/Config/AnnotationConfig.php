@@ -12,7 +12,8 @@ class AnnotationConfig
     /**
      * @param \Weasel\Annotation\Config\Annotation $annotation
      */
-    public function addAnnotation($annotation) {
+    public function addAnnotation($annotation)
+    {
         $this->annotations[$annotation->getClass()] = $annotation;
     }
 
@@ -34,7 +35,8 @@ class AnnotationConfig
         return $this->annotations;
     }
 
-    public function getAnnotation($class) {
+    public function getAnnotation($class)
+    {
         return isset($this->annotations[$class]) ? $this->annotations[$class] : null;
     }
 

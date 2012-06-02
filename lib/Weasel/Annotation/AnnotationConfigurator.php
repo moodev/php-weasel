@@ -12,7 +12,8 @@ class AnnotationConfigurator
 
     protected $logger;
 
-    public function __construct(\Weasel\Logger\Logger $logger = null) {
+    public function __construct(\Weasel\Logger\Logger $logger = null)
+    {
         $this->logger = $logger;
         if (!isset(self::$builtIns)) {
             self::$builtIns = Config\BuiltInsProvider::getConfig();

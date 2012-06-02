@@ -20,8 +20,8 @@ class XmlElementRef
      * @param string $type
      * @param string $namespace
      * @AnnotationCreator({@Parameter(name="name", type="string", required=false),
-                            @Parameter(name="type", type="string", required=true),
-                            @Parameter(name="namespace", type="string", required=false)})
+    @Parameter(name="type", type="string", required=true),
+    @Parameter(name="namespace", type="string", required=false)})
      */
     public function __construct($name, $type, $namespace)
     {

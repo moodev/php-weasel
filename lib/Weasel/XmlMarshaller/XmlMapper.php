@@ -9,11 +9,13 @@ class XmlMapper
      */
     protected $configProvider;
 
-    public function __construct(\Weasel\XmlMarshaller\Config\ConfigProvider $configProvider) {
+    public function __construct(\Weasel\XmlMarshaller\Config\ConfigProvider $configProvider)
+    {
         $this->configProvider = $configProvider;
     }
 
-    public function readString($string, $class) {
+    public function readString($string, $class)
+    {
         $reader = new \XMLReader();
 //        $reader->setParserProperty(\XMLReader::VALIDATE, true);
         $reader->xml($string);
@@ -22,7 +24,8 @@ class XmlMapper
         return $ret;
     }
 
-    public function readXml(\XmlReader $xml, $class) {
+    public function readXml(\XmlReader $xml, $class)
+    {
         $xml->read();
 
         return $this->_readObject($xml, $class, true);
@@ -30,7 +33,8 @@ class XmlMapper
         // TODO check end of file?
     }
 
-    protected function _readObject(\XMLReader $xml, $class, $root = false) {
+    protected function _readObject(\XMLReader $xml, $class, $root = false)
+    {
         $deConfig = $this->configProvider->getConfig($class)->deserialization;
         if (!isset($deConfig)) {
             throw new \Exception("No config count for $class");
@@ -96,7 +100,7 @@ class XmlMapper
 
         $namespace = $xml->namespaceURI;
 
-		if ($xml->hasAttributes) {
+        if ($xml->hasAttributes) {
             while ($xml->moveToNextAttribute()) {
                 $attrNS = (($xml->namespaceURI) ? $xml->namespaceURI . ':' : (isset($namespace) ? $namespace . ':' : ''));
                 $fullName = $attrNS . $xml->name;
@@ -153,7 +157,7 @@ class XmlMapper
         $notSeenElements = array_diff($deConfig->requiredElements, $seenElements);
         if (!empty($notSeenAtts) || !empty($notSeenElements)) {
             // TODO fix.
-            throw new \Exception("Missing required elements: ".implode(', ', $notSeenElements)." and attributes: " . implode(',', $notSeenAtts) . "on $class");
+            throw new \Exception("Missing required elements: " . implode(', ', $notSeenElements) . " and attributes: " . implode(',', $notSeenAtts) . "on $class");
         }
 
         foreach ($knownValues as $typeval) {
@@ -165,7 +169,8 @@ class XmlMapper
 
     }
 
-    protected function _setProperty($object, Config\Deserialization\PropertyDeserialization $propConfig, $value) {
+    protected function _setProperty($object, Config\Deserialization\PropertyDeserialization $propConfig, $value)
+    {
         if ($propConfig instanceof Config\Deserialization\DirectDeserialization) {
             /**
              * @var Config\Deserialization\DirectDeserialization $propConfig
@@ -184,7 +189,8 @@ class XmlMapper
         }
     }
 
-    protected function _readElementWrapper(\XMLReader $xml, Config\Deserialization\ElementWrapper $wrapperConfig) {
+    protected function _readElementWrapper(\XMLReader $xml, Config\Deserialization\ElementWrapper $wrapperConfig)
+    {
 
         $elementConfig = $wrapperConfig->wraps;
 
@@ -227,9 +233,10 @@ class XmlMapper
      * @param string $fullName
      * @return string the type
      */
-    protected function _getRef(Config\Deserialization\ElementDeserialization $ref, $fullName) {
+    protected function _getRef(Config\Deserialization\ElementDeserialization $ref, $fullName)
+    {
         if (isset($ref->refNameToTypeMap)) {
-            if  (isset($ref->refNameToTypeMap[$fullName])) {
+            if (isset($ref->refNameToTypeMap[$fullName])) {
                 return $ref->refNameToTypeMap[$fullName];
             } else {
                 return null;
@@ -243,13 +250,14 @@ class XmlMapper
             $subFullName = (isset($subConfig->namespace) ? $subConfig->namespace . ":" : "") . $subConfig->name;
             $ref->refNameToTypeMap[$subFullName] = $subClass;
         }
-        if  (isset($ref->refNameToTypeMap[$fullName])) {
+        if (isset($ref->refNameToTypeMap[$fullName])) {
             return $ref->refNameToTypeMap[$fullName];
         }
         return null;
     }
 
-    protected function _readElement(\XMLReader $xml, Config\Deserialization\ClassDeserialization $deConfig) {
+    protected function _readElement(\XMLReader $xml, Config\Deserialization\ClassDeserialization $deConfig)
+    {
         $fullName = $xml->namespaceURI . ':' . $xml->name;
         if (isset($deConfig->elementWrappers[$fullName])) {
             return $this->_readElementWrapper($xml, $deConfig->elementWrappers[$fullName], $deConfig);
@@ -288,7 +296,8 @@ class XmlMapper
      * @param bool $root
      * @return mixed
      */
-    protected function _readElementAsType($xml, $type, $root = false) {
+    protected function _readElementAsType($xml, $type, $root = false)
+    {
         $matches = array();
         $ret = null;
         if (!preg_match('/^(.*)\\[(int|integer|string|bool|boolean|float|)\\]$/i', $type, $matches)) {
@@ -327,7 +336,8 @@ class XmlMapper
         return $ret;
     }
 
-    protected function _readMap(\XMLReader $xml, $indexType, $elementType) {
+    protected function _readMap(\XMLReader $xml, $indexType, $elementType)
+    {
 
         $array = array();
 
@@ -379,15 +389,18 @@ class XmlMapper
         return $array;
     }
 
-    protected function _readAttribute(\XMLReader $xml, Config\Deserialization\AttributeDeserialization $config) {
+    protected function _readAttribute(\XMLReader $xml, Config\Deserialization\AttributeDeserialization $config)
+    {
         return $this->_decodeSimpleValue($xml->value, $config->property->type);
     }
 
-    public function writeString($object) {
+    public function writeString($object)
+    {
         throw new \Exception("Not implemented yet");
     }
 
-    protected function _decodeSimpleValue($value, $type) {
+    protected function _decodeSimpleValue($value, $type)
+    {
         switch ($type) {
             case "bool":
             case "boolean":

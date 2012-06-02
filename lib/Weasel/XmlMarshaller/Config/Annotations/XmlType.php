@@ -43,12 +43,13 @@ class XmlType
      * @param string $namespace
      * @param string[] $propOrder
      * @AnnotationCreator({@Parameter(name="factoryClass", type="string", required=false),
-                            @Parameter(name="factoryMethod", type="string", required=false),
-                            @Parameter(name="name", type="string", required=false),
-                            @Parameter(name="namespace", type="string", required=false),
-                            @Parameter(name="propOrder", type="string[]", required=false)})
+    @Parameter(name="factoryMethod", type="string", required=false),
+    @Parameter(name="name", type="string", required=false),
+    @Parameter(name="namespace", type="string", required=false),
+    @Parameter(name="propOrder", type="string[]", required=false)})
      */
-    public function __construct($factoryClass, $factoryMethod, $name, $namespace, $propOrder) {
+    public function __construct($factoryClass, $factoryMethod, $name, $namespace, $propOrder)
+    {
         $this->factoryClass = $factoryClass;
         $this->factoryMethod = $factoryMethod;
         $this->name = $name;

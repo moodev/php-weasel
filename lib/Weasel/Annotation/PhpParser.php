@@ -9,18 +9,21 @@ class PhpParser
      */
     protected $logger;
 
-    public function __construct($logger = null) {
+    public function __construct($logger = null)
+    {
         $this->logger = $logger;
     }
 
-    public function parseClass(\ReflectionClass $class) {
+    public function parseClass(\ReflectionClass $class)
+    {
         if (isset($this->logger)) {
             $this->logger->logDebug("Parsing file " . $class->getFileName() . " for " . $class->getName());
         }
         return $this->_parse($class);
     }
 
-    protected function _parse(\ReflectionClass $class) {
+    protected function _parse(\ReflectionClass $class)
+    {
         // Read PHP file up to the point the class is defined
         $data = $this->_readPrologue($class);
 
@@ -56,7 +59,8 @@ class PhpParser
         return $namespaces;
     }
 
-    protected function _Use($tokens) {
+    protected function _Use($tokens)
+    {
 
         $namespaces = array();
 
@@ -102,7 +106,8 @@ class PhpParser
     }
 
 
-    protected function _readPrologue(\ReflectionClass $class) {
+    protected function _readPrologue(\ReflectionClass $class)
+    {
         // TODO: Handle silly corner cases where someone has decided to play PHP Golf.
         $file = $class->getFileName();
         $line = $class->getStartLine();

@@ -44,7 +44,8 @@ class Annotation
      * @param string[] $on
      * @param int $max
      */
-    public function __construct($class, $on, $max = null) {
+    public function __construct($class, $on, $max = null)
+    {
         $this->class = $class;
         $this->on = $on;
         $this->max = $max;
@@ -104,7 +105,8 @@ class Annotation
      * @param \Weasel\Annotation\Config\Param $param
      * @return Annotation
      */
-    public function addCreatorParam($param) {
+    public function addCreatorParam($param)
+    {
         $this->creatorParams[] = $param;
         return $this;
     }
@@ -199,7 +201,8 @@ class Annotation
      * @param string $name
      * @return \Weasel\Annotation\Config\Enum
      */
-    public function getEnum($name) {
+    public function getEnum($name)
+    {
         return isset($this->enums[$name]) ? $this->enums[$name] : null;
     }
 

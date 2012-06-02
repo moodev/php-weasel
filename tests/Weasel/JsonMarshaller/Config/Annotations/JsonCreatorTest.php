@@ -6,7 +6,8 @@ require_once(__DIR__ . '/../../../../../WeaselAutoloader.php');
 class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testParseClassAnnotations() {
+    public function testParseClassAnnotations()
+    {
 
         $annotationReader = new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator'), new \Weasel\Annotation\AnnotationConfigurator());
 
@@ -18,7 +19,8 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testParsePropertyAnnotations() {
+    public function testParsePropertyAnnotations()
+    {
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator');
         $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
@@ -34,7 +36,8 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testParseMethodAnnotations() {
+    public function testParseMethodAnnotations()
+    {
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator');
         $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
@@ -49,13 +52,13 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-            array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
-                new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
-                    array(
-                        new \Weasel\Annotation\Config\Annotations\Parameter("params", '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty[]', false),
-                    )
+        array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
+            new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
+                array(
+                    new \Weasel\Annotation\Config\Annotations\Parameter("params", '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty[]', false),
                 )
-            )),
+            )
+        )),
             "getParams" => array(),
         );
 

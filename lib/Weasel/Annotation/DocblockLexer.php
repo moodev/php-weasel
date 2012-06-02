@@ -28,7 +28,8 @@ class DocblockLexer
 
     protected $pos;
 
-    public function __construct($input) {
+    public function __construct($input)
+    {
         $this->_scan($input);
     }
 
@@ -37,7 +38,8 @@ class DocblockLexer
      * @param string $input
      * @throws \Exception
      */
-    protected function _scan($input) {
+    protected function _scan($input)
+    {
 
         // In a more traditional world we'd scan the input a single char at a time
         // Fortunately preg_split gives us a way to split the input up into a slightly more helpful form.
@@ -49,7 +51,7 @@ class DocblockLexer
                 '([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)', // Identifier
                 '(\s+)', // Whitespace
                 '(.)', // Everything else will be split into single chars
-                )) . ')',
+            )) . ')',
             $input,
             -1,
             (PREG_SPLIT_NO_EMPTY | PREG_SPLIT_OFFSET_CAPTURE | PREG_SPLIT_DELIM_CAPTURE)
@@ -66,7 +68,8 @@ class DocblockLexer
         $this->pos = 0;
     }
 
-    protected function _processToken(&$value) {
+    protected function _processToken(&$value)
+    {
 
         switch (strtolower($value)) {
             case '@':
@@ -132,7 +135,8 @@ class DocblockLexer
         return self::T_MEH;
     }
 
-    public function skipToType($target) {
+    public function skipToType($target)
+    {
         if (!$cur = $this->get()) {
             return null;
         }
@@ -144,7 +148,8 @@ class DocblockLexer
         return null;
     }
 
-    public function get() {
+    public function get()
+    {
         if (!isset($this->tokens[$this->pos])) {
             return null;
         } else {
@@ -152,7 +157,8 @@ class DocblockLexer
         }
     }
 
-    public function skip($type = self::T_WHITESPACE) {
+    public function skip($type = self::T_WHITESPACE)
+    {
         if (!$cur = $this->get()) {
             return null;
         }
@@ -164,7 +170,8 @@ class DocblockLexer
         return null;
     }
 
-    public function next($skipWS = false) {
+    public function next($skipWS = false)
+    {
         $this->pos++;
         if ($skipWS) {
             return $this->skip();
@@ -172,9 +179,10 @@ class DocblockLexer
         return $this->get();
     }
 
-    public function seek($to = 0) {
+    public function seek($to = 0)
+    {
         if ($to < 0) {
-            $to = count($this->pos)-$to;
+            $to = count($this->pos) - $to;
         }
         if (!isset($this->tokens[$to])) {
             return null;
@@ -183,11 +191,13 @@ class DocblockLexer
         return $this->get();
     }
 
-    public function cur() {
+    public function cur()
+    {
         return $this->pos;
     }
 
-    protected function _wsSkippingPeek($num = 1) {
+    protected function _wsSkippingPeek($num = 1)
+    {
         $pos = $this->pos;
         $ret = null;
         $i = 0;
@@ -199,12 +209,13 @@ class DocblockLexer
         return isset($ret) ? $ret["type"] : null;
     }
 
-    public function peek($num = 1, $skipWS = false) {
+    public function peek($num = 1, $skipWS = false)
+    {
         if ($skipWS) {
             return $this->_wsSkippingPeek($num);
         }
         $pos = $this->pos;
-        if ($ret = $this->seek($pos+$num)) {
+        if ($ret = $this->seek($pos + $num)) {
             $this->seek($pos);
             return $ret['type'];
         }

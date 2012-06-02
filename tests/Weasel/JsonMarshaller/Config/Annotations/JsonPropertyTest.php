@@ -6,7 +6,8 @@ require_once(__DIR__ . '/../../../../../WeaselAutoloader.php');
 class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testParseClassAnnotations() {
+    public function testParseClassAnnotations()
+    {
 
         $annotationReader = new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonProperty'), new \Weasel\Annotation\AnnotationConfigurator());
 
@@ -20,7 +21,8 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testParsePropertyAnnotations() {
+    public function testParsePropertyAnnotations()
+    {
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonProperty');
         $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
@@ -36,7 +38,8 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testParseMethodAnnotations() {
+    public function testParseMethodAnnotations()
+    {
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonProperty');
         $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
@@ -51,14 +54,14 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-            array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
-                new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
-                    array(
-                        new \Weasel\Annotation\Config\Annotations\Parameter("name", 'string', false),
-                        new \Weasel\Annotation\Config\Annotations\Parameter("type", 'string', false),
-                    )
+        array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
+            new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
+                array(
+                    new \Weasel\Annotation\Config\Annotations\Parameter("name", 'string', false),
+                    new \Weasel\Annotation\Config\Annotations\Parameter("type", 'string', false),
                 )
-            )),
+            )
+        )),
             'getName' => array(),
             'getType' => array(),
         );
@@ -67,7 +70,8 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testCreate() {
+    public function testCreate()
+    {
         $test = new JsonProperty("foo", "bar");
         $this->assertEquals("foo", $test->getName());
         $this->assertEquals("bar", $test->getType());

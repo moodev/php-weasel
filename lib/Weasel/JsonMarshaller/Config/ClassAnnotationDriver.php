@@ -35,7 +35,8 @@ class ClassAnnotationDriver
         $this->rClass = $rClass;
     }
 
-    protected function _configureGetter(\ReflectionMethod $method) {
+    protected function _configureGetter(\ReflectionMethod $method)
+    {
         $name = $method->getName();
         /**
          * @var \Weasel\JsonMarshaller\Config\Annotations\JsonProperty $propertyConfig
@@ -72,7 +73,8 @@ class ClassAnnotationDriver
         $this->config->serialization->properties[$property] = $getterConfig;
     }
 
-    protected function _configureSetter(\ReflectionMethod $method) {
+    protected function _configureSetter(\ReflectionMethod $method)
+    {
         $name = $method->getName();
         /**
          * @var \Weasel\JsonMarshaller\Config\Annotations\JsonProperty $propertyConfig
@@ -104,7 +106,8 @@ class ClassAnnotationDriver
         $this->config->deserialization->properties[$property] = $setterConfig;
     }
 
-    protected function _configureCreator(\ReflectionMethod $method) {
+    protected function _configureCreator(\ReflectionMethod $method)
+    {
         $name = $method->getName();
         /**
          * @var \Weasel\JsonMarshaller\Config\Annotations\JsonCreator $creatorConfig
@@ -148,7 +151,8 @@ class ClassAnnotationDriver
         $this->config->deserialization->creator = $creator;
     }
 
-    protected function _configureMethod(\ReflectionMethod $method) {
+    protected function _configureMethod(\ReflectionMethod $method)
+    {
         $name = $method->getName();
         if ($method->isStatic()) {
             $this->_configureCreator($method);
@@ -161,7 +165,8 @@ class ClassAnnotationDriver
         }
     }
 
-    protected function _configureProperty(\ReflectionProperty $property) {
+    protected function _configureProperty(\ReflectionProperty $property)
+    {
         $name = $property->getName();
         /**
          * @var \Weasel\JsonMarshaller\Config\Annotations\JsonProperty $propertyConfig
@@ -214,7 +219,8 @@ class ClassAnnotationDriver
      * @param Annotations\JsonInclude $includer
      * @return int
      */
-    protected function _getIncluderValue($includer) {
+    protected function _getIncluderValue($includer)
+    {
         $val = $this->config->serialization->include;
         if (isset($includer)) {
             switch ($includer->getValue()) {
@@ -236,7 +242,8 @@ class ClassAnnotationDriver
         return $val;
     }
 
-    protected function _getSubClassName(\ReflectionClass $rClass) {
+    protected function _getSubClassName(\ReflectionClass $rClass)
+    {
         $subClassReader = new AnnotationReader($rClass, $this->configurator);
         /**
          * @var Annotations\JsonTypeName $subNameA
@@ -256,7 +263,8 @@ class ClassAnnotationDriver
      * @throws \Exception
      * @return Deserialization\TypeInfo|null
      */
-    protected function _getSerializationTypeInfo($typeInfo, $subTypes) {
+    protected function _getSerializationTypeInfo($typeInfo, $subTypes)
+    {
 
         if (!isset($typeInfo)) {
             return null;
@@ -333,13 +341,15 @@ class ClassAnnotationDriver
 
 
     }
+
     /**
      * @param Annotations\JsonTypeInfo $typeInfo
      * @param Annotations\JsonSubTypes $subTypes
      * @throws \Exception
      * @return Deserialization\TypeInfo|null
      */
-    protected function _getDeserializationTypeInfo($typeInfo, $subTypes) {
+    protected function _getDeserializationTypeInfo($typeInfo, $subTypes)
+    {
 
         if (!isset($typeInfo)) {
             return null;
@@ -462,7 +472,7 @@ class ClassAnnotationDriver
             $this->_configureMethod($method);
         }
 
-        $properties = $this->rClass->getProperties(\ReflectionProperty::IS_PUBLIC &~ \ReflectionProperty::IS_STATIC);
+        $properties = $this->rClass->getProperties(\ReflectionProperty::IS_PUBLIC & ~\ReflectionProperty::IS_STATIC);
         foreach ($properties as $property) {
             $this->_configureProperty($property);
         }

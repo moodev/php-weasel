@@ -18,7 +18,8 @@ class Annotation
      * @param int|null $max
      * @AnnotationCreator({@Parameter(name="on", type="string[]", required=false), @Parameter(name="max", type="integer", required=false)})
      */
-    public function __construct(array $on, $max) {
+    public function __construct(array $on, $max)
+    {
         $this->on = isset($on) ? $on : null;
         $this->max = isset($max) ? $max : null;
     }

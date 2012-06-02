@@ -1,14 +1,16 @@
 <?php
 namespace Weasel\Annotation\Config;
 
-class BuiltInsProvider {
+class BuiltInsProvider
+{
 
     /**
      * @var AnnotationConfig
      */
     protected static $builtIns;
 
-    protected static function _buildConfig() {
+    protected static function _buildConfig()
+    {
 
         self::$builtIns = new AnnotationConfig();
 
@@ -43,7 +45,8 @@ class BuiltInsProvider {
         self::$builtIns->addAnnotation($annotation);
     }
 
-    public static function getConfig() {
+    public static function getConfig()
+    {
         if (!isset(self::$builtIns)) {
             self::_buildConfig();
         }

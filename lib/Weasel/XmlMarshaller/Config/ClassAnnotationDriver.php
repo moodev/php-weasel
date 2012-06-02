@@ -36,7 +36,8 @@ class ClassAnnotationDriver
         $this->rClass = $rClass;
     }
 
-    protected function _configureSetter(\ReflectionMethod $method, $namespace) {
+    protected function _configureSetter(\ReflectionMethod $method, $namespace)
+    {
         $name = $method->getName();
 
         $setterConfig = new Deserialization\SetterDeserialization();
@@ -116,7 +117,8 @@ class ClassAnnotationDriver
 
     }
 
-    protected function _configureElementRefDeserialization(Annotations\XmlElementRef $annot, Config\Deserialization\PropertyDeserialization $prop, $defaultName, $defaultNamespace) {
+    protected function _configureElementRefDeserialization(Annotations\XmlElementRef $annot, Config\Deserialization\PropertyDeserialization $prop, $defaultName, $defaultNamespace)
+    {
         $elementConfig = new Config\Deserialization\ElementDeserialization();
         $prop->type = $annot->getType();
         $elementConfig->property = $prop;
@@ -126,7 +128,8 @@ class ClassAnnotationDriver
         return $elementConfig;
     }
 
-    protected function _configureElementRefsDeserialization(Annotations\XmlElementRefs $annot, Config\Deserialization\PropertyDeserialization $prop, $defaultName, $defaultNamespace) {
+    protected function _configureElementRefsDeserialization(Annotations\XmlElementRefs $annot, Config\Deserialization\PropertyDeserialization $prop, $defaultName, $defaultNamespace)
+    {
         $elementConfig = new Config\Deserialization\ElementDeserialization();
         $prop->type = $annot->getType();
         $elementConfig->property = $prop;
@@ -151,7 +154,8 @@ class ClassAnnotationDriver
         return $elementConfig;
     }
 
-    protected function _configureElementDeserialization(Annotations\XmlElement $annot, Config\Deserialization\PropertyDeserialization $prop, $defaultName, $defaultNamespace) {
+    protected function _configureElementDeserialization(Annotations\XmlElement $annot, Config\Deserialization\PropertyDeserialization $prop, $defaultName, $defaultNamespace)
+    {
         $elementConfig = new Config\Deserialization\ElementDeserialization();
         $prop->type = $annot->getType();
         $elementConfig->property = $prop;
@@ -177,7 +181,8 @@ class ClassAnnotationDriver
         return $elementConfig;
     }
 
-    protected function _configureAttributeDeserialization(Annotations\XmlAttribute $annot, Config\Deserialization\PropertyDeserialization $prop, $defaultName, $defaultNamespace) {
+    protected function _configureAttributeDeserialization(Annotations\XmlAttribute $annot, Config\Deserialization\PropertyDeserialization $prop, $defaultName, $defaultNamespace)
+    {
         $attributeConfig = new Config\Deserialization\AttributeDeserialization();
         $prop->type = $annot->getType();
         $attributeConfig->property = $prop;
@@ -201,7 +206,8 @@ class ClassAnnotationDriver
         $this->config->deserialization->attributes[$fullName] = $attributeConfig;
     }
 
-    protected function _configureMethod(\ReflectionMethod $method, $namespace) {
+    protected function _configureMethod(\ReflectionMethod $method, $namespace)
+    {
         $name = $method->getName();
         if ($method->isStatic()) {
 //            $this->_configureCreator($method, $namespace);
@@ -214,7 +220,8 @@ class ClassAnnotationDriver
         }
     }
 
-    protected function _configureProperty(\ReflectionProperty $property, $namespace) {
+    protected function _configureProperty(\ReflectionProperty $property, $namespace)
+    {
         $name = $property->getName();
 
         $directConfig = new Deserialization\DirectDeserialization();
@@ -364,7 +371,7 @@ class ClassAnnotationDriver
             $this->_configureMethod($method, $namespace);
         }
 
-        $properties = $this->rClass->getProperties(\ReflectionProperty::IS_PUBLIC &~ \ReflectionProperty::IS_STATIC);
+        $properties = $this->rClass->getProperties(\ReflectionProperty::IS_PUBLIC & ~\ReflectionProperty::IS_STATIC);
         foreach ($properties as $property) {
             $this->_configureProperty($property, $namespace);
         }

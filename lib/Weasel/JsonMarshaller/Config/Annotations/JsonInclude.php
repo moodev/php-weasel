@@ -21,7 +21,7 @@ class JsonInclude
         "NON_DEFAULT" => 2,
         "NON_EMPTY" => 3,
         "NON_NULL" => 4
-        );
+    );
 
     /**
      * @var integer

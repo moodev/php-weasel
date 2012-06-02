@@ -18,7 +18,8 @@ class Property
      * @param string $name
      * @param string $type
      */
-    public function __construct($name, $type) {
+    public function __construct($name, $type)
+    {
         $this->name = $name;
         $this->type = $type;
     }

@@ -18,7 +18,8 @@ class Enum
      * @param string $name
      * @param array $values
      */
-    public function __construct($name, $values) {
+    public function __construct($name, $values)
+    {
         $this->name = $name;
         $this->values = $values;
     }

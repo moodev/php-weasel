@@ -8,7 +8,8 @@ use Weasel\Annotation\DocblockLexer;
 class DocblockLexerTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function provideSimpleType() {
+    public function provideSimpleType()
+    {
         return array(
             array('    123  +942 -954 1 0 +0 -0  +5-1 ', array_fill(0, 9, DocblockLexer::T_INTEGER)),
             array('123  +942 -954 1 0 +0 -0  +5-1 ', array_fill(0, 9, DocblockLexer::T_INTEGER)),
@@ -28,7 +29,8 @@ class DocblockLexerTest extends \PHPUnit_Framework_TestCase
      * @param $expectedTypes
      * @dataProvider provideSimpleType
      */
-    public function testSimpleType($in, $expectedTypes) {
+    public function testSimpleType($in, $expectedTypes)
+    {
         $lexer = new DocblockLexer($in);
         $got = array();
         $toks = array();

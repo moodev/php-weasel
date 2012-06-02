@@ -17,12 +17,12 @@ class JsonTypeInfo
      * @Enum("Id")
      */
     public static $enumId = array(
-            "CLASS" => 1,
-            "CUSTOM" => 2,
-            "MINIMAL_CLASS" => 3,
-            "NAME" => 4,
-            "NONE" => 5
-        );
+        "CLASS" => 1,
+        "CUSTOM" => 2,
+        "MINIMAL_CLASS" => 3,
+        "NAME" => 4,
+        "NONE" => 5
+    );
 
     /**
      * @var int[string]

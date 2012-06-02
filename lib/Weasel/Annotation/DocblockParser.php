@@ -18,16 +18,19 @@ class DocblockParser
         "param", "author", "copyright", "var", "return", "package", "throws"
     );
 
-    public function parse($docBlock, $location, $namespaces) {
+    public function parse($docBlock, $location, $namespaces)
+    {
         return $this->_parse($docBlock, $location, $namespaces);
     }
 
-    public function __construct(AnnotationConfigurator $annotations) {
+    public function __construct(AnnotationConfigurator $annotations)
+    {
         $this->annotations = $annotations;
         $this->logger = $annotations->getLogger();
     }
 
-    protected function _getAnnotation($name, $namespaces) {
+    protected function _getAnnotation($name, $namespaces)
+    {
 
         if ($name[0] !== '\\') {
             $exploded = explode('\\', $name, 2);
@@ -43,12 +46,14 @@ class DocblockParser
         return $this->annotations->get($name);
     }
 
-    protected function _parse($input, $location, $namespaces) {
+    protected function _parse($input, $location, $namespaces)
+    {
         $lexer = new DocblockLexer($input);
         return $this->_DocBlock($lexer, $location, $namespaces);
     }
 
-    protected function _DocBlock(DocblockLexer $lexer, $location, $namespaces) {
+    protected function _DocBlock(DocblockLexer $lexer, $location, $namespaces)
+    {
         $annotations = array();
         while ($lexer->skipToType(DocblockLexer::T_AT)) {
             $pos = $lexer->cur();
@@ -73,7 +78,8 @@ class DocblockParser
         return $annotations;
     }
 
-    protected function _Array(DocblockLexer $lexer, $location, $namespaces) {
+    protected function _Array(DocblockLexer $lexer, $location, $namespaces)
+    {
 
         $elements = array();
 
@@ -89,7 +95,8 @@ class DocblockParser
         return $elements;
     }
 
-    protected function _ParamValue(DocblockLexer $lexer, $location, $namespaces) {
+    protected function _ParamValue(DocblockLexer $lexer, $location, $namespaces)
+    {
         $next = $lexer->peek(1, true);
         if ($next === DocblockLexer::T_IDENTIFIER) {
             // Might be an enum then...
@@ -124,7 +131,8 @@ class DocblockParser
         return $param;
     }
 
-    protected function _NamedParam(DocblockLexer $lexer, $location, $namespaces) {
+    protected function _NamedParam(DocblockLexer $lexer, $location, $namespaces)
+    {
         $nameToken = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER, true);
 
         $this->_expectNext($lexer, DocblockLexer::T_EQUAL, true);
@@ -135,18 +143,20 @@ class DocblockParser
 
     }
 
-    protected function _expectNext(DocblockLexer $lexer, $types, $skipWS = false) {
+    protected function _expectNext(DocblockLexer $lexer, $types, $skipWS = false)
+    {
         if (!is_array($types)) {
             $types = array($types);
         }
         $next = $lexer->next($skipWS);
         if (!$next || !in_array($next['type'], $types, true)) {
-            throw new \Exception('Parse error, expected one of '. implode(',', $types) .' but got ' . ($next ? $next['type'] : 'EOF') );
+            throw new \Exception('Parse error, expected one of ' . implode(',', $types) . ' but got ' . ($next ? $next['type'] : 'EOF'));
         }
         return $next;
     }
 
-    protected function _ClassName(DocblockLexer $lexer) {
+    protected function _ClassName(DocblockLexer $lexer)
+    {
         $next = $lexer->next();
 
         $class = '';
@@ -166,7 +176,8 @@ class DocblockParser
         return $class;
     }
 
-    protected function _Enum(DocblockLexer $lexer, $location, $namespaces) {
+    protected function _Enum(DocblockLexer $lexer, $location, $namespaces)
+    {
         $class = $this->_ClassName($lexer);
         $meta = $this->_getAnnotation($class, $namespaces);
         if (!$meta) {
@@ -192,7 +203,8 @@ class DocblockParser
 
     }
 
-    protected function _Annotation(DocblockLexer $lexer, $location, $namespaces) {
+    protected function _Annotation(DocblockLexer $lexer, $location, $namespaces)
+    {
 
         $identifier = $this->_ClassName($lexer);
 
@@ -271,7 +283,7 @@ class DocblockParser
                     throw new \Exception("Too many parameters");
                 }
                 reset($anonParams);
-                foreach($expectedParams as $paramConfig) {
+                foreach ($expectedParams as $paramConfig) {
                     $param = each($anonParams);
                     $param = ($param === false) ? null : $param['value'];
                     if ($param === null) {
@@ -284,7 +296,7 @@ class DocblockParser
                     }
                 }
             } elseif (!empty($namedParams)) {
-                foreach($expectedParams as $paramConfig) {
+                foreach ($expectedParams as $paramConfig) {
                     if (!isset($namedParams[$paramConfig->getName()])) {
                         if ($paramConfig->getRequired() && $paramConfig->getRequired() === true) {
                             throw new \Exception('Missing required parameter ' . $paramConfig->getName());
@@ -324,7 +336,8 @@ class DocblockParser
         return array($class, $annotation);
     }
 
-    protected function _collapseAndCheckType($param, $type) {
+    protected function _collapseAndCheckType($param, $type)
+    {
         list($paramType, $paramValue) = $param;
         $matches = array();
         if (!preg_match('/^(.*)\\[(int|integer|string|bool|boolean|float|)\\]$/i', $type, $matches)) {

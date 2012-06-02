@@ -24,7 +24,8 @@ class Param
      * @param string $type
      * @param bool $required
      */
-    public function __construct($name, $type, $required) {
+    public function __construct($name, $type, $required)
+    {
         $this->name = $name;
         $this->type = $type;
         $this->required = $required;
