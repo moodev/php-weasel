@@ -59,6 +59,7 @@ class DocblockParser
             $pos = $lexer->cur();
             try {
                 $annotation = $this->_Annotation($lexer, $location, $namespaces);
+                $this->_expectNext($lexer, DocblockLexer::T_WHITESPACE);
                 if (isset($annotation)) {
                     $annotations[$annotation[0]][] = $annotation[1];
                 } else {
@@ -222,9 +223,9 @@ class DocblockParser
             throw new \Exception("Found annotation in wrong location, got $location but expected one of " . implode(", ", $meta->getOn()));
         }
 
-        $next = $this->_expectNext($lexer, array(DocblockLexer::T_OPEN_PAREN, DocblockLexer::T_WHITESPACE));
-        if ($next['type'] === DocblockLexer::T_OPEN_PAREN) {
+        if ($lexer->peek() === DocblockLexer::T_OPEN_PAREN) {
             // There are params to read
+            $this->_expectNext($lexer, array(DocblockLexer::T_OPEN_PAREN));
 
             $anonParams = array();
             $namedParams = array();
@@ -261,7 +262,7 @@ class DocblockParser
 
             $this->_expectNext($lexer, DocblockLexer::T_CLOSE_PAREN, true);
 
-            if ($expectingComma === false) {
+            if ((!empty($anonParams) || !empty($namedParams)) && $expectingComma === false) {
                 // There has been a comma followed by a close paren...
                 throw new \Exception('Unexpected close paren after comma');
             }

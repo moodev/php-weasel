@@ -37,6 +37,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
      * @param $value
      * @param $type
      * @dataProvider provideSimpleClassAnnotation
+     * @covers \Weasel\Annotation\DocblockParser
      */
     public function testSimpleClassAnnotation($value, $type)
     {
@@ -65,6 +66,135 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @covers \Weasel\Annotation\DocblockParser
+     */
+    public function testNoArgsAnnotation()
+    {
+
+        $mockConfigurator = new MockConfigurator();
+        $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
+        $mockConfigurator->addAnnotation($annotation);
+
+        $parser = new DocblockParser($mockConfigurator);
+
+        $parsed = $parser->parse(
+            '/**
+              * @Gloop
+              */',
+            "class",
+            array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
+        );
+
+        $gloop = new Gloop();
+
+        $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop)), $parsed);
+
+    }
+
+    /**
+     * @covers \Weasel\Annotation\DocblockParser
+     */
+    public function testEmptyArgsAnnotation()
+    {
+
+        $mockConfigurator = new MockConfigurator();
+        $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
+        $mockConfigurator->addAnnotation($annotation);
+
+        $parser = new DocblockParser($mockConfigurator);
+
+        $parsed = $parser->parse(
+            '/**
+              * @Gloop()
+              */',
+            "class",
+            array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
+        );
+
+        $gloop = new Gloop();
+
+        $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop)), $parsed);
+
+    }
+
+    /**
+     * @covers \Weasel\Annotation\DocblockParser
+     */
+    public function testFullyNamespacedAnnotation()
+    {
+
+        $mockConfigurator = new MockConfigurator();
+        $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
+        $mockConfigurator->addAnnotation($annotation);
+
+        $parser = new DocblockParser($mockConfigurator);
+
+        $parsed = $parser->parse(
+            '/**
+              * @\Weasel\Annotation\Tests\Gloop
+              */',
+            "class",
+            array()
+        );
+
+        $gloop = new Gloop();
+
+        $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop)), $parsed);
+
+    }
+
+    /**
+     * @covers \Weasel\Annotation\DocblockParser
+     */
+    public function testMissingWhitespaceNoArgs()
+    {
+
+        $mockConfigurator = new MockConfigurator();
+        $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
+        $mockConfigurator->addAnnotation($annotation);
+
+        $parser = new DocblockParser($mockConfigurator);
+
+        $parsed = $parser->parse(
+            '/**
+              * @\Weasel\Annotation\Tests\Gloop@glarp
+              */',
+            "class",
+            array()
+        );
+
+        $this->assertEmpty($parsed);
+
+    }
+
+    /**
+     * @covers \Weasel\Annotation\DocblockParser
+     */
+    public function testMissingWhitespaceArgs()
+    {
+
+        $mockConfigurator = new MockConfigurator();
+        $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
+        $mockConfigurator->addAnnotation($annotation);
+
+        $parser = new DocblockParser($mockConfigurator);
+
+        $parsed = $parser->parse(
+            '/**
+              * @\Weasel\Annotation\Tests\Gloop()@glarp
+              */',
+            "class",
+            array()
+        );
+
+        $this->assertEmpty($parsed);
+
+    }
+
+    /**
+     * @covers \Weasel\Annotation\DocblockParser
+     */
     public function testArrayClassAnnotation()
     {
 
@@ -90,6 +220,9 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @covers \Weasel\Annotation\DocblockParser
+     */
     public function testArraySingleElementClassAnnotation()
     {
 
@@ -119,6 +252,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
      * @param $value
      * @param $type
      * @dataProvider provideSimpleClassAnnotation
+     * @covers \Weasel\Annotation\DocblockParser
      */
     public function testNestedClassAnnotation($value, $type)
     {
@@ -155,10 +289,56 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function testMultiNestedArgs() {
+        $mockConfigurator = new MockConfigurator();
+        $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Multi', array('class'));
+        $annotation->addProperty(new \Weasel\Annotation\Config\Property('a', '\Weasel\Annotation\Tests\Glarp'));
+        $annotation->addProperty(new \Weasel\Annotation\Config\Property('b', '\Weasel\Annotation\Tests\Glarp'));
+        $annotation->addProperty(new \Weasel\Annotation\Config\Property('c', '\Weasel\Annotation\Tests\Gloop'));
+        $mockConfigurator->addAnnotation($annotation);
+        $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Glarp', array('\Weasel\Annotation\Tests\Multi'));
+        $annotation->addProperty(new \Weasel\Annotation\Config\Property('bar', 'string'));
+        $mockConfigurator->addAnnotation($annotation);
+        $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('\Weasel\Annotation\Tests\Multi'));
+        $annotation->addProperty(new \Weasel\Annotation\Config\Property('foo', 'string'));
+        $mockConfigurator->addAnnotation($annotation);
+
+        $parser = new DocblockParser($mockConfigurator);
+
+        $parsed = $parser->parse(
+            '/**
+              * @Multi(a=@Glarp(bar="foo"), b=@Glarp(bar="baa"), c=@Gloop(foo="fnord"))
+              * @Multi(a=@Glarp(bar="foo")   , b=@Glarp(bar="baa")  ,  c=@Gloop(foo="fnord"))
+              * @Multi(a=@Glarp(bar="foo"),b=@Glarp(bar="baa"),c=@Gloop(foo="fnord"))
+              */',
+            "class",
+            array(
+                'Gloop' => 'Weasel\Annotation\Tests\Gloop',
+                'Glarp' => 'Weasel\Annotation\Tests\Glarp',
+                'Multi' => 'Weasel\Annotation\Tests\Multi'
+            )
+
+        );
+
+        $multi = new Multi();
+        $multi->a = new Glarp();
+        $multi->a->bar = "foo";
+        $multi->b = new Glarp();
+        $multi->b->bar = "baa";
+        $multi->c = new Gloop();
+        $multi->c->foo = "fnord";
+
+        $results = array_fill(0, 3, $multi);
+
+        $this->assertEquals(array('\Weasel\Annotation\Tests\Multi' => $results), $parsed);
+
+    }
+
     /**
      * @param $value
      * @param $type
      * @dataProvider provideSimpleClassAnnotation
+     * @covers \Weasel\Annotation\DocblockParser
      */
     public function testSimpleClassAnnotationCreator($value, $type)
     {
@@ -213,6 +393,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return void
+     * @covers \Weasel\Annotation\DocblockParser
      */
     public function testUnknownAnnotations()
     {
@@ -236,6 +417,10 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @return void
+     * @covers \Weasel\Annotation\DocblockParser
+     */
     public function testEnumAnnotation()
     {
 
@@ -262,6 +447,10 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @return void
+     * @covers \Weasel\Annotation\DocblockParser
+     */
     public function testEnumAnnotationNoName()
     {
 
@@ -304,6 +493,15 @@ class Gloop
         $this->fromca = $foo;
         $this->fromcb = $baz;
     }
+}
+
+class Multi
+{
+
+    public $a;
+    public $b;
+    public $c;
+
 }
 
 class Glarp
