@@ -12,7 +12,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @covers \Weasel\JsonMarshaller\Config\Annotations\Type
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type
      */
     public function testParseClassAnnotations()
     {
@@ -28,7 +28,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Weasel\JsonMarshaller\Config\Annotations\Type
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type
      */
     public function testParsePropertyAnnotations()
     {
@@ -51,7 +51,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Weasel\JsonMarshaller\Config\Annotations\Type
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type
      */
     public function testParseMethodAnnotations()
     {
@@ -87,7 +87,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Weasel\JsonMarshaller\Config\Annotations\Type
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type
      */
     public function testCreate()
     {
