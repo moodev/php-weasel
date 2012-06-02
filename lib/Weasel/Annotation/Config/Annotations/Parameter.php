@@ -1,11 +1,11 @@
 <?php
-namespace Weasel\Annotation\Annotations;
+namespace Weasel\Annotation\Config\Annotations;
 
-use Weasel\Annotation\Annotations\Annotation;
-use Weasel\Annotation\Annotations\AnnotationCreator;
+use Weasel\Annotation\Config\Annotations\Annotation;
+use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 
 /**
- * @Annotation(on="\Weasel\Annotation\Annotations\AnnotationCreator")
+ * @Annotation(on="\Weasel\Annotation\Config\Annotations\AnnotationCreator")
  */
 class Parameter
 {

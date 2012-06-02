@@ -1,7 +1,7 @@
-PhpMarshaller
-=============
+PHP Weasel
+==========
 
-One day this will be a nice general purpose set of marshalling libraries along the same lines as Jackson and JAXB. But
+One day this will be a nice general purpose set of marshalling libraries along the same lines as Jackson. But
  for PHP.
 
 It is configured using "annotations" in docblock comments, and as a result also includes a library for parsing those.

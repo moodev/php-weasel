@@ -180,11 +180,15 @@ class DocblockParser
         $indexTok = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER);
         $index = $indexTok["token"];
 
-        if (!isset($meta["enums"][$enum][$index])) {
+        if (!$meta->getEnum($enum)) {
+            throw new \Exception("Unable to find an enum for $class : $enum : $index");
+        }
+        $enumValues = $meta->getEnum($enum)->getValues();
+        if (!isset($enumValues[$index])) {
             throw new \Exception("Unable to lookup enum value for $class : $enum : $index");
         }
 
-        return array("integer", $meta["enums"][$enum][$index]);
+        return array("integer", $enumValues[$index]);
 
     }
 
@@ -202,8 +206,8 @@ class DocblockParser
             return null;
         }
 
-        if (isset($meta["on"]) && !in_array($location, $meta["on"])) {
-            throw new \Exception("Found annotation in wrong location, got $location but expected one of " . implode(", ", $meta["on"]));
+        if ($meta->getOn() && !in_array($location, $meta->getOn())) {
+            throw new \Exception("Found annotation in wrong location, got $location but expected one of " . implode(", ", $meta->getOn()));
         }
 
         $next = $this->_expectNext($lexer, array(DocblockLexer::T_OPEN_PAREN, DocblockLexer::T_WHITESPACE));
@@ -222,7 +226,7 @@ class DocblockParser
                     if ($expectingComma) {
                         throw new \Exception('Unexpected identifier, expecting comma or close paren');
                     }
-                    list($name, $param) = $this->_NamedParam($lexer, $meta['class'], $namespaces);
+                    list($name, $param) = $this->_NamedParam($lexer, $meta->getClass(), $namespaces);
                     $namedParams[$name] = $param;
                     $expectingComma = true;
                 } elseif ($next === DocblockLexer::T_COMMA) {
@@ -235,7 +239,7 @@ class DocblockParser
                     if ($expectingComma) {
                         throw new \Exception('Unexpected value, expecting comma or close paren');
                     }
-                    $anonParams[] = $this->_ParamValue($lexer, $meta['class'], $namespaces);
+                    $anonParams[] = $this->_ParamValue($lexer, $meta->getClass(), $namespaces);
                     $expectingComma = true;
                 }
             }
@@ -252,12 +256,15 @@ class DocblockParser
 
         }
 
-        $class = $meta['class'];
+        $class = $meta->getClass();
 
-        if (isset($meta['creatorMethod'])) {
+        if ($meta->getCreatorMethod()) {
             // There's a creator method to call
 
-            $expectedParams = isset($meta['creatorParams']) ? $meta['creatorParams'] : array();
+            /**
+             * @var \Weasel\Annotation\Config\Param[] $expectedParams
+             */
+            $expectedParams = $meta->getCreatorParams() ? $meta->getCreatorParams() : array();
             $actualParams = array();
             if (!empty($anonParams)) {
                 if (count($anonParams) > count($expectedParams)) {
@@ -268,34 +275,34 @@ class DocblockParser
                     $param = each($anonParams);
                     $param = ($param === false) ? null : $param['value'];
                     if ($param === null) {
-                        if (isset($paramConfig['required']) && $paramConfig['required'] === true) {
-                            throw new \Exception('Missing required parameter ' . $paramConfig['name']);
+                        if ($paramConfig->getRequired() && $paramConfig->getRequired() === true) {
+                            throw new \Exception('Missing required parameter ' . $paramConfig->getName());
                         }
                         $actualParams[] = null;
                     } else {
-                        $actualParams[] = $this->_collapseAndCheckType($param, $paramConfig['type']);
+                        $actualParams[] = $this->_collapseAndCheckType($param, $paramConfig->getType());
                     }
                 }
             } elseif (!empty($namedParams)) {
                 foreach($expectedParams as $paramConfig) {
-                    if (!isset($namedParams[$paramConfig['name']])) {
-                        if (isset($paramConfig['required']) && $paramConfig['required'] === true) {
-                            throw new \Exception('Missing required parameter ' . $paramConfig['name']);
+                    if (!isset($namedParams[$paramConfig->getName()])) {
+                        if ($paramConfig->getRequired() && $paramConfig->getRequired() === true) {
+                            throw new \Exception('Missing required parameter ' . $paramConfig->getName());
                         }
                         $actualParams[] = null;
                     } else {
-                        $actualParams[] = $this->_collapseAndCheckType($namedParams[$paramConfig['name']], $paramConfig['type']);
+                        $actualParams[] = $this->_collapseAndCheckType($namedParams[$paramConfig->getName()], $paramConfig->getType());
                     }
                 }
             } else {
                 $actualParams = array_fill(0, count($expectedParams), null);
             }
 
-            if ($meta['creatorMethod'] === '__construct') {
+            if ($meta->getCreatorMethod() === '__construct') {
                 $reflectionClass = new \ReflectionClass($class);
                 $annotation = $reflectionClass->newInstanceArgs($actualParams);
             } else {
-                $method = $meta['creatorMethod'];
+                $method = $meta->getCreatorMethod();
                 $reflectionMethod = new \ReflectionMethod($class, $method);
                 $annotation = $reflectionMethod->invokeArgs(null, $actualParams);
             }
@@ -303,10 +310,13 @@ class DocblockParser
             $annotation = new $class();
         }
 
-        if (!empty($namedParams) && isset($meta['properties'])) {
-            foreach ($meta['properties'] as $name => $type) {
+        if (!empty($namedParams) && $meta->getProperties()) {
+            foreach ($meta->getProperties() as $name => $property) {
+                /**
+                 * @var Config\Property $property
+                 */
                 if (isset($namedParams[$name])) {
-                    $annotation->$name = $this->_collapseAndCheckType($namedParams[$name], $type);
+                    $annotation->$name = $this->_collapseAndCheckType($namedParams[$name], $property->getType());
                 }
             }
         }
