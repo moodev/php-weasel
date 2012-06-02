@@ -16,7 +16,7 @@ function autoLoad($name) {
     }
     $exploded = explode("\\", $name);
     $vendor = $exploded[0];
-    if ($vendor != "PhpJsonMarshaller" && $vendor != "PhpAnnotation" && $vendor != "PhpLogger" && $vendor != "PhpXmlMarshaller") {
+    if ($vendor != "JsonMarshaller" && $vendor != "Annotation" && $vendor != "PhpLogger" && $vendor != "XmlMarshaller") {
         return;
     }
     $path = implode('/', $exploded);
@@ -24,5 +24,5 @@ function autoLoad($name) {
     return;
 }
 
-spl_autoload_register('\PhpJsonMarshaller\autoLoad');
+spl_autoload_register('\JsonMarshaller\autoLoad');
 

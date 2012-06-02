@@ -8,10 +8,10 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 
     public function testParseClassAnnotations() {
 
-        $annotationReader = new \PhpAnnotation\AnnotationReader(new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonCreator'), new \PhpAnnotation\AnnotationConfigurator());
+        $annotationReader = new \PhpAnnotation\AnnotationReader(new \ReflectionClass('\JsonMarshaller\Config\Annotations\JsonCreator'), new \PhpAnnotation\AnnotationConfigurator());
 
         $expected = array(
-            '\PhpAnnotation\Annotations\Annotation' => array(new \PhpAnnotation\Annotations\Annotation(array("method"), 1)),
+            '\Annotation\Annotations\Annotation' => array(new \PhpAnnotation\Annotations\Annotation(array("method"), 1)),
         );
 
         $this->assertEquals($expected, $annotationReader->getClassAnnotations());
@@ -20,7 +20,7 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 
     public function testParsePropertyAnnotations() {
 
-        $rClass = new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonCreator');
+        $rClass = new \ReflectionClass('\JsonMarshaller\Config\Annotations\JsonCreator');
         $annotationReader = new \PhpAnnotation\AnnotationReader($rClass, new \PhpAnnotation\AnnotationConfigurator());
 
 
@@ -36,7 +36,7 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 
     public function testParseMethodAnnotations() {
 
-        $rClass = new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonCreator');
+        $rClass = new \ReflectionClass('\JsonMarshaller\Config\Annotations\JsonCreator');
         $annotationReader = new \PhpAnnotation\AnnotationReader($rClass, new \PhpAnnotation\AnnotationConfigurator());
 
         $found = array();
@@ -49,10 +49,10 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-            array('\PhpAnnotation\Annotations\AnnotationCreator' => array(
+            array('\Annotation\Annotations\AnnotationCreator' => array(
                 new \PhpAnnotation\Annotations\AnnotationCreator(
                     array(
-                        new \PhpAnnotation\Annotations\Parameter("params", '\PhpJsonMarshaller\Config\Annotations\JsonProperty[]', false),
+                        new \PhpAnnotation\Annotations\Parameter("params", '\JsonMarshaller\Config\Annotations\JsonProperty[]', false),
                     )
                 )
             )),

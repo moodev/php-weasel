@@ -8,11 +8,11 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     public function testParseClassAnnotations() {
 
-        $annotationReader = new \PhpAnnotation\AnnotationReader(new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonProperty'), new \PhpAnnotation\AnnotationConfigurator());
+        $annotationReader = new \PhpAnnotation\AnnotationReader(new \ReflectionClass('\JsonMarshaller\Config\Annotations\JsonProperty'), new \PhpAnnotation\AnnotationConfigurator());
 
         $expected = array(
-            '\PhpAnnotation\Annotations\Annotation' => array(
-                new \PhpAnnotation\Annotations\Annotation(array("property", "method", '\PhpJsonMarshaller\Config\Annotations\JsonCreator'), null)
+            '\Annotation\Annotations\Annotation' => array(
+                new \PhpAnnotation\Annotations\Annotation(array("property", "method", '\JsonMarshaller\Config\Annotations\JsonCreator'), null)
             ),
         );
 
@@ -22,7 +22,7 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     public function testParsePropertyAnnotations() {
 
-        $rClass = new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonProperty');
+        $rClass = new \ReflectionClass('\JsonMarshaller\Config\Annotations\JsonProperty');
         $annotationReader = new \PhpAnnotation\AnnotationReader($rClass, new \PhpAnnotation\AnnotationConfigurator());
 
 
@@ -38,7 +38,7 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     public function testParseMethodAnnotations() {
 
-        $rClass = new \ReflectionClass('\PhpJsonMarshaller\Config\Annotations\JsonProperty');
+        $rClass = new \ReflectionClass('\JsonMarshaller\Config\Annotations\JsonProperty');
         $annotationReader = new \PhpAnnotation\AnnotationReader($rClass, new \PhpAnnotation\AnnotationConfigurator());
 
         $found = array();
@@ -51,7 +51,7 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-            array('\PhpAnnotation\Annotations\AnnotationCreator' => array(
+            array('\Annotation\Annotations\AnnotationCreator' => array(
                 new \PhpAnnotation\Annotations\AnnotationCreator(
                     array(
                         new \PhpAnnotation\Annotations\Parameter("name", 'string', false),
