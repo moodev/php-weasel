@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author Jonathan Oddy <jonathan@woaf.net>
+ * @copyright 2012 Jonathan Oddy
+ * @license ISC
+ */
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
 require_once(__DIR__ . '/../../../../../WeaselAutoloader.php');

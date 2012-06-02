@@ -1,10 +1,10 @@
 <?php
-namespace Weasel\Logger;
 /**
- * @package MooPhp
- * @author Jonathan Oddy <jonathan at woaf.net>
- * @copyright Copyright (c) 2011, Jonathan Oddy
+ * @author Jonathan Oddy <jonathan@woaf.net>
+ * @copyright 2012 Jonathan Oddy
+ * @license ISC
  */
+namespace Weasel\Logger;
 
 interface Logger
 {
