@@ -7,7 +7,7 @@ use Weasel\Annotation\AnnotationReader;
 
 class ClassAnnotationDriver
 {
-    const _ANS = '\XmlMarshaller\Config\Annotations\\';
+    const _ANS = '\Weasel\XmlMarshaller\Config\Annotations\\';
 
     /**
      * @var \Weasel\Annotation\AnnotationReader
