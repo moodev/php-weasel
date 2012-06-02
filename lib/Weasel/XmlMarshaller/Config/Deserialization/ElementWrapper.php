@@ -1,5 +1,5 @@
 <?php
-namespace PhpXmlMarshaller\Config\Deserialization;
+namespace Weasel\XmlMarshaller\Config\Deserialization;
 
 class ElementWrapper
 {
@@ -12,7 +12,7 @@ class ElementWrapper
 
 
     /**
-     * @var \XmlMarshaller\Config\Deserialization\ElementDeserialization
+     * @var \Weasel\XmlMarshaller\Config\Deserialization\ElementDeserialization
      */
     public $wraps;
 

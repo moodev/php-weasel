@@ -1,8 +1,8 @@
 <?php
-namespace PhpAnnotation\Annotations;
+namespace Weasel\Annotation\Annotations;
 
-use PhpAnnotation\Annotations\Annotation;
-use PhpAnnotation\Annotations\Parameter;
+use Weasel\Annotation\Annotations\Annotation;
+use Weasel\Annotation\Annotations\Parameter;
 
 /**
  * @Annotation(on="method", max=1)
@@ -11,12 +11,12 @@ class AnnotationCreator
 {
 
     /**
-     * @var array|null|\PhpAnnotation\Annotations\Parameter[]
+     * @var array|null|\Weasel\Annotation\Annotations\Parameter[]
      */
     protected $params;
 
     /**
-     * @param \PhpAnnotation\Annotations\Parameter[]|null $params
+     * @param \Weasel\Annotation\Annotations\Parameter[]|null $params
      * @AnnotationCreator(@Parameter(name="params", type="\Annotation\Annotations\Parameter[]", required=false))
      */
     public function __construct(array $params) {
@@ -24,7 +24,7 @@ class AnnotationCreator
     }
 
     /**
-     * @return array|null|\PhpAnnotation\Annotations\Parameter[]
+     * @return array|null|\Weasel\Annotation\Annotations\Parameter[]
      */
     public function getParams()
     {

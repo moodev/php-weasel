@@ -1,26 +1,26 @@
 <?php
-namespace PhpXmlMarshaller\Config\Deserialization;
+namespace Weasel\XmlMarshaller\Config\Deserialization;
 
 class ClassDeserialization
 {
 
     /**
-     * @var \PhpXmlMarshaller\Config\Deserialization\ElementDeserialization[]
+     * @var \Weasel\XmlMarshaller\Config\Deserialization\ElementDeserialization[]
      */
     public $elements = array();
 
     /**
-     * @var \PhpXmlMarshaller\Config\Deserialization\ElementWrapper[]
+     * @var \Weasel\XmlMarshaller\Config\Deserialization\ElementWrapper[]
      */
     public $elementWrappers = array();
 
     /**
-     * @var \PhpXmlMarshaller\Config\Deserialization\AttributeDeserialization[]
+     * @var \Weasel\XmlMarshaller\Config\Deserialization\AttributeDeserialization[]
      */
     public $attributes = array();
 
     /**
-     * @var \PhpXmlMarshaller\Config\Deserialization\ElementRefDeserialization[]
+     * @var \Weasel\XmlMarshaller\Config\Deserialization\ElementRefDeserialization[]
      */
     public $elementRefs = array();
 

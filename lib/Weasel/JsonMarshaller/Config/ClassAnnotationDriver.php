@@ -1,8 +1,8 @@
 <?php
-namespace PhpJsonMarshaller\Config;
+namespace Weasel\JsonMarshaller\Config;
 
-use PhpJsonMarshaller\Config\Annotations as Annotations;
-use PhpAnnotation\AnnotationReader;
+use Weasel\JsonMarshaller\Config\Annotations as Annotations;
+use Weasel\Annotation\AnnotationReader;
 
 class ClassAnnotationDriver
 {
@@ -28,7 +28,7 @@ class ClassAnnotationDriver
      */
     protected $config;
 
-    public function __construct(\ReflectionClass $rClass, \PhpAnnotation\AnnotationConfigurator $configurator)
+    public function __construct(\ReflectionClass $rClass, \Weasel\Annotation\AnnotationConfigurator $configurator)
     {
         $this->configurator = $configurator;
         $this->annotationReader = new AnnotationReader($rClass, $configurator);
@@ -38,7 +38,7 @@ class ClassAnnotationDriver
     protected function _configureGetter(\ReflectionMethod $method) {
         $name = $method->getName();
         /**
-         * @var \JsonMarshaller\Config\Annotations\JsonProperty $propertyConfig
+         * @var \Weasel\JsonMarshaller\Config\Annotations\JsonProperty $propertyConfig
          */
         $propertyConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonProperty');
         if (!isset($propertyConfig)) {
@@ -70,7 +70,7 @@ class ClassAnnotationDriver
     protected function _configureSetter(\ReflectionMethod $method) {
         $name = $method->getName();
         /**
-         * @var \JsonMarshaller\Config\Annotations\JsonProperty $propertyConfig
+         * @var \Weasel\JsonMarshaller\Config\Annotations\JsonProperty $propertyConfig
          */
         $propertyConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonProperty');
         if (!isset($propertyConfig)) {
@@ -98,7 +98,7 @@ class ClassAnnotationDriver
     protected function _configureCreator(\ReflectionMethod $method) {
         $name = $method->getName();
         /**
-         * @var \JsonMarshaller\Config\Annotations\JsonCreator $creatorConfig
+         * @var \Weasel\JsonMarshaller\Config\Annotations\JsonCreator $creatorConfig
          */
         $creatorConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonCreator');
         if (empty($creatorConfig)) {
@@ -155,7 +155,7 @@ class ClassAnnotationDriver
     protected function _configureProperty(\ReflectionProperty $property) {
         $name = $property->getName();
         /**
-         * @var \JsonMarshaller\Config\Annotations\JsonProperty $propertyConfig
+         * @var \Weasel\JsonMarshaller\Config\Annotations\JsonProperty $propertyConfig
          */
         $propertyConfig = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonProperty');
         if (!isset($propertyConfig)) {
@@ -412,13 +412,13 @@ class ClassAnnotationDriver
         $this->config->deserialization = new Deserialization\ClassDeserialization();
 
         /**
-         * @var \JsonMarshaller\Config\Annotations\JsonInclude $includer
+         * @var \Weasel\JsonMarshaller\Config\Annotations\JsonInclude $includer
          */
         $includer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonInclude');
         $this->config->serialization->include = $this->_getIncluderValue($includer);
 
         /**
-         * @var \JsonMarshaller\Config\Annotations\JsonTypeName $typeNamer
+         * @var \Weasel\JsonMarshaller\Config\Annotations\JsonTypeName $typeNamer
          */
         $typeNamer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonTypeName');
         $name = null;
@@ -448,7 +448,7 @@ class ClassAnnotationDriver
         }
 
         /**
-         * @var \JsonMarshaller\Config\Annotations\JsonIgnoreProperties|null $ignorer
+         * @var \Weasel\JsonMarshaller\Config\Annotations\JsonIgnoreProperties|null $ignorer
          */
         $ignorer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonIgnoreProperties');
         if (!empty($ignorer)) {

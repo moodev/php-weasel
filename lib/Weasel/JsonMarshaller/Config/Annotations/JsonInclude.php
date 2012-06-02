@@ -1,10 +1,10 @@
 <?php
-namespace PhpJsonMarshaller\Config\Annotations;
+namespace Weasel\JsonMarshaller\Config\Annotations;
 
-use PhpAnnotation\Annotations\Annotation;
-use PhpAnnotation\Annotations\AnnotationCreator;
-use PhpAnnotation\Annotations\Parameter;
-use PhpAnnotation\Annotations\Enum;
+use Weasel\Annotation\Annotations\Annotation;
+use Weasel\Annotation\Annotations\AnnotationCreator;
+use Weasel\Annotation\Annotations\Parameter;
+use Weasel\Annotation\Annotations\Enum;
 
 /**
  * @Annotation(on={"class", "method", "property"}, max=1)

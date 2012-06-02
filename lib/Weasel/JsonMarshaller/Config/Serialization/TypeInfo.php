@@ -1,5 +1,5 @@
 <?php
-namespace PhpJsonMarshaller\Config\Serialization;
+namespace Weasel\JsonMarshaller\Config\Serialization;
 
 class TypeInfo
 {

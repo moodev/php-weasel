@@ -1,5 +1,5 @@
 <?php
-namespace PhpAnnotation;
+namespace Weasel\Annotation;
 
 
 class ArrayCachingAnnotationConfigurator extends AnnotationConfigurator

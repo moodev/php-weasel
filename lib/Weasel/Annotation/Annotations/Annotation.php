@@ -1,8 +1,8 @@
 <?php
-namespace PhpAnnotation\Annotations;
+namespace Weasel\Annotation\Annotations;
 
-use PhpAnnotation\Annotations\AnnotationCreator;
-use PhpAnnotation\Annotations\Parameter;
+use Weasel\Annotation\Annotations\AnnotationCreator;
+use Weasel\Annotation\Annotations\Parameter;
 
 /**
  * @Annotation(on="class", max=1)

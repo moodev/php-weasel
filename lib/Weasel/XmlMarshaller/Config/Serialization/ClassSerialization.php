@@ -1,5 +1,5 @@
 <?php
-namespace PhpXmlMarshaller\Config\Serialization;
+namespace Weasel\XmlMarshaller\Config\Serialization;
 
 class ClassSerialization
 {
@@ -10,14 +10,14 @@ class ClassSerialization
     const INCLUDE_NON_NULL =4;
 
     /**
-     * @var \PhpXmlMarshaller\Config\Serialization\PropertySerialization[]
+     * @var \Weasel\XmlMarshaller\Config\Serialization\PropertySerialization[]
      */
     public $properties = array();
 
     public $include = self::INCLUDE_ALWAYS;
 
     /**
-     * @var \XmlMarshaller\Config\Serialization\TypeInfo
+     * @var \Weasel\XmlMarshaller\Config\Serialization\TypeInfo
      */
     public $typeInfo;
 }

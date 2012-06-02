@@ -1,10 +1,10 @@
 <?php
-namespace PhpJsonMarshaller\Config\Deserialization;
+namespace Weasel\JsonMarshaller\Config\Deserialization;
 
 class PropertyCreator extends Creator
 {
     /**
-     * @var \PhpJsonMarshaller\Config\Deserialization\Param[]
+     * @var \Weasel\JsonMarshaller\Config\Deserialization\Param[]
      */
     public $params = array();
 

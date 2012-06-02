@@ -1,5 +1,5 @@
 <?php
-namespace PhpAnnotation;
+namespace Weasel\Annotation;
 
 
 class AnnotationConfigurator

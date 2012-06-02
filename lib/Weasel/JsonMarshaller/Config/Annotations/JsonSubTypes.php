@@ -1,9 +1,9 @@
 <?php
-namespace PhpJsonMarshaller\Config\Annotations;
+namespace Weasel\JsonMarshaller\Config\Annotations;
 
-use PhpAnnotation\Annotations\Annotation;
-use PhpAnnotation\Annotations\AnnotationCreator;
-use PhpAnnotation\Annotations\Parameter;
+use Weasel\Annotation\Annotations\Annotation;
+use Weasel\Annotation\Annotations\AnnotationCreator;
+use Weasel\Annotation\Annotations\Parameter;
 
 /**
  * The list of subtypes of this base class
@@ -18,7 +18,7 @@ class JsonSubTypes
     protected $value;
 
     /**
-     * @param \PhpJsonMarshaller\Config\Annotations\JsonSubTypes\Type[] $value
+     * @param \Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type[] $value
      * @AnnotationCreator(@Parameter(name="value", type="\JsonMarshaller\Config\Annotations\JsonSubTypes\Type[]", required=true))
      */
     public function __construct($value)

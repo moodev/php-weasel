@@ -1,12 +1,12 @@
 <?php
-namespace PhpJsonMarshaller\Config;
+namespace Weasel\JsonMarshaller\Config;
 
 interface ConfigProvider
 {
 
     /**
      * @param string $class
-     * @return \JsonMarshaller\Config\ClassMarshaller
+     * @return \Weasel\JsonMarshaller\Config\ClassMarshaller
      */
     public function getConfig($class);
 

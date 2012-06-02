@@ -1,5 +1,5 @@
 <?php
-namespace PhpJsonMarshaller\Config\Deserialization;
+namespace Weasel\JsonMarshaller\Config\Deserialization;
 
 abstract class PropertyDeserialization
 {
@@ -10,7 +10,7 @@ abstract class PropertyDeserialization
     public $type;
 
     /**
-     * @var \JsonMarshaller\Config\Deserialization\TypeInfo
+     * @var \Weasel\JsonMarshaller\Config\Deserialization\TypeInfo
      */
     public $typeInfo;
 }

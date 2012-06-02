@@ -1,9 +1,9 @@
 <?php
-namespace PhpJsonMarshaller\Config\Annotations;
+namespace Weasel\JsonMarshaller\Config\Annotations;
 
-use PhpAnnotation\Annotations\Annotation;
-use PhpAnnotation\Annotations\AnnotationCreator;
-use PhpAnnotation\Annotations\Parameter;
+use Weasel\Annotation\Annotations\Annotation;
+use Weasel\Annotation\Annotations\AnnotationCreator;
+use Weasel\Annotation\Annotations\Parameter;
 
 /**
  * @Annotation(on="method", max=1)
@@ -12,12 +12,12 @@ class JsonCreator
 {
 
     /**
-     * @var \PhpJsonMarshaller\Config\Annotations\JsonProperty[]
+     * @var \Weasel\JsonMarshaller\Config\Annotations\JsonProperty[]
      */
     protected $params = array();
 
     /**
-     * @param null|\PhpJsonMarshaller\Config\Annotations\JsonProperty[] params
+     * @param null|\Weasel\JsonMarshaller\Config\Annotations\JsonProperty[] params
      * @AnnotationCreator(@Parameter(name="params", type="\JsonMarshaller\Config\Annotations\JsonProperty[]", required=false))
      */
     public function __construct(array $params) {

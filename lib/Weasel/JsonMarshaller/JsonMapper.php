@@ -1,16 +1,16 @@
 <?php
-namespace PhpJsonMarshaller;
+namespace Weasel\JsonMarshaller;
 
 class JsonMapper
 {
 
     /**
-     * @var \JsonMarshaller\Config\ConfigProvider
+     * @var \Weasel\JsonMarshaller\Config\ConfigProvider
      */
     protected $configProvider;
 
 
-    public function __construct(\PhpJsonMarshaller\Config\ConfigProvider $configProvider) {
+    public function __construct(\Weasel\JsonMarshaller\Config\ConfigProvider $configProvider) {
         $this->configProvider = $configProvider;
     }
 

@@ -1,9 +1,9 @@
 <?php
-namespace PhpAnnotation\Annotations;
+namespace Weasel\Annotation\Annotations;
 
-use PhpAnnotation\Annotations\Annotation;
-use PhpAnnotation\Annotations\AnnotationCreator;
-use PhpAnnotation\Annotations\Parameter;
+use Weasel\Annotation\Annotations\Annotation;
+use Weasel\Annotation\Annotations\AnnotationCreator;
+use Weasel\Annotation\Annotations\Parameter;
 
 /**
  * @Annotation(on="property", max=1)

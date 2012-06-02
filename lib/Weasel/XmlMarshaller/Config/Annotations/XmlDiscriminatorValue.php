@@ -1,9 +1,9 @@
 <?php
-namespace PhpXmlMarshaller\Config\Annotations;
+namespace Weasel\XmlMarshaller\Config\Annotations;
 
-use PhpAnnotation\Annotations\Annotation;
-use PhpAnnotation\Annotations\AnnotationCreator;
-use PhpAnnotation\Annotations\Parameter;
+use Weasel\Annotation\Annotations\Annotation;
+use Weasel\Annotation\Annotations\AnnotationCreator;
+use Weasel\Annotation\Annotations\Parameter;
 
 /**
  * @Annotation(on={"class"})

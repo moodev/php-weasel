@@ -1,10 +1,10 @@
 <?php
-namespace PhpAnnotation\Tests;
+namespace Weasel\Annotation\Tests;
 
 require_once(__DIR__ . '/../../WeaselAutoloader.php');
 
-use PhpAnnotation\DocblockParser;
-use PhpAnnotation\AnnotationConfigurator;
+use Weasel\Annotation\DocblockParser;
+use Weasel\Annotation\AnnotationConfigurator;
 
 class DocblockParserTest extends \PHPUnit_Framework_TestCase
 {

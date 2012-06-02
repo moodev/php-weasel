@@ -1,9 +1,9 @@
 <?php
-namespace PhpJsonMarshaller\Config\Annotations\JsonSubTypes;
+namespace Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes;
 
-use PhpAnnotation\Annotations\Annotation;
-use PhpAnnotation\Annotations\AnnotationCreator;
-use PhpAnnotation\Annotations\Parameter;
+use Weasel\Annotation\Annotations\Annotation;
+use Weasel\Annotation\Annotations\AnnotationCreator;
+use Weasel\Annotation\Annotations\Parameter;
 
 /**
  * A subtype

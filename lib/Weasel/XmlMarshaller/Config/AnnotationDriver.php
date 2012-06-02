@@ -1,8 +1,8 @@
 <?php
-namespace PhpXmlMarshaller\Config;
+namespace Weasel\XmlMarshaller\Config;
 
-use PhpXmlMarshaller\Config\Annotations as Annotations;
-use PhpAnnotation\AnnotationReader;
+use Weasel\XmlMarshaller\Config\Annotations as Annotations;
+use Weasel\Annotation\AnnotationReader;
 
 class AnnotationDriver implements ConfigProvider
 {
@@ -11,12 +11,12 @@ class AnnotationDriver implements ConfigProvider
     protected $configurator;
 
     public function __construct($logger = null) {
-        $this->configurator = new \PhpAnnotation\ArrayCachingAnnotationConfigurator($logger);
+        $this->configurator = new \Weasel\Annotation\ArrayCachingAnnotationConfigurator($logger);
     }
 
     /**
      * @param string $class
-     * @return \XmlMarshaller\Config\ClassMarshaller
+     * @return \Weasel\XmlMarshaller\Config\ClassMarshaller
      */
     public function getConfig($class) {
         $rClass = new \ReflectionClass($class);

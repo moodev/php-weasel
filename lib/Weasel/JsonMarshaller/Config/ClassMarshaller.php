@@ -1,16 +1,16 @@
 <?php
-namespace PhpJsonMarshaller\Config;
+namespace Weasel\JsonMarshaller\Config;
 
 class ClassMarshaller
 {
 
     /**
-     * @var \JsonMarshaller\Config\Serialization\ClassSerialization
+     * @var \Weasel\JsonMarshaller\Config\Serialization\ClassSerialization
      */
     public $serialization;
 
     /**
-     * @var \JsonMarshaller\Config\Deserialization\ClassDeserialization
+     * @var \Weasel\JsonMarshaller\Config\Deserialization\ClassDeserialization
      */
     public $deserialization;
 

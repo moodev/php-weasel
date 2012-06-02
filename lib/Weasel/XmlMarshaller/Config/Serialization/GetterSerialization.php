@@ -1,5 +1,5 @@
 <?php
-namespace PhpXmlMarshaller\Config\Serialization;
+namespace Weasel\XmlMarshaller\Config\Serialization;
 
 class GetterSerialization extends PropertySerialization
 {

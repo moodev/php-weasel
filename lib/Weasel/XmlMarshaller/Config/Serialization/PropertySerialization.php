@@ -1,5 +1,5 @@
 <?php
-namespace PhpXmlMarshaller\Config\Serialization;
+namespace Weasel\XmlMarshaller\Config\Serialization;
 
 class PropertySerialization
 {
@@ -15,7 +15,7 @@ class PropertySerialization
     public $type;
 
     /**
-     * @var \XmlMarshaller\Config\Serialization\TypeInfo
+     * @var \Weasel\XmlMarshaller\Config\Serialization\TypeInfo
      */
     public $typeInfo;
 }

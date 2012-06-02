@@ -1,5 +1,5 @@
 <?php
-namespace PhpJsonMarshaller\Config\Deserialization;
+namespace Weasel\JsonMarshaller\Config\Deserialization;
 
 class SetterDeserialization extends PropertyDeserialization
 {

@@ -1,5 +1,5 @@
 <?php
-namespace PhpJsonMarshaller\Config\Serialization;
+namespace Weasel\JsonMarshaller\Config\Serialization;
 
 class PropertySerialization
 {
@@ -15,7 +15,7 @@ class PropertySerialization
     public $type;
 
     /**
-     * @var \JsonMarshaller\Config\Serialization\TypeInfo
+     * @var \Weasel\JsonMarshaller\Config\Serialization\TypeInfo
      */
     public $typeInfo;
 }

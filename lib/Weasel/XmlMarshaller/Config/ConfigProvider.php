@@ -1,12 +1,12 @@
 <?php
-namespace PhpXmlMarshaller\Config;
+namespace Weasel\XmlMarshaller\Config;
 
 interface ConfigProvider
 {
 
     /**
      * @param string $class
-     * @return \XmlMarshaller\Config\ClassMarshaller
+     * @return \Weasel\XmlMarshaller\Config\ClassMarshaller
      */
     public function getConfig($class);
 

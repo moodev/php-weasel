@@ -1,9 +1,9 @@
 <?php
-namespace PhpXmlMarshaller\Config;
+namespace Weasel\XmlMarshaller\Config;
 
-use PhpXmlMarshaller\Config\Annotations as Annotations;
-use PhpXmlMarshaller\Config as Config;
-use PhpAnnotation\AnnotationReader;
+use Weasel\XmlMarshaller\Config\Annotations as Annotations;
+use Weasel\XmlMarshaller\Config as Config;
+use Weasel\Annotation\AnnotationReader;
 
 class ClassAnnotationDriver
 {
@@ -29,7 +29,7 @@ class ClassAnnotationDriver
      */
     protected $config;
 
-    public function __construct(\ReflectionClass $rClass, \PhpAnnotation\AnnotationConfigurator $configurator)
+    public function __construct(\ReflectionClass $rClass, \Weasel\Annotation\AnnotationConfigurator $configurator)
     {
         $this->configurator = $configurator;
         $this->annotationReader = new AnnotationReader($rClass, $configurator);
@@ -44,7 +44,7 @@ class ClassAnnotationDriver
         $setterConfig->id = $method->getName();
 
         /**
-         * @var \XmlMarshaller\Config\Annotations\XmlAttribute $attributeConfig
+         * @var \Weasel\XmlMarshaller\Config\Annotations\XmlAttribute $attributeConfig
          */
         $attributeConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'XmlAttribute');
         if (isset($attributeConfig)) {
@@ -56,7 +56,7 @@ class ClassAnnotationDriver
         $defaultName = ucfirst(substr($name, 3));
 
         /**
-         * @var \XmlMarshaller\Config\Annotations\XmlElement $elementConfig
+         * @var \Weasel\XmlMarshaller\Config\Annotations\XmlElement $elementConfig
          */
         $elementConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'XmlElement');
 
@@ -65,7 +65,7 @@ class ClassAnnotationDriver
         }
 
         /**
-         * @var \XmlMarshaller\Config\Annotations\XmlElementRef $refConfig
+         * @var \Weasel\XmlMarshaller\Config\Annotations\XmlElementRef $refConfig
          */
         $refConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'XmlElementRef');
 
@@ -74,7 +74,7 @@ class ClassAnnotationDriver
         }
 
         /**
-         * @var \XmlMarshaller\Config\Annotations\XmlElementRefs $refsConfig
+         * @var \Weasel\XmlMarshaller\Config\Annotations\XmlElementRefs $refsConfig
          */
         $refsConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'XmlElementRefs');
 
@@ -83,7 +83,7 @@ class ClassAnnotationDriver
         }
 
         /**
-         * @var \XmlMarshaller\Config\Annotations\XmlElementWrapper $wrapperConfig
+         * @var \Weasel\XmlMarshaller\Config\Annotations\XmlElementWrapper $wrapperConfig
          */
         $wrapperConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'XmlElementWrapper');
         if (isset($element) && isset($wrapperConfig)) {
@@ -223,7 +223,7 @@ class ClassAnnotationDriver
         $directConfig->id = '$' . $name;
 
         /**
-         * @var \XmlMarshaller\Config\Annotations\XmlAttribute $attributeConfig
+         * @var \Weasel\XmlMarshaller\Config\Annotations\XmlAttribute $attributeConfig
          */
         $attributeConfig = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'XmlAttribute');
         if (isset($attributeConfig)) {
@@ -235,7 +235,7 @@ class ClassAnnotationDriver
         $defaultName = ucfirst($name);
 
         /**
-         * @var \XmlMarshaller\Config\Annotations\XmlElement $elementConfig
+         * @var \Weasel\XmlMarshaller\Config\Annotations\XmlElement $elementConfig
          */
         $elementConfig = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'XmlElement');
 
@@ -244,7 +244,7 @@ class ClassAnnotationDriver
         }
 
         /**
-         * @var \XmlMarshaller\Config\Annotations\XmlElementRef $refConfig
+         * @var \Weasel\XmlMarshaller\Config\Annotations\XmlElementRef $refConfig
          */
         $refConfig = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'XmlElementRef');
 
@@ -253,7 +253,7 @@ class ClassAnnotationDriver
         }
 
         /**
-         * @var \XmlMarshaller\Config\Annotations\XmlElementRefs $refsConfig
+         * @var \Weasel\XmlMarshaller\Config\Annotations\XmlElementRefs $refsConfig
          */
         $refsConfig = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'XmlElementRefs');
 
@@ -262,7 +262,7 @@ class ClassAnnotationDriver
         }
 
         /**
-         * @var \XmlMarshaller\Config\Annotations\XmlElementWrapper $wrapperConfig
+         * @var \Weasel\XmlMarshaller\Config\Annotations\XmlElementWrapper $wrapperConfig
          */
         $wrapperConfig = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'XmlElementWrapper');
         if (isset($element) && isset($wrapperConfig)) {

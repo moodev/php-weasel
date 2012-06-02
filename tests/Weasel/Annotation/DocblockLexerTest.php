@@ -1,9 +1,9 @@
 <?php
-namespace PhpAnnotation\Tests;
+namespace Weasel\Annotation\Tests;
 
 require_once(__DIR__ . '/../../WeaselAutoloader.php');
 
-use PhpAnnotation\DocblockLexer;
+use Weasel\Annotation\DocblockLexer;
 
 class DocblockLexerTest extends \PHPUnit_Framework_TestCase
 {

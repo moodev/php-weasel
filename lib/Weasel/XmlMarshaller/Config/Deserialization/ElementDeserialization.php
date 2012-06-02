@@ -1,11 +1,11 @@
 <?php
-namespace PhpXmlMarshaller\Config\Deserialization;
+namespace Weasel\XmlMarshaller\Config\Deserialization;
 
 class ElementDeserialization
 {
 
     /**
-     * @var \XmlMarshaller\Config\Deserialization\PropertyDeserialization
+     * @var \Weasel\XmlMarshaller\Config\Deserialization\PropertyDeserialization
      */
     public $property;
 

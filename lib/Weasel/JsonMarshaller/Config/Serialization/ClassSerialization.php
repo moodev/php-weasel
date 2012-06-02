@@ -1,5 +1,5 @@
 <?php
-namespace PhpJsonMarshaller\Config\Serialization;
+namespace Weasel\JsonMarshaller\Config\Serialization;
 
 class ClassSerialization
 {
@@ -10,14 +10,14 @@ class ClassSerialization
     const INCLUDE_NON_NULL =4;
 
     /**
-     * @var \PhpJsonMarshaller\Config\Serialization\PropertySerialization[]
+     * @var \Weasel\JsonMarshaller\Config\Serialization\PropertySerialization[]
      */
     public $properties = array();
 
     public $include = self::INCLUDE_ALWAYS;
 
     /**
-     * @var \JsonMarshaller\Config\Serialization\TypeInfo
+     * @var \Weasel\JsonMarshaller\Config\Serialization\TypeInfo
      */
     public $typeInfo;
 }

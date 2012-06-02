@@ -1,16 +1,16 @@
 <?php
-namespace PhpXmlMarshaller\Config;
+namespace Weasel\XmlMarshaller\Config;
 
 class ClassMarshaller
 {
 
     /**
-     * @var \XmlMarshaller\Config\Serialization\ClassSerialization
+     * @var \Weasel\XmlMarshaller\Config\Serialization\ClassSerialization
      */
     public $serialization;
 
     /**
-     * @var \XmlMarshaller\Config\Deserialization\ClassDeserialization
+     * @var \Weasel\XmlMarshaller\Config\Deserialization\ClassDeserialization
      */
     public $deserialization;
 

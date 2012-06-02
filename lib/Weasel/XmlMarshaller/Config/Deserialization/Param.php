@@ -1,5 +1,5 @@
 <?php
-namespace PhpXmlMarshaller\Config\Deserialization;
+namespace Weasel\XmlMarshaller\Config\Deserialization;
 
 class Param extends PropertyDeserialization
 {

@@ -1,16 +1,16 @@
 <?php
-namespace PhpJsonMarshaller\Config\Deserialization;
+namespace Weasel\JsonMarshaller\Config\Deserialization;
 
 class ClassDeserialization
 {
 
     /**
-     * @var \PhpJsonMarshaller\Config\Deserialization\PropertyDeserialization[]
+     * @var \Weasel\JsonMarshaller\Config\Deserialization\PropertyDeserialization[]
      */
     public $properties = array();
 
     /**
-     * @var \JsonMarshaller\Config\Deserialization\Creator
+     * @var \Weasel\JsonMarshaller\Config\Deserialization\Creator
      */
     public $creator = null;
 
@@ -30,7 +30,7 @@ class ClassDeserialization
     public $name;
 
     /**
-     * @var \JsonMarshaller\Config\Deserialization\TypeInfo
+     * @var \Weasel\JsonMarshaller\Config\Deserialization\TypeInfo
      */
     public $typeInfo;
 

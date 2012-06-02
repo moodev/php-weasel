@@ -1,15 +1,15 @@
 <?php
-namespace PhpXmlMarshaller;
+namespace Weasel\XmlMarshaller;
 
 class XmlMapper
 {
 
     /**
-     * @var \XmlMarshaller\Config\ConfigProvider
+     * @var \Weasel\XmlMarshaller\Config\ConfigProvider
      */
     protected $configProvider;
 
-    public function __construct(\PhpXmlMarshaller\Config\ConfigProvider $configProvider) {
+    public function __construct(\Weasel\XmlMarshaller\Config\ConfigProvider $configProvider) {
         $this->configProvider = $configProvider;
     }
 
@@ -223,7 +223,7 @@ class XmlMapper
     }
 
     /**
-     * @param \XmlMarshaller\Config\Deserialization\ElementDeserialization $ref
+     * @param \Weasel\XmlMarshaller\Config\Deserialization\ElementDeserialization $ref
      * @param string $fullName
      * @return string the type
      */
