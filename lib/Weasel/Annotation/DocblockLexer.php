@@ -51,12 +51,18 @@ class DocblockLexer
         // Yay.
         $split = preg_split(
             '(' . implode('|', array(
-                '("(?:[^"]|"")*")', // Quoted strings
-                '([+-]?[0-9]+(?:\.[0-9]+|[eE][+-]?[0-9]+)?)', // Numeric
-                '([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)', // Identifier
-                '(\s+)', // Whitespace
-                '(.)', // Everything else will be split into single chars
-            )) . ')',
+                                    '("(?:[^"]|"")*")',
+                                    // Quoted strings
+                                    '([+-]?[0-9]+(?:\.[0-9]+|[eE][+-]?[0-9]+)?)',
+                                    // Numeric
+                                    '([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)',
+                                    // Identifier
+                                    '(\s+)',
+                                    // Whitespace
+                                    '(.)',
+                                    // Everything else will be split into single chars
+                               )
+            ) . ')',
             $input,
             -1,
             (PREG_SPLIT_NO_EMPTY | PREG_SPLIT_OFFSET_CAPTURE | PREG_SPLIT_DELIM_CAPTURE)
@@ -79,34 +85,24 @@ class DocblockLexer
         switch (strtolower($value)) {
             case '@':
                 return self::T_AT;
-                break;
             case '(':
                 return self::T_OPEN_PAREN;
-                break;
             case ')':
                 return self::T_CLOSE_PAREN;
-                break;
             case '{':
                 return self::T_OPEN_BRACE;
-                break;
             case '}':
                 return self::T_CLOSE_BRACE;
-                break;
             case ',':
                 return self::T_COMMA;
-                break;
             case '=':
                 return self::T_EQUAL;
-                break;
             case '\\':
                 return self::T_BACKSLASH;
-                break;
             case ':':
                 return self::T_COLON;
-                break;
             case '.':
                 return self::T_DOT;
-                break;
             case 'true':
                 $value = true;
                 return self::T_BOOLEAN;
@@ -187,7 +183,7 @@ class DocblockLexer
     public function seek($to = 0)
     {
         if ($to < 0) {
-            $to = count($this->pos) - $to;
+            $to = count($this->tokens) + $to;
         }
         if (!isset($this->tokens[$to])) {
             return null;
@@ -203,6 +199,12 @@ class DocblockLexer
 
     protected function _wsSkippingPeek($num = 1)
     {
+        if ($num === 0) {
+            $cur = $this->get();
+            if ($cur["type"] !== self::T_WHITESPACE) {
+                return $cur["type"];
+            }
+        }
         $pos = $this->pos;
         $ret = null;
         $i = 0;
@@ -216,8 +218,15 @@ class DocblockLexer
 
     public function peek($num = 1, $skipWS = false)
     {
+        if ($num < 0) {
+            throw new \InvalidArgumentException("Cannot peek backwards");
+        }
         if ($skipWS) {
             return $this->_wsSkippingPeek($num);
+        }
+        if ($num === 0) {
+            $cur = $this->get();
+            return $cur["type"];
         }
         $pos = $this->pos;
         if ($ret = $this->seek($pos + $num)) {
