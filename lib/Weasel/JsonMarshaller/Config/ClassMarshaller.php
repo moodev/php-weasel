@@ -6,6 +6,9 @@
  */
 namespace Weasel\JsonMarshaller\Config;
 
+/**
+ * Holder for the configuration for marshalling of a class
+ */
 class ClassMarshaller
 {
 

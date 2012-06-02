@@ -7,7 +7,7 @@
 namespace Weasel\Annotation;
 
 
-class AnnotationConfigurator
+class AnnotationConfigurator implements AnnotationConfigProvider
 {
 
     /**
@@ -49,7 +49,9 @@ class AnnotationConfigurator
              * @var \ReflectionMethod $method
              * @var \Weasel\Annotation\Config\Annotations\AnnotationCreator $creator
              */
-            $creator = $reader->getSingleMethodAnnotation($method->getName(), '\Weasel\Annotation\Config\Annotations\AnnotationCreator');
+            $creator = $reader->getSingleMethodAnnotation($method->getName(),
+                                                          '\Weasel\Annotation\Config\Annotations\AnnotationCreator'
+            );
             if (isset($creator)) {
                 $metaConfig->setCreatorMethod($method->getName());
                 $creatorArgs = $method->getParameters();
@@ -75,7 +77,9 @@ class AnnotationConfigurator
              * @var \ReflectionProperty $property
              * @var \Weasel\Annotation\Config\Annotations\Property $annotProperty
              */
-            $annotProperty = $reader->getSinglePropertyAnnotation($property->getName(), '\Weasel\Annotation\Config\Annotations\Property');
+            $annotProperty = $reader->getSinglePropertyAnnotation($property->getName(),
+                                                                  '\Weasel\Annotation\Config\Annotations\Property'
+            );
 
             if (isset($annotProperty)) {
                 $propertyConfig = new Config\Property($property->getName(), $annotProperty->getType);
@@ -85,7 +89,9 @@ class AnnotationConfigurator
             /**
              * @var \Weasel\Annotation\Config\Annotations\Enum $annotEnum
              */
-            $annotEnum = $reader->getSinglePropertyAnnotation($property->getName(), '\Weasel\Annotation\Config\Annotations\Enum');
+            $annotEnum = $reader->getSinglePropertyAnnotation($property->getName(),
+                                                              '\Weasel\Annotation\Config\Annotations\Enum'
+            );
 
             if (isset($annotEnum)) {
                 if (!$property->isStatic()) {

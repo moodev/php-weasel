@@ -10,12 +10,12 @@ class JsonMapper
 {
 
     /**
-     * @var \Weasel\JsonMarshaller\Config\ConfigProvider
+     * @var \Weasel\JsonMarshaller\Config\JsonConfigProvider
      */
     protected $configProvider;
 
 
-    public function __construct(\Weasel\JsonMarshaller\Config\ConfigProvider $configProvider)
+    public function __construct(\Weasel\JsonMarshaller\Config\JsonConfigProvider $configProvider)
     {
         $this->configProvider = $configProvider;
     }
@@ -125,7 +125,9 @@ class JsonMapper
                     if (!isset($classId)) {
                         break;
                     }
-                    $result = array($classId, $result);
+                    $result = array($classId,
+                                    $result
+                    );
                     break;
                 case Config\Serialization\TypeInfo::TI_AS_WRAPPER_OBJECT:
                     if (!isset($classId)) {
@@ -335,7 +337,8 @@ class JsonMapper
                     return (float)$value;
                 default:
                     if (!is_array($value)) {
-                        throw new \Exception("Expected array but found something else (or type $type is bad) got: " . gettype($value));
+                        throw new \Exception("Expected array but found something else (or type $type is bad) got: " . gettype($value
+                        ));
                     }
                     return $this->_decodeClass($value, $type);
             }

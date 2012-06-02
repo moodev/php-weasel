@@ -10,7 +10,7 @@ class DocblockParser
 {
 
     /**
-     * @var AnnotationConfigurator
+     * @var AnnotationConfigProvider
      */
     protected $annotations;
 
@@ -20,7 +20,13 @@ class DocblockParser
     protected $logger;
 
     static $silentlyDiscard = array(
-        "param", "author", "copyright", "var", "return", "package", "throws"
+        "param",
+        "author",
+        "copyright",
+        "var",
+        "return",
+        "package",
+        "throws"
     );
 
     public function parse($docBlock, $location, $namespaces)
@@ -28,7 +34,7 @@ class DocblockParser
         return $this->_parse($docBlock, $location, $namespaces);
     }
 
-    public function __construct(AnnotationConfigurator $annotations)
+    public function __construct(AnnotationConfigProvider $annotations)
     {
         $this->annotations = $annotations;
         $this->logger = $annotations->getLogger();
@@ -113,16 +119,24 @@ class DocblockParser
         $cur = $lexer->next(true);
         switch ($cur['type']) {
             case DocblockLexer::T_INTEGER:
-                $param = array('integer', $cur['token']);
+                $param = array('integer',
+                               $cur['token']
+                );
                 break;
             case DocblockLexer::T_FLOAT:
-                $param = array('float', $cur['token']);
+                $param = array('float',
+                               $cur['token']
+                );
                 break;
             case DocblockLexer::T_BOOLEAN:
-                $param = array('boolean', $cur['token']);
+                $param = array('boolean',
+                               $cur['token']
+                );
                 break;
             case DocblockLexer::T_QUOTED_STRING:
-                $param = array('string', $cur['token']);
+                $param = array('string',
+                               $cur['token']
+                );
                 break;
             case DocblockLexer::T_AT:
                 $object = $this->_Annotation($lexer, $location, $namespaces);
@@ -130,7 +144,9 @@ class DocblockParser
                 break;
             case DocblockLexer::T_OPEN_BRACE:
                 $array = $this->_Array($lexer, $location, $namespaces);
-                return array('array', $array);
+                return array('array',
+                             $array
+                );
             default:
                 throw new \Exception("Parse error got {$cur["type"]} ({$cur['token']})");
         }
@@ -145,7 +161,9 @@ class DocblockParser
 
         $value = $this->_ParamValue($lexer, $location, $namespaces);
 
-        return array($nameToken['token'], $value);
+        return array($nameToken['token'],
+                     $value
+        );
 
     }
 
@@ -156,7 +174,8 @@ class DocblockParser
         }
         $next = $lexer->next($skipWS);
         if (!$next || !in_array($next['type'], $types, true)) {
-            throw new \Exception('Parse error, expected one of ' . implode(',', $types) . ' but got ' . ($next ? $next['type'] : 'EOF'));
+            throw new \Exception('Parse error, expected one of ' . implode(',', $types) . ' but got ' . ($next ?
+                $next['type'] : 'EOF'));
         }
         return $next;
     }
@@ -197,7 +216,7 @@ class DocblockParser
         $indexTok = $this->_expectNext($lexer, DocblockLexer::T_IDENTIFIER);
         $index = $indexTok["token"];
 
-        if (!$meta->getEnum($enum)) {
+        if ($meta->getEnum($enum) === null) {
             throw new \Exception("Unable to find an enum for $class : $enum : $index");
         }
         $enumValues = $meta->getEnum($enum)->getValues();
@@ -205,7 +224,9 @@ class DocblockParser
             throw new \Exception("Unable to lookup enum value for $class : $enum : $index");
         }
 
-        return array("integer", $enumValues[$index]);
+        return array("integer",
+                     $enumValues[$index]
+        );
 
     }
 
@@ -225,7 +246,10 @@ class DocblockParser
         }
 
         if ($meta->getOn() && !in_array($location, $meta->getOn())) {
-            throw new \Exception("Found annotation in wrong location, got $location but expected one of " . implode(", ", $meta->getOn()));
+            throw new \Exception("Found annotation in wrong location, got $location but expected one of " . implode(", ",
+                                                                                                                    $meta->getOn(
+                                                                                                                    )
+            ));
         }
 
         if ($lexer->peek() === DocblockLexer::T_OPEN_PAREN) {
@@ -309,7 +333,9 @@ class DocblockParser
                         }
                         $actualParams[] = null;
                     } else {
-                        $actualParams[] = $this->_collapseAndCheckType($namedParams[$paramConfig->getName()], $paramConfig->getType());
+                        $actualParams[] = $this->_collapseAndCheckType($namedParams[$paramConfig->getName()],
+                                                                       $paramConfig->getType()
+                        );
                     }
                 }
             } else {
@@ -339,7 +365,9 @@ class DocblockParser
             }
         }
 
-        return array($class, $annotation);
+        return array($class,
+                     $annotation
+        );
     }
 
     protected function _collapseAndCheckType($param, $type)
@@ -387,7 +415,10 @@ class DocblockParser
 
         $result = array();
         if (!is_array($paramValue)) {
-            $paramValue = array(array($paramType, $paramValue));
+            $paramValue = array(array($paramType,
+                                      $paramValue
+                                )
+            );
         }
         foreach ($paramValue as $element) {
             $result[] = $this->_collapseAndCheckType($element, $elementType);

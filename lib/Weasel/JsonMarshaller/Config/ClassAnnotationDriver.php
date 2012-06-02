@@ -9,8 +9,14 @@ namespace Weasel\JsonMarshaller\Config;
 use Weasel\JsonMarshaller\Config\Annotations as Annotations;
 use Weasel\Annotation\AnnotationReader;
 
+/**
+ * Load the configuration for a given class from annotations
+ */
 class ClassAnnotationDriver
 {
+    /**
+     * The namespace the annotations live in. This is useful as various places require fully namespaced names.
+     */
     const _ANS = '\Weasel\JsonMarshaller\Config\Annotations\\';
 
     /**
@@ -24,7 +30,7 @@ class ClassAnnotationDriver
     protected $rClass;
 
     /**
-     * @var \Weasel\Annotation\AnnotationConfigurator
+     * @var \Weasel\Annotation\AnnotationConfigProvider
      */
     protected $configurator;
 
@@ -33,7 +39,11 @@ class ClassAnnotationDriver
      */
     protected $config;
 
-    public function __construct(\ReflectionClass $rClass, \Weasel\Annotation\AnnotationConfigurator $configurator)
+    /**
+     * @param \ReflectionClass $rClass A reflection for the class we're configuring
+     * @param \Weasel\Annotation\AnnotationConfigProvider $configurator An annotation configurator
+     */
+    public function __construct(\ReflectionClass $rClass, \Weasel\Annotation\AnnotationConfigProvider $configurator)
     {
         $this->configurator = $configurator;
         $this->annotationReader = new AnnotationReader($rClass, $configurator);
@@ -247,6 +257,11 @@ class ClassAnnotationDriver
         return $val;
     }
 
+    /**
+     * Find out what name we should use to referr to one of our subtypes.
+     * @param \ReflectionClass $rClass
+     * @return string
+     */
     protected function _getSubClassName(\ReflectionClass $rClass)
     {
         $subClassReader = new AnnotationReader($rClass, $this->configurator);
@@ -348,6 +363,8 @@ class ClassAnnotationDriver
     }
 
     /**
+     * For the given typeinfo, and sub type info, work out how we're going to be deserialized.
+     *
      * @param Annotations\JsonTypeInfo $typeInfo
      * @param Annotations\JsonSubTypes $subTypes
      * @throws \Exception
@@ -361,6 +378,9 @@ class ClassAnnotationDriver
         }
 
         $typeConfig = new Deserialization\TypeInfo();
+        /**
+         * Based on the Use value we should also choose the default property name
+         */
         switch ($typeInfo->getUse()) {
             case Annotations\JsonTypeInfo::$enumId['CLASS']:
                 $typeConfig->typeInfo = Deserialization\TypeInfo::TI_USE_CLASS;
@@ -385,6 +405,7 @@ class ClassAnnotationDriver
         }
 
         if ($typeInfo->getProperty() !== null) {
+            // If there is a property specified then we should use that rather than the default
             $typeConfig->typeInfoProperty = $typeInfo->getProperty();
         }
 
@@ -407,6 +428,7 @@ class ClassAnnotationDriver
         }
 
         if (isset($subTypes)) {
+            // Now we need to store a mapping from our discriminator values to the sub types
             foreach ($subTypes->getValue() as $type) {
                 switch ($typeConfig->typeInfo) {
                     case Deserialization\TypeInfo::TI_USE_CLASS:
@@ -419,6 +441,7 @@ class ClassAnnotationDriver
                     case Deserialization\TypeInfo::TI_USE_NAME:
                         $subName = $type->getName();
                         if (empty($subName)) {
+                            // We've got to find out if our sub class has a JsonTypeName annotation
                             $subName = $this->_getSubClassName(new \ReflectionClass($type->getValue()));
                         }
                         break;
@@ -435,6 +458,10 @@ class ClassAnnotationDriver
 
     }
 
+    /**
+     * Get the config for the current class
+     * @return ClassMarshaller
+     */
     public function getConfig()
     {
 
@@ -449,6 +476,7 @@ class ClassAnnotationDriver
         $this->config->serialization->include = $this->_getIncluderValue($includer);
 
         /**
+         * Work out what the class' "name" is, just in case inheritence is needed.
          * @var \Weasel\JsonMarshaller\Config\Annotations\JsonTypeName $typeNamer
          */
         $typeNamer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonTypeName');

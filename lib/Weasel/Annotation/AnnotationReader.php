@@ -41,9 +41,9 @@ class AnnotationReader
 
     /**
      * @param \ReflectionClass $class
-     * @param AnnotationConfigurator $annotations
+     * @param AnnotationConfigProvider $annotations
      */
-    public function __construct(\ReflectionClass $class, AnnotationConfigurator $annotations)
+    public function __construct(\ReflectionClass $class, AnnotationConfigProvider $annotations)
     {
         $this->class = $class;
         $this->parser = new DocblockParser($annotations);
@@ -140,7 +140,9 @@ class AnnotationReader
         $rMethod = $this->class->getMethod($method);
         $docblock = $rMethod->getDocComment();
         if ($docblock !== false) {
-            $this->methodAnnotations[$method] = $this->parser->parse($docblock, "method", $this->_getDeclaredNamespaces($rMethod));
+            $this->methodAnnotations[$method] = $this->parser->parse($docblock, "method",
+                                                                     $this->_getDeclaredNamespaces($rMethod)
+            );
         }
         return $this->methodAnnotations[$method];
 
@@ -182,7 +184,9 @@ class AnnotationReader
         $rProperty = $this->class->getProperty($property);
         $docblock = $rProperty->getDocComment();
         if ($docblock !== false) {
-            $this->propertyAnnotations[$property] = $this->parser->parse($docblock, "property", $this->_getDeclaredNamespaces($rProperty));
+            $this->propertyAnnotations[$property] = $this->parser->parse($docblock, "property",
+                                                                         $this->_getDeclaredNamespaces($rProperty)
+            );
         }
         return $this->propertyAnnotations[$property];
 

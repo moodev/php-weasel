@@ -20,7 +20,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $annotationReader = new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type'), new \Weasel\Annotation\AnnotationConfigurator());
 
         $expected = array(
-            '\Weasel\Annotation\Config\Annotations\Annotation' => array(new \Weasel\Annotation\Config\Annotations\Annotation(array("\Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes"), null)),
+            '\Weasel\Annotation\Config\Annotations\Annotation' => array(new \Weasel\Annotation\Config\Annotations\Annotation(array('\Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes'), null)),
         );
 
         $this->assertEquals($expected, $annotationReader->getClassAnnotations());
@@ -43,7 +43,10 @@ class TypeTest extends \PHPUnit_Framework_TestCase
             $found[$name] = $annotationReader->getPropertyAnnotations($name);
         }
 
-        $this->assertEquals(array("value"=>array(), "name"=>array()), $found);
+        $this->assertEquals(array("value" => array(),
+                                  "name" => array()
+                            ), $found
+        );
 
     }
 
@@ -66,16 +69,17 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-        array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
-            new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
-                array(
-                    new \Weasel\Annotation\Config\Annotations\Parameter("value", 'string', true),
-                    new \Weasel\Annotation\Config\Annotations\Parameter("name", 'string', false),
-                )
-            )
-        )),
-            "getValue" => array(),
-            "getName" => array(),
+                          array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
+                              new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
+                                  array(
+                                       new \Weasel\Annotation\Config\Annotations\Parameter("value", 'string', true),
+                                       new \Weasel\Annotation\Config\Annotations\Parameter("name", 'string', false),
+                                  )
+                              )
+                          )
+                          ),
+                          "getValue" => array(),
+                          "getName" => array(),
         );
 
         $this->assertEquals($expected, $found);
