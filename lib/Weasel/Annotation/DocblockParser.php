@@ -10,7 +10,7 @@ class DocblockParser
     protected $annotations;
 
     /**
-     * @var null|\PhpLogger\Logger
+     * @var null|\Logger\Logger
      */
     protected $logger;
 

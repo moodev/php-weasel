@@ -16,7 +16,7 @@ function autoLoad($name) {
     }
     $exploded = explode("\\", $name);
     $vendor = $exploded[0];
-    if ($vendor != "JsonMarshaller" && $vendor != "Annotation" && $vendor != "PhpLogger" && $vendor != "XmlMarshaller") {
+    if ($vendor != "JsonMarshaller" && $vendor != "Annotation" && $vendor != "Logger" && $vendor != "XmlMarshaller") {
         return;
     }
     $path = implode('/', $exploded);
