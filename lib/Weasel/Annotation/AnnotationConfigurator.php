@@ -94,7 +94,7 @@ class AnnotationConfigurator
                 if (!is_array($value)) {
                     throw new \Exception("Enum must be an array");
                 }
-                $metaConfig->addEnum($name, new Config\Enum($name, $value));
+                $metaConfig->addEnum(new Config\Enum($name, $value));
             }
 
         }
