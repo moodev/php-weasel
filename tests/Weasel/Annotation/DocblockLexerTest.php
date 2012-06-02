@@ -33,6 +33,7 @@ class DocblockLexerTest extends \PHPUnit_Framework_TestCase
      * @param $in
      * @param $expectedTypes
      * @dataProvider provideSimpleType
+     * @covers \Weasel\Annotation\DocblockLexer
      */
     public function testSimpleType($in, $expectedTypes)
     {

@@ -11,6 +11,9 @@ require_once(__DIR__ . '/../../../../../WeaselAutoloader.php');
 class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonProperty
+     */
     public function testParseClassAnnotations()
     {
 
@@ -26,6 +29,9 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonProperty
+     */
     public function testParsePropertyAnnotations()
     {
 
@@ -43,6 +49,9 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonProperty
+     */
     public function testParseMethodAnnotations()
     {
 
@@ -75,6 +84,9 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonProperty
+     */
     public function testCreate()
     {
         $test = new JsonProperty("foo", "bar");

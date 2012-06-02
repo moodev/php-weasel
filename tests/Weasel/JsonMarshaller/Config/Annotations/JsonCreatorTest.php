@@ -11,6 +11,9 @@ require_once(__DIR__ . '/../../../../../WeaselAutoloader.php');
 class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonCreator
+     */
     public function testParseClassAnnotations()
     {
 
@@ -24,6 +27,9 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonCreator
+     */
     public function testParsePropertyAnnotations()
     {
 
@@ -41,6 +47,9 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonCreator
+     */
     public function testParseMethodAnnotations()
     {
 
