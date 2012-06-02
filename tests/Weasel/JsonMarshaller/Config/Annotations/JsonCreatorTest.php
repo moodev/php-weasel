@@ -1,7 +1,7 @@
 <?php
 namespace PhpJsonMarshaller\Config\Annotations;
 
-require_once(__DIR__ . '/../../../../PhpMarshallerAutoloader.php');
+require_once(__DIR__ . '/../../../../WeaselAutoloader.php');
 
 class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 {
