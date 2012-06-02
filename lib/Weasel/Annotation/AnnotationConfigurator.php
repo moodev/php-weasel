@@ -17,12 +17,23 @@ class AnnotationConfigurator implements AnnotationConfigProvider
 
     protected $logger;
 
-    public function __construct(\Weasel\Logger\Logger $logger = null)
+    /**
+     * @var AnnotationReaderFactory
+     */
+    protected $readerFactory = null;
+
+    public function __construct(\Weasel\Logger\Logger $logger = null, AnnotationReaderFactory $readerFactory = null)
     {
         $this->logger = $logger;
         if (!isset(self::$builtIns)) {
             self::$builtIns = Config\BuiltInsProvider::getConfig();
         }
+        if (isset($readerFactory)) {
+            $this->readerFactory = $readerFactory;
+        } else {
+            $this->readerFactory = new AnnotationReaderFactory();
+        }
+
     }
 
     public function get($name)
@@ -32,7 +43,7 @@ class AnnotationConfigurator implements AnnotationConfigProvider
         }
 
         $class = new \ReflectionClass($name);
-        $reader = new AnnotationReader($class, $this);
+        $reader = $this->readerFactory->getReaderForClass($class, $this);
 
         /**
          * @var \Weasel\Annotation\Config\Annotations\Annotation $annotation
@@ -116,6 +127,16 @@ class AnnotationConfigurator implements AnnotationConfigProvider
     public function getLogger()
     {
         return $this->logger;
+    }
+
+    /**
+     * @param \Weasel\Annotation\AnnotationReaderFactory $readerFactory
+     * @return AnnotationConfigurator
+     */
+    public function setReaderFactory($readerFactory)
+    {
+        $this->readerFactory = $readerFactory;
+        return $this;
     }
 
 }

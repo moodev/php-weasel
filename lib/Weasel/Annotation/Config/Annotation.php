@@ -117,7 +117,7 @@ class Annotation
     }
 
     /**
-     * @param \Weasel\Annotation\Config\Param $creatorParams
+     * @param \Weasel\Annotation\Config\Param[] $creatorParams
      * @return Annotation
      */
     public function setCreatorParams($creatorParams)
