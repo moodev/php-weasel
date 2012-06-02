@@ -294,6 +294,9 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @covers \Weasel\Annotation\DocblockParser
+     */
     public function testMultiNestedArgs() {
         $mockConfigurator = new MockConfigurator();
         $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Multi', array('class'));
