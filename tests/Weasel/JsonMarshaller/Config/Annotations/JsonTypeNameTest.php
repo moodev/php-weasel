@@ -8,19 +8,19 @@ namespace Weasel\JsonMarshaller\Config\Annotations;
 
 require_once(__DIR__ . '/../../../../../WeaselAutoloader.php');
 
-class JsonCreatorTest extends \PHPUnit_Framework_TestCase
+class JsonTypeNameTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonCreator
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonTypeName
      */
     public function testParseClassAnnotations()
     {
 
-        $annotationReader = new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator'), new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader = new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonTypeName'), new \Weasel\Annotation\AnnotationConfigurator());
 
         $expected = array(
-            '\Weasel\Annotation\Config\Annotations\Annotation' => array(new \Weasel\Annotation\Config\Annotations\Annotation(array("method"), 1)),
+            '\Weasel\Annotation\Config\Annotations\Annotation' => array(new \Weasel\Annotation\Config\Annotations\Annotation(array("class"), null)),
         );
 
         $this->assertEquals($expected, $annotationReader->getClassAnnotations());
@@ -28,12 +28,12 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonCreator
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonTypeName
      */
     public function testParsePropertyAnnotations()
     {
 
-        $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator');
+        $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonTypeName');
         $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
 
 
@@ -43,17 +43,17 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
             $found[$name] = $annotationReader->getPropertyAnnotations($name);
         }
 
-        $this->assertEquals(array("params" => array()), $found);
+        $this->assertEquals(array("name"=>array()), $found);
 
     }
 
     /**
-     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonCreator
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonTypeName
      */
     public function testParseMethodAnnotations()
     {
 
-        $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator');
+        $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonTypeName');
         $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
 
         $found = array();
@@ -69,11 +69,11 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
         array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
             new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
                 array(
-                    new \Weasel\Annotation\Config\Annotations\Parameter("params", '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty[]', false),
+                    new \Weasel\Annotation\Config\Annotations\Parameter("name", 'string', true),
                 )
             )
         )),
-            "getParams" => array(),
+            "getName" => array(),
         );
 
         $this->assertEquals($expected, $found);
@@ -81,11 +81,11 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonCreator
+     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonTypeName
      */
     public function testCreate()
     {
-        $test = new JsonCreator(array());
-        $this->assertEmpty($test->getParams());
+        $test = new JsonTypeName("testName");
+        $this->assertEquals("testName", $test->getName());
     }
 }
