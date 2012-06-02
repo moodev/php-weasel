@@ -6,10 +6,10 @@ use Weasel\Annotation\AnnotationReader;
 
 class ClassAnnotationDriver
 {
-    const _ANS = '\JsonMarshaller\Config\Annotations\\';
+    const _ANS = '\Weasel\JsonMarshaller\Config\Annotations\\';
 
     /**
-     * @var \Annotation\AnnotationReader
+     * @var \Weasel\Annotation\AnnotationReader
      */
     protected $annotationReader;
 
@@ -19,7 +19,7 @@ class ClassAnnotationDriver
     protected $rClass;
 
     /**
-     * @var \Annotation\AnnotationConfigurator
+     * @var \Weasel\Annotation\AnnotationConfigurator
      */
     protected $configurator;
 
@@ -51,6 +51,11 @@ class ClassAnnotationDriver
         if (!isset($property)) {
             $property = lcfirst(substr($name, 3));
         }
+        /**
+         * @var Annotations\JsonTypeInfo $typeInfo
+         * @var Annotations\JsonSubTypes $subTypes
+         * @var Annotations\JsonInclude $includer
+         */
         $typeInfo = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonTypeInfo');
         $subTypes = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonSubTypes');
 
@@ -82,6 +87,10 @@ class ClassAnnotationDriver
             $property = lcfirst(substr($name, 3));
         }
 
+        /**
+         * @var Annotations\JsonTypeInfo $typeInfo
+         * @var Annotations\JsonSubTypes $subTypes
+         */
         $typeInfo = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonTypeInfo');
         $subTypes = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonSubTypes');
         if (isset($this->config->deserialization->properties[$property])) {
@@ -167,6 +176,10 @@ class ClassAnnotationDriver
             $propertyName = $name;
         }
 
+        /**
+         * @var Annotations\JsonTypeInfo $typeInfo
+         * @var Annotations\JsonSubTypes $subTypes
+         */
         $typeInfo = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonTypeInfo');
         $subTypes = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonSubTypes');
 
@@ -185,6 +198,9 @@ class ClassAnnotationDriver
             $getterConfig->property = $name;
             $getterConfig->type = $propertyConfig->getType();
 
+            /**
+             * @var Annotations\JsonInclude $includer
+             */
             $includer = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonInclude');
             $getterConfig->include = $this->_getIncluderValue($includer);
             $getterConfig->typeInfo = $this->_getSerializationTypeInfo($typeInfo, $subTypes);
@@ -431,6 +447,10 @@ class ClassAnnotationDriver
         }
         $this->config->deserialization->name = $name;
 
+        /**
+         * @var Annotations\JsonTypeInfo $typeInfo
+         * @var Annotations\JsonSubTypes $subTypes
+         */
         $typeInfo = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonTypeInfo');
         $subTypes = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonSubTypes');
         $this->config->deserialization->typeInfo = $this->_getDeserializationTypeInfo($typeInfo, $subTypes);

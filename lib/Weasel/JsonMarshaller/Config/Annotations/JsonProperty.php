@@ -10,7 +10,7 @@ use Weasel\Annotation\Annotations\Parameter;
  * The name sets the json field name to use for this property.
  * The type specifies the type to use.
  * Because PHP is not strongly typed we can only make best guesses about types if you do not provide type info!
- * @Annotation(on={"property", "method", "\JsonMarshaller\Config\Annotations\JsonCreator"})
+ * @Annotation(on={"property", "method", "\Weasel\JsonMarshaller\Config\Annotations\JsonCreator"})
  */
 class JsonProperty
 {

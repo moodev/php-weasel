@@ -10,7 +10,7 @@ class ClassAnnotationDriver
     const _ANS = '\XmlMarshaller\Config\Annotations\\';
 
     /**
-     * @var \Annotation\AnnotationReader
+     * @var \Weasel\Annotation\AnnotationReader
      */
     protected $annotationReader;
 
@@ -20,7 +20,7 @@ class ClassAnnotationDriver
     protected $rClass;
 
     /**
-     * @var \Annotation\AnnotationConfigurator
+     * @var \Weasel\Annotation\AnnotationConfigurator
      */
     protected $configurator;
 
@@ -216,7 +216,6 @@ class ClassAnnotationDriver
 
     protected function _configureProperty(\ReflectionProperty $property, $namespace) {
         $name = $property->getName();
-        $defaultName = $name;
 
         $directConfig = new Deserialization\DirectDeserialization();
         $directConfig->property = $name;

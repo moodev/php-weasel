@@ -5,7 +5,7 @@ class PhpParser
 {
 
     /**
-     * @var \Logger\Logger
+     * @var \Weasel\Logger\Logger
      */
     protected $logger;
 

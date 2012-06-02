@@ -10,7 +10,7 @@ class DocblockParser
     protected $annotations;
 
     /**
-     * @var null|\Logger\Logger
+     * @var \Weasel\Logger\Logger
      */
     protected $logger;
 

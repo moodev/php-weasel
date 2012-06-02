@@ -313,7 +313,6 @@ class XmlMapper
 
             // We return an array of the element(s) we've read.
             // This will be merged if necessary by whoever we return it to.
-            $result = array();
 
             if (empty($indexType)) {
                 // It's an array element, not a map.

@@ -5,7 +5,7 @@ use Weasel\Annotation\Annotations\Annotation;
 use Weasel\Annotation\Annotations\AnnotationCreator;
 
 /**
- * @Annotation(on="\Annotation\Annotations\AnnotationCreator")
+ * @Annotation(on="\Weasel\Annotation\Annotations\AnnotationCreator")
  */
 class Parameter
 {

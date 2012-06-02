@@ -1,7 +1,7 @@
 <?php
 namespace Weasel\Annotation\Tests;
 
-require_once(__DIR__ . '/../../WeaselAutoloader.php');
+require_once(__DIR__ . '/../../../WeaselAutoloader.php');
 
 use Weasel\Annotation\DocblockParser;
 use Weasel\Annotation\AnnotationConfigurator;
@@ -39,9 +39,9 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
     public function testSimpleClassAnnotation($value, $type) {
 
         $mockConfigurator = new MockConfigurator();
-        $mockConfigurator->types['\Annotation\Tests\Gloop'] =
+        $mockConfigurator->types['\Weasel\Annotation\Tests\Gloop'] =
             array(
-                'class' => '\Annotation\Tests\Gloop',
+                'class' => '\Weasel\Annotation\Tests\Gloop',
                 'on' => array('class'),
                 'properties' => array(
                     'foo' => $type
@@ -57,22 +57,22 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
               * @Gloop(foo='.$valueQuoted.')
               */',
             "class",
-            array('Gloop' => 'Annotation\Tests\Gloop')
+            array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
         );
 
         $gloop = new Gloop();
         $gloop->foo = $value;
 
-        $this->assertEquals(array('\Annotation\Tests\Gloop' => array($gloop)), $parsed);
+        $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop)), $parsed);
 
     }
 
     public function testArrayClassAnnotation() {
 
         $mockConfigurator = new MockConfigurator();
-        $mockConfigurator->types['\Annotation\Tests\Gloop'] =
+        $mockConfigurator->types['\Weasel\Annotation\Tests\Gloop'] =
             array(
-                'class' => '\Annotation\Tests\Gloop',
+                'class' => '\Weasel\Annotation\Tests\Gloop',
                 'on' => array('class'),
                 'properties' => array(
                     'foo' => 'string[][]'
@@ -86,22 +86,22 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
               * @Gloop(foo={{"ab", "cd"}, {"ef"}, {}})
               */',
             "class",
-            array('Gloop' => 'Annotation\Tests\Gloop')
+            array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
         );
 
         $gloop = new Gloop();
         $gloop->foo = array(array("ab", "cd"), array("ef"), array());
 
-        $this->assertEquals(array('\Annotation\Tests\Gloop' => array($gloop)), $parsed);
+        $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop)), $parsed);
 
     }
 
     public function testArraySingleElementClassAnnotation() {
 
         $mockConfigurator = new MockConfigurator();
-        $mockConfigurator->types['\Annotation\Tests\Gloop'] =
+        $mockConfigurator->types['\Weasel\Annotation\Tests\Gloop'] =
             array(
-                'class' => '\Annotation\Tests\Gloop',
+                'class' => '\Weasel\Annotation\Tests\Gloop',
                 'on' => array('class'),
                 'properties' => array(
                     'foo' => 'string[]'
@@ -115,13 +115,13 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
               * @Gloop(foo="bar")
               */',
             "class",
-            array('Gloop' => 'Annotation\Tests\Gloop')
+            array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
         );
 
         $gloop = new Gloop();
         $gloop->foo = array("bar");
 
-        $this->assertEquals(array('\Annotation\Tests\Gloop' => array($gloop)), $parsed);
+        $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop)), $parsed);
 
     }
 
@@ -133,18 +133,18 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
     public function testNestedClassAnnotation($value, $type) {
 
         $mockConfigurator = new MockConfigurator();
-        $mockConfigurator->types['\Annotation\Tests\Gloop'] =
+        $mockConfigurator->types['\Weasel\Annotation\Tests\Gloop'] =
             array(
-                'class' => '\Annotation\Tests\Gloop',
+                'class' => '\Weasel\Annotation\Tests\Gloop',
                 'on' => array('class'),
                 'properties' => array(
-                    'foo' => '\Annotation\Tests\Glarp'
+                    'foo' => '\Weasel\Annotation\Tests\Glarp'
                 )
         );
-        $mockConfigurator->types['\Annotation\Tests\Glarp'] =
+        $mockConfigurator->types['\Weasel\Annotation\Tests\Glarp'] =
             array(
-                'class' => '\Annotation\Tests\Glarp',
-                'on' => array('\Annotation\Tests\Gloop'),
+                'class' => '\Weasel\Annotation\Tests\Glarp',
+                'on' => array('\Weasel\Annotation\Tests\Gloop'),
                 'properties' => array(
                     'bar' => $type
                 )
@@ -160,8 +160,8 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
               */',
             "class",
             array(
-                'Gloop' => 'Annotation\Tests\Gloop',
-                'Glarp' => 'Annotation\Tests\Glarp'
+                'Gloop' => 'Weasel\Annotation\Tests\Gloop',
+                'Glarp' => 'Weasel\Annotation\Tests\Glarp'
             )
 
         );
@@ -170,7 +170,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $gloop->foo = new Glarp();
         $gloop->foo->bar = $value;
 
-        $this->assertEquals(array('\Annotation\Tests\Gloop' => array($gloop)), $parsed);
+        $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop)), $parsed);
 
     }
 
@@ -182,9 +182,9 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
     public function testSimpleClassAnnotationCreator($value, $type) {
 
         $mockConfigurator = new MockConfigurator();
-        $mockConfigurator->types['\Annotation\Tests\Gloop'] =
+        $mockConfigurator->types['\Weasel\Annotation\Tests\Gloop'] =
             array(
-                'class' => '\Annotation\Tests\Gloop',
+                'class' => '\Weasel\Annotation\Tests\Gloop',
                 'on' => array('class'),
                 'creatorMethod' => '__construct',
                 'creatorParams' => array(
@@ -211,7 +211,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
               * @Gloop(baz='.$valueQuoted.')
               */',
             "class",
-            array('Gloop' => 'Annotation\Tests\Gloop')
+            array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
         );
 
         $expected = array();
@@ -232,13 +232,12 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $gloop->fromcb = $value;
         $expected[] = $gloop;
 
-        $this->assertEquals(array('\Annotation\Tests\Gloop' => $expected), $parsed);
+        $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => $expected), $parsed);
 
     }
 
     /**
-     * @param $value
-     * @param $type
+     * @return void
      */
     public function testUnknownAnnotations() {
 
@@ -264,9 +263,9 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
     public function testEnumAnnotation() {
 
         $mockConfigurator = new MockConfigurator();
-        $mockConfigurator->types['\Annotation\Tests\Gloop'] =
+        $mockConfigurator->types['\Weasel\Annotation\Tests\Gloop'] =
             array(
-                'class' => '\Annotation\Tests\Gloop',
+                'class' => '\Weasel\Annotation\Tests\Gloop',
                 'on' => array('class'),
                 'properties' => array(
                     'foo' => 'integer'
@@ -287,22 +286,22 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
               * @Gloop(foo=Gloop.Snorks.BAR)
               */',
             "class",
-            array('Gloop' => 'Annotation\Tests\Gloop')
+            array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
         );
 
         $gloop = new Gloop();
         $gloop->foo = 2;
 
-        $this->assertEquals(array('\Annotation\Tests\Gloop' => array($gloop)), $parsed);
+        $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop)), $parsed);
 
     }
 
     public function testEnumAnnotationNoName() {
 
         $mockConfigurator = new MockConfigurator();
-        $mockConfigurator->types['\Annotation\Tests\Gloop'] =
+        $mockConfigurator->types['\Weasel\Annotation\Tests\Gloop'] =
             array(
-                'class' => '\Annotation\Tests\Gloop',
+                'class' => '\Weasel\Annotation\Tests\Gloop',
                 'on' => array('class'),
                 'creatorMethod' => '__construct',
                 'creatorParams' => array(
@@ -331,13 +330,13 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
               * @Gloop(Gloop.Snorks.BAR)
               */',
             "class",
-            array('Gloop' => 'Annotation\Tests\Gloop')
+            array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
         );
 
         $gloop = new Gloop();
         $gloop->fromca = 2;
 
-        $this->assertEquals(array('\Annotation\Tests\Gloop' => array($gloop)), $parsed);
+        $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop)), $parsed);
 
     }
 }
@@ -378,8 +377,8 @@ class MockConfigurator extends AnnotationConfigurator{
     }
 
     public function getLogger() {
-        $logger = new \PhpLogger\FileLogger();
-        $logger->setLogLevel(\PhpLogger\Logger::LOG_LEVEL_DEBUG);
+        $logger = new \Weasel\Logger\FileLogger();
+        $logger->setLogLevel(\Weasel\Logger\Logger::LOG_LEVEL_DEBUG);
     }
 
 }

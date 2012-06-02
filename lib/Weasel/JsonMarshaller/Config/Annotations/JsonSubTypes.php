@@ -19,7 +19,7 @@ class JsonSubTypes
 
     /**
      * @param \Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type[] $value
-     * @AnnotationCreator(@Parameter(name="value", type="\JsonMarshaller\Config\Annotations\JsonSubTypes\Type[]", required=true))
+     * @AnnotationCreator(@Parameter(name="value", type="\Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type[]", required=true))
      */
     public function __construct($value)
     {

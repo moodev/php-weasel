@@ -6,8 +6,8 @@ class AnnotationConfigurator
 {
 
      protected $builtIn = array(
-        '\Annotation\Annotations\Annotation' => array(
-            'class' => '\Annotation\Annotations\Annotation',
+        '\Weasel\Annotation\Annotations\Annotation' => array(
+            'class' => '\Weasel\Annotation\Annotations\Annotation',
             'on' => array('class'),
             'max' => 1,
             'creatorMethod' => '__construct',
@@ -24,22 +24,22 @@ class AnnotationConfigurator
                 ),
             ),
         ),
-        '\Annotation\Annotations\AnnotationCreator' => array(
-            'class' => '\Annotation\Annotations\AnnotationCreator',
+        '\Weasel\Annotation\Annotations\AnnotationCreator' => array(
+            'class' => '\Weasel\Annotation\Annotations\AnnotationCreator',
             'on' => array('method'),
             'max' => 1,
             'creatorMethod' => '__construct',
             'creatorParams' => array(
                 array(
                     'name' => 'params',
-                    'type' => '\Annotation\Annotations\Parameter[]',
+                    'type' => '\Weasel\Annotation\Annotations\Parameter[]',
                     'required' => false
                 ),
             ),
         ),
-        '\Annotation\Annotations\Parameter' => array(
-            'class' => '\Annotation\Annotations\Parameter',
-            'on' => array('\Annotation\Annotations\AnnotationCreator'),
+        '\Weasel\Annotation\Annotations\Parameter' => array(
+            'class' => '\Weasel\Annotation\Annotations\Parameter',
+            'on' => array('\Weasel\Annotation\Annotations\AnnotationCreator'),
             'max' => null,
             'creatorMethod' => '__construct',
             'creatorParams' => array(
@@ -65,7 +65,7 @@ class AnnotationConfigurator
 
     protected $logger;
 
-    public function __construct(\PhpLogger\Logger $logger = null) {
+    public function __construct(\Weasel\Logger\Logger $logger = null) {
         $this->logger = $logger;
     }
 
@@ -79,9 +79,9 @@ class AnnotationConfigurator
         $reader = new AnnotationReader($class, $this);
 
         /**
-         * @var \Annotation\Annotations\Annotation $annotation
+         * @var \Weasel\Annotation\Annotations\Annotation $annotation
          */
-        $annotation = $reader->getSingleClassAnnotation('\Annotation\Annotations\Annotation');
+        $annotation = $reader->getSingleClassAnnotation('\Weasel\Annotation\Annotations\Annotation');
         if (!isset($annotation)) {
             throw new \Exception("Did not find an @Annotation annotation on $name");
         }
@@ -94,9 +94,9 @@ class AnnotationConfigurator
         foreach ($class->getMethods() as $method) {
             /**
              * @var \ReflectionMethod $method
-             * @var \Annotation\Annotations\AnnotationCreator $creator
+             * @var \Weasel\Annotation\Annotations\AnnotationCreator $creator
              */
-            $creator = $reader->getSingleMethodAnnotation($method->getName(), '\Annotation\Annotations\AnnotationCreator');
+            $creator = $reader->getSingleMethodAnnotation($method->getName(), '\Weasel\Annotation\Annotations\AnnotationCreator');
             if (isset($creator)) {
                 $metaConfig['creatorMethod'] = $method->getName();
                 $creatorArgs = $method->getParameters();
@@ -114,8 +114,8 @@ class AnnotationConfigurator
                     $creatorParam['type'] = $param->getType();
                     $creatorParam['required'] = $param->getRequired();
                     $creatorParams[] = $creatorParam;
+                    $i++;
                 }
-                $i++;
                 $metaConfig['creatorParams'] = $creatorParams;
 
             }
@@ -125,9 +125,9 @@ class AnnotationConfigurator
         foreach ($class->getProperties() as $property) {
             /**
              * @var \ReflectionProperty $property
-             * @var \Annotation\Annotations\Property $annotProperty
+             * @var \Weasel\Annotation\Annotations\Property $annotProperty
              */
-            $annotProperty = $reader->getSinglePropertyAnnotation($property->getName(), '\Annotation\Annotations\Property');
+            $annotProperty = $reader->getSinglePropertyAnnotation($property->getName(), '\Weasel\Annotation\Annotations\Property');
 
             if (isset($annotProperty)) {
                 $propertyConfig = array();
@@ -136,9 +136,9 @@ class AnnotationConfigurator
             }
 
             /**
-             * @var \Annotation\Annotations\Enum $annotEnum
+             * @var \Weasel\Annotation\Annotations\Enum $annotEnum
              */
-            $annotEnum = $reader->getSinglePropertyAnnotation($property->getName(), '\Annotation\Annotations\Enum');
+            $annotEnum = $reader->getSinglePropertyAnnotation($property->getName(), '\Weasel\Annotation\Annotations\Enum');
 
             if (isset($annotEnum)) {
                 if (!$property->isStatic()) {

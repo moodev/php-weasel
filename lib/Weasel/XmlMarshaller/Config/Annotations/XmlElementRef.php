@@ -6,7 +6,7 @@ use Weasel\Annotation\Annotations\AnnotationCreator;
 use Weasel\Annotation\Annotations\Parameter;
 
 /**
- * @Annotation(on={"property", "method", "\XmlMarshaller\Config\Annotations\XmlElementRefs"})
+ * @Annotation(on={"property", "method", "\Weasel\XmlMarshaller\Config\Annotations\XmlElementRefs"})
  */
 class XmlElementRef
 {

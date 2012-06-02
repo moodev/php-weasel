@@ -1,18 +1,18 @@
 <?php
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
-require_once(__DIR__ . '/../../../../WeaselAutoloader.php');
+require_once(__DIR__ . '/../../../../../WeaselAutoloader.php');
 
 class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testParseClassAnnotations() {
 
-        $annotationReader = new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\JsonMarshaller\Config\Annotations\JsonProperty'), new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader = new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonProperty'), new \Weasel\Annotation\AnnotationConfigurator());
 
         $expected = array(
-            '\Annotation\Annotations\Annotation' => array(
-                new \Weasel\Annotation\Annotations\Annotation(array("property", "method", '\JsonMarshaller\Config\Annotations\JsonCreator'), null)
+            '\Weasel\Annotation\Annotations\Annotation' => array(
+                new \Weasel\Annotation\Annotations\Annotation(array("property", "method", '\Weasel\JsonMarshaller\Config\Annotations\JsonCreator'), null)
             ),
         );
 
@@ -22,7 +22,7 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     public function testParsePropertyAnnotations() {
 
-        $rClass = new \ReflectionClass('\JsonMarshaller\Config\Annotations\JsonProperty');
+        $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonProperty');
         $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
 
 
@@ -38,7 +38,7 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
 
     public function testParseMethodAnnotations() {
 
-        $rClass = new \ReflectionClass('\JsonMarshaller\Config\Annotations\JsonProperty');
+        $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonProperty');
         $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
 
         $found = array();
@@ -51,7 +51,7 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-            array('\Annotation\Annotations\AnnotationCreator' => array(
+            array('\Weasel\Annotation\Annotations\AnnotationCreator' => array(
                 new \Weasel\Annotation\Annotations\AnnotationCreator(
                     array(
                         new \Weasel\Annotation\Annotations\Parameter("name", 'string', false),

@@ -1,7 +1,7 @@
 <?php
 namespace Weasel\Annotation\Tests;
 
-require_once(__DIR__ . '/../../WeaselAutoloader.php');
+require_once(__DIR__ . '/../../../WeaselAutoloader.php');
 
 use Weasel\Annotation\DocblockLexer;
 

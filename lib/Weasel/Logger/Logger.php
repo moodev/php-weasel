@@ -1,5 +1,5 @@
 <?php
-namespace PhpLogger;
+namespace Weasel\Logger;
 /**
  * @package MooPhp
  * @author Jonathan Oddy <jonathan at woaf.net>

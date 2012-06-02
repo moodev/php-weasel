@@ -7,7 +7,7 @@ use Weasel\Annotation\Annotations\Parameter;
 
 /**
  * A subtype
- * @Annotation(on={"\JsonMarshaller\Config\Annotations\JsonSubTypes"})
+ * @Annotation(on={"\Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes"})
  */
 class Type
 {

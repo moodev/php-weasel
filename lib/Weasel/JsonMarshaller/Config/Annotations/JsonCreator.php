@@ -18,7 +18,7 @@ class JsonCreator
 
     /**
      * @param null|\Weasel\JsonMarshaller\Config\Annotations\JsonProperty[] params
-     * @AnnotationCreator(@Parameter(name="params", type="\JsonMarshaller\Config\Annotations\JsonProperty[]", required=false))
+     * @AnnotationCreator(@Parameter(name="params", type="\Weasel\JsonMarshaller\Config\Annotations\JsonProperty[]", required=false))
      */
     public function __construct(array $params) {
         $this->params = isset($params) ? $params : array();
