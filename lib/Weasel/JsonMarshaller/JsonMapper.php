@@ -27,16 +27,16 @@ class JsonMapper
     }
 
 
-    public function writeString($object)
+    public function writeString($object, $class = null)
     {
-
-        return json_encode($this->_encodeObject($object), JSON_FORCE_OBJECT);
+        if (!isset($class)) {
+            $class = get_class($object);
+        }
+        return json_encode($this->_encodeObject($object, $class), JSON_FORCE_OBJECT);
     }
 
-    protected function _encodeObject($object, $typeInfo = null)
+    protected function _encodeObject($object, $class = null, $typeInfo = null)
     {
-        $class = get_class($object);
-
         $classconfig = $this->configProvider->getConfig($class);
         $config = $classconfig->serialization;
 
@@ -145,7 +145,8 @@ class JsonMapper
     }
 
 
-    protected function _instantiateClassFromPropertyCreator($array, $class, Config\Deserialization\PropertyCreator $creator)
+    protected function _instantiateClassFromPropertyCreator($array, $class,
+                                                            Config\Deserialization\PropertyCreator $creator)
     {
         $args = array();
         foreach ($creator->params as $param) {
@@ -337,8 +338,9 @@ class JsonMapper
                     return (float)$value;
                 default:
                     if (!is_array($value)) {
-                        throw new \Exception("Expected array but found something else (or type $type is bad) got: " . gettype($value
-                        ));
+                        throw new \Exception(
+                            "Expected array but found something else (or type $type is bad) got: " . gettype($value
+                            ));
                     }
                     return $this->_decodeClass($value, $type);
             }
@@ -405,7 +407,7 @@ class JsonMapper
                     if (!is_object($value)) {
                         throw new \Exception("Expected object but found something else (or type $type is bad)");
                     }
-                    return $this->_encodeObject($value, $typeInfo);
+                    return $this->_encodeObject($value, $type, $typeInfo);
             }
         }
 

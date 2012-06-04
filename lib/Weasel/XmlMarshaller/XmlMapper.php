@@ -51,7 +51,9 @@ class XmlMapper
         if (!empty($deConfig->subClasses)) {
             if (!empty($deConfig->discriminator)) {
                 if (substr($deConfig->discriminator, 0, 1) !== '@') {
-                    throw new \Exception("Unsupported discriminator, currently only attributes (denoted with @) are supported. Found: " . $deConfig->discriminator);
+                    throw new \Exception(
+                        "Unsupported discriminator, currently only attributes (denoted with @) are supported. Found: " .
+                            $deConfig->discriminator);
                 }
                 $discrimName = substr($deConfig->discriminator, 1);
                 $attrNS = ($xml->namespaceURI) ? $xml->namespaceURI . ':' : '';
@@ -107,7 +109,8 @@ class XmlMapper
 
         if ($xml->hasAttributes) {
             while ($xml->moveToNextAttribute()) {
-                $attrNS = (($xml->namespaceURI) ? $xml->namespaceURI . ':' : (isset($namespace) ? $namespace . ':' : ''));
+                $attrNS =
+                    (($xml->namespaceURI) ? $xml->namespaceURI . ':' : (isset($namespace) ? $namespace . ':' : ''));
                 $fullName = $attrNS . $xml->name;
                 if ($xml->name === 'xmlns') {
                     continue;
@@ -138,7 +141,10 @@ class XmlMapper
                         $seenElements[] = $propType->id;
                         if (is_array($val)) {
                             if (!isset($knownValues[$propType->id])) {
-                                $knownValues[$propType->id] = array($propType, array());
+                                $knownValues[$propType->id] =
+                                    array($propType,
+                                          array()
+                                    );
                             }
                             $knownValues[$propType->id][1] = array_merge($knownValues[$propType->id][1], $val);
                         } else {
@@ -162,7 +168,8 @@ class XmlMapper
         $notSeenElements = array_diff($deConfig->requiredElements, $seenElements);
         if (!empty($notSeenAtts) || !empty($notSeenElements)) {
             // TODO fix.
-            throw new \Exception("Missing required elements: " . implode(', ', $notSeenElements) . " and attributes: " . implode(',', $notSeenAtts) . "on $class");
+            throw new \Exception("Missing required elements: " . implode(', ', $notSeenElements) . " and attributes: " .
+                                     implode(',', $notSeenAtts) . "on $class");
         }
 
         foreach ($knownValues as $typeval) {
@@ -214,7 +221,9 @@ class XmlMapper
                         $type = $elementConfig->property->type;
                     }
                     if (empty($type)) {
-                        throw new \Exception("Unable to resolve wrapped type for " . $wrapperConfig->name . " base type " . $wrapperConfig->wraps->property->type . " looking for " . $fullName);
+                        throw new \Exception(
+                            "Unable to resolve wrapped type for " . $wrapperConfig->name . " base type " .
+                                $wrapperConfig->wraps->property->type . " looking for " . $fullName);
                     }
                     $collection[] = $this->_readElementAsType($xml, $type);
                     break;
@@ -230,7 +239,9 @@ class XmlMapper
             }
         } while ($xml->nodeType != \XMLReader::END_ELEMENT);
 
-        return array($elementConfig->property, $collection);
+        return array($elementConfig->property,
+                     $collection
+        );
     }
 
     /**
@@ -292,7 +303,9 @@ class XmlMapper
             throw new \Exception("Unknown element found in {$deConfig->name}: {$fullName}");
         }
 
-        return array($element->property, $this->_readElementAsType($xml, $type));
+        return array($element->property,
+                     $this->_readElementAsType($xml, $type)
+        );
     }
 
     /**
@@ -399,7 +412,7 @@ class XmlMapper
         return $this->_decodeSimpleValue($xml->value, $config->property->type);
     }
 
-    public function writeString($object)
+    public function writeString($object, $class = null)
     {
         throw new \Exception("Not implemented yet");
     }
