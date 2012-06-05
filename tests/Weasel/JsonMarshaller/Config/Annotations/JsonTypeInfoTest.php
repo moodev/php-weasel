@@ -6,7 +6,7 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
-require_once(__DIR__ . '/../../../../../WeaselAutoloader.php');
+require_once(__DIR__ . '/../../../../../lib/WeaselAutoloader.php');
 
 class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +17,8 @@ class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
     public function testParseClassAnnotations()
     {
 
-        $annotationReader = new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonTypeInfo'), new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader =
+            new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonTypeInfo'), new \Weasel\Annotation\AnnotationConfigurator());
 
         $expected = array(
             '\Weasel\Annotation\Config\Annotations\Annotation' => array(new \Weasel\Annotation\Config\Annotations\Annotation(array("class",
@@ -38,7 +39,8 @@ class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
     {
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonTypeInfo');
-        $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader =
+            new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
 
 
         $found = array();
@@ -69,7 +71,8 @@ class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
     {
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonTypeInfo');
-        $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader =
+            new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
 
         $found = array();
         foreach ($rClass->getMethods() as $method) {
@@ -110,7 +113,8 @@ class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreate()
     {
-        $test = new JsonTypeInfo(JsonTypeInfo::$enumAs["PROPERTY"], JsonTypeInfo::$enumId["NAME"], "testProp", true, "FooBar");
+        $test =
+            new JsonTypeInfo(JsonTypeInfo::$enumAs["PROPERTY"], JsonTypeInfo::$enumId["NAME"], "testProp", true, "FooBar");
         $this->assertEquals(JsonTypeInfo::$enumAs["PROPERTY"], $test->getUse());
         $this->assertEquals(JsonTypeInfo::$enumId["NAME"], $test->getInclude());
         $this->assertEquals("testProp", $test->getProperty());

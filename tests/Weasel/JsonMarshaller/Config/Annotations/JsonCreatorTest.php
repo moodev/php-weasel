@@ -6,7 +6,7 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
-require_once(__DIR__ . '/../../../../../WeaselAutoloader.php');
+require_once(__DIR__ . '/../../../../../lib/WeaselAutoloader.php');
 
 class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +17,8 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
     public function testParseClassAnnotations()
     {
 
-        $annotationReader = new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator'), new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader =
+            new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator'), new \Weasel\Annotation\AnnotationConfigurator());
 
         $expected = array(
             '\Weasel\Annotation\Config\Annotations\Annotation' => array(new \Weasel\Annotation\Config\Annotations\Annotation(array("method"), 1)),
@@ -34,7 +35,8 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
     {
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator');
-        $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader =
+            new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
 
 
         $found = array();
@@ -54,7 +56,8 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
     {
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator');
-        $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader =
+            new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
 
         $found = array();
         foreach ($rClass->getMethods() as $method) {
@@ -66,14 +69,15 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-        array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
-            new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
-                array(
-                    new \Weasel\Annotation\Config\Annotations\Parameter("params", '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty[]', false),
-                )
-            )
-        )),
-            "getParams" => array(),
+                          array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
+                              new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
+                                  array(
+                                       new \Weasel\Annotation\Config\Annotations\Parameter("params", '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty[]', false),
+                                  )
+                              )
+                          )
+                          ),
+                          "getParams" => array(),
         );
 
         $this->assertEquals($expected, $found);

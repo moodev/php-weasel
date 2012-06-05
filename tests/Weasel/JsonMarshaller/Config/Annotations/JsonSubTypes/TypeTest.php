@@ -6,7 +6,7 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes;
 
-require_once(__DIR__ . '/../../../../../../WeaselAutoloader.php');
+require_once(__DIR__ . '/../../../../../../lib/WeaselAutoloader.php');
 
 class TypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +17,8 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     public function testParseClassAnnotations()
     {
 
-        $annotationReader = new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type'), new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader =
+            new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type'), new \Weasel\Annotation\AnnotationConfigurator());
 
         $expected = array(
             '\Weasel\Annotation\Config\Annotations\Annotation' => array(new \Weasel\Annotation\Config\Annotations\Annotation(array('\Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes'), null)),
@@ -34,7 +35,8 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     {
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type');
-        $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader =
+            new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
 
 
         $found = array();
@@ -57,7 +59,8 @@ class TypeTest extends \PHPUnit_Framework_TestCase
     {
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type');
-        $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader =
+            new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
 
         $found = array();
         foreach ($rClass->getMethods() as $method) {

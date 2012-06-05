@@ -27,7 +27,7 @@ function autoLoad($name)
     }
     $path = implode('/', $exploded);
     /** @noinspection PhpIncludeInspection */
-    include(__DIR__ . '/lib/' . $path . '.php');
+    include(__DIR__ . '/' . $path . '.php');
     return;
 }
 

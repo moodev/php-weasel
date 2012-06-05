@@ -6,7 +6,7 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
-require_once(__DIR__ . '/../../../../../WeaselAutoloader.php');
+require_once(__DIR__ . '/../../../../../lib/WeaselAutoloader.php');
 
 class JsonIgnorePropertiesTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +17,8 @@ class JsonIgnorePropertiesTest extends \PHPUnit_Framework_TestCase
     public function testParseClassAnnotations()
     {
 
-        $annotationReader = new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonIgnoreProperties'), new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader =
+            new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonIgnoreProperties'), new \Weasel\Annotation\AnnotationConfigurator());
 
         $expected = array(
             '\Weasel\Annotation\Config\Annotations\Annotation' => array(new \Weasel\Annotation\Config\Annotations\Annotation(array("class"), null)),
@@ -34,7 +35,8 @@ class JsonIgnorePropertiesTest extends \PHPUnit_Framework_TestCase
     {
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonIgnoreProperties');
-        $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader =
+            new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
 
 
         $found = array();
@@ -43,7 +45,10 @@ class JsonIgnorePropertiesTest extends \PHPUnit_Framework_TestCase
             $found[$name] = $annotationReader->getPropertyAnnotations($name);
         }
 
-        $this->assertEquals(array("names" => array(), "ignoreUnknown" => array()), $found);
+        $this->assertEquals(array("names" => array(),
+                                  "ignoreUnknown" => array()
+                            ), $found
+        );
 
     }
 
@@ -54,7 +59,8 @@ class JsonIgnorePropertiesTest extends \PHPUnit_Framework_TestCase
     {
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonIgnoreProperties');
-        $annotationReader = new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
+        $annotationReader =
+            new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
 
         $found = array();
         foreach ($rClass->getMethods() as $method) {
@@ -66,16 +72,17 @@ class JsonIgnorePropertiesTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-        array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
-            new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
-                array(
-                    new \Weasel\Annotation\Config\Annotations\Parameter("names", 'string[]', false),
-                    new \Weasel\Annotation\Config\Annotations\Parameter("ignoreUnknown", 'boolean', false),
-                )
-            )
-        )),
-            "getNames" => array(),
-            "getIgnoreUnknown" => array(),
+                          array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
+                              new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
+                                  array(
+                                       new \Weasel\Annotation\Config\Annotations\Parameter("names", 'string[]', false),
+                                       new \Weasel\Annotation\Config\Annotations\Parameter("ignoreUnknown", 'boolean', false),
+                                  )
+                              )
+                          )
+                          ),
+                          "getNames" => array(),
+                          "getIgnoreUnknown" => array(),
         );
 
         $this->assertEquals($expected, $found);
