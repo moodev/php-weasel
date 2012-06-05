@@ -36,7 +36,8 @@ class BuiltInsProvider
         );
         self::$builtIns->addAnnotation($annotation);
 
-        $annotation = new Annotation('\Weasel\Annotation\Config\Annotations\Parameter', array('\Weasel\Annotation\Config\Annotations\AnnotationCreator'), null);
+        $annotation =
+            new Annotation('\Weasel\Annotation\Config\Annotations\Parameter', array('\Weasel\Annotation\Config\Annotations\AnnotationCreator'), null);
         $annotation->setCreatorMethod('__construct');
         $annotation->addCreatorParam(
             new Param('name', 'string', false)

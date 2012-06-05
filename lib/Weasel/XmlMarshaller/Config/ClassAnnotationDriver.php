@@ -85,7 +85,8 @@ class ClassAnnotationDriver
         $refsConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'XmlElementRefs');
 
         if (isset($refsConfig)) {
-            $element = $this->_configureElementRefsDeserialization($refsConfig, $setterConfig, $defaultName, $namespace);
+            $element =
+                $this->_configureElementRefsDeserialization($refsConfig, $setterConfig, $defaultName, $namespace);
         }
 
         /**
@@ -122,7 +123,9 @@ class ClassAnnotationDriver
 
     }
 
-    protected function _configureElementRefDeserialization(Annotations\XmlElementRef $annot, Config\Deserialization\PropertyDeserialization $prop, $defaultName, $defaultNamespace)
+    protected function _configureElementRefDeserialization(Annotations\XmlElementRef $annot,
+                                                           Config\Deserialization\PropertyDeserialization $prop,
+                                                           $defaultName, $defaultNamespace)
     {
         $elementConfig = new Config\Deserialization\ElementDeserialization();
         $prop->type = $annot->getType();
@@ -133,7 +136,9 @@ class ClassAnnotationDriver
         return $elementConfig;
     }
 
-    protected function _configureElementRefsDeserialization(Annotations\XmlElementRefs $annot, Config\Deserialization\PropertyDeserialization $prop, $defaultName, $defaultNamespace)
+    protected function _configureElementRefsDeserialization(Annotations\XmlElementRefs $annot,
+                                                            Config\Deserialization\PropertyDeserialization $prop,
+                                                            $defaultName, $defaultNamespace)
     {
         $elementConfig = new Config\Deserialization\ElementDeserialization();
         $prop->type = $annot->getType();
@@ -159,7 +164,9 @@ class ClassAnnotationDriver
         return $elementConfig;
     }
 
-    protected function _configureElementDeserialization(Annotations\XmlElement $annot, Config\Deserialization\PropertyDeserialization $prop, $defaultName, $defaultNamespace)
+    protected function _configureElementDeserialization(Annotations\XmlElement $annot,
+                                                        Config\Deserialization\PropertyDeserialization $prop,
+                                                        $defaultName, $defaultNamespace)
     {
         $elementConfig = new Config\Deserialization\ElementDeserialization();
         $prop->type = $annot->getType();
@@ -186,7 +193,9 @@ class ClassAnnotationDriver
         return $elementConfig;
     }
 
-    protected function _configureAttributeDeserialization(Annotations\XmlAttribute $annot, Config\Deserialization\PropertyDeserialization $prop, $defaultName, $defaultNamespace)
+    protected function _configureAttributeDeserialization(Annotations\XmlAttribute $annot,
+                                                          Config\Deserialization\PropertyDeserialization $prop,
+                                                          $defaultName, $defaultNamespace)
     {
         $attributeConfig = new Config\Deserialization\AttributeDeserialization();
         $prop->type = $annot->getType();
@@ -269,7 +278,8 @@ class ClassAnnotationDriver
         $refsConfig = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'XmlElementRefs');
 
         if (isset($refConfig)) {
-            $element = $this->_configureElementRefsDeserialization($refsConfig, $directConfig, $defaultName, $namespace);
+            $element =
+                $this->_configureElementRefsDeserialization($refsConfig, $directConfig, $defaultName, $namespace);
         }
 
         /**

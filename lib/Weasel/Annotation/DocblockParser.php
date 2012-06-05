@@ -246,10 +246,11 @@ class DocblockParser
         }
 
         if ($meta->getOn() && !in_array($location, $meta->getOn())) {
-            throw new \Exception("Found annotation in wrong location, got $location but expected one of " . implode(", ",
-                                                                                                                    $meta->getOn(
-                                                                                                                    )
-            ));
+            throw new \Exception(
+                "Found annotation in wrong location, got $location but expected one of " . implode(", ",
+                                                                                                   $meta->getOn(
+                                                                                                   )
+                ));
         }
 
         if ($lexer->peek() === DocblockLexer::T_OPEN_PAREN) {
