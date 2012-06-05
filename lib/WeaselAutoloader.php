@@ -5,11 +5,6 @@
  * @license ISC
  */
 namespace Weasel;
-    /**
-     * @package MooPhp
-     * @author Jonathan Oddy <jonathan at woaf.net>
-     * @copyright Copyright (c) 2011, Jonathan Oddy
-     */
 
 /**
  * @param string $name Class to load
