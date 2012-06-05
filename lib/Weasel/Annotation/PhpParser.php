@@ -32,10 +32,6 @@ class PhpParser
         // Read PHP file up to the point the class is defined
         $data = $this->_readPrologue($class);
 
-        if (isset($this->logger)) {
-            $this->logger->logDebug("Read: ~~~~$data~~~~~");
-        }
-
         $tokens = token_get_all('<?php ' . $data);
         $namespaces = array();
         while ($token = array_shift($tokens)) {
