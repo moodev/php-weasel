@@ -289,6 +289,132 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Weasel\Annotation\AnnotationConfigurator
+     */
+    public function testEnumDefaultName()
+    {
+
+        $annotation = new Config\Annotations\Annotation(array('class'), 6);
+        $classAnnotations = array('\Weasel\Annotation\Config\Annotations\Annotation' => array($annotation));
+
+
+        $mock =
+            $this->getMock('\Weasel\Annotation\AnnotationReader',
+                           array('getClassAnnotations',
+                                 'getMethodAnnotations',
+                                 'getPropertyAnnotations'
+                           ), array(), '', false
+            );
+        $mock->expects($this->any())->method('getClassAnnotations')->will($this->returnValue($classAnnotations));
+        $mock->expects($this->any())->method('getMethodAnnotations')
+            ->will($this->returnValue(array()));
+        $mock->expects($this->any())->method('getPropertyAnnotations')
+            ->will($this->returnValueMap(array(
+                                              array("a",
+                                                    array()
+                                              ),
+                                              array("b",
+                                                    array()
+                                              ),
+                                              array("enumTest",
+                                                    array('\Weasel\Annotation\Config\Annotations\Enum' => array(
+                                                        new Config\Annotations\Enum(null)
+                                                    )
+                                                    )
+                                              )
+                                         )
+                   )
+        );
+        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+
+        $result = $instance->get('\Weasel\Annotation\BoringAnnotation');
+
+        $expected = new Config\Annotation('\Weasel\Annotation\BoringAnnotation', array('class'), 6);
+        $expected->addEnum(new Config\Enum("enumTest", array("FOO" => 1,
+                                                             "BAR" => 2
+                                                       ))
+        );
+
+        $this->assertEquals($expected, $result, "Got " . print_r($result, true));
+    }
+
+    /**
+     * @covers \Weasel\Annotation\AnnotationConfigurator
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Enums must be static properties
+     */
+    public function testNonStaticEnum()
+    {
+
+        $annotation = new Config\Annotations\Annotation(array('class'), 6);
+        $classAnnotations = array('\Weasel\Annotation\Config\Annotations\Annotation' => array($annotation));
+
+
+        $mock =
+            $this->getMock('\Weasel\Annotation\AnnotationReader',
+                           array('getClassAnnotations',
+                                 'getMethodAnnotations',
+                                 'getPropertyAnnotations'
+                           ), array(), '', false
+            );
+        $mock->expects($this->any())->method('getClassAnnotations')->will($this->returnValue($classAnnotations));
+        $mock->expects($this->any())->method('getMethodAnnotations')
+            ->will($this->returnValue(array()));
+        $mock->expects($this->any())->method('getPropertyAnnotations')
+            ->will($this->returnValueMap(array(
+                                              array("a",
+                                                    array('\Weasel\Annotation\Config\Annotations\Enum' => array(
+                                                        new Config\Annotations\Enum(null)
+                                                    )
+                                                    )
+                                              ),
+                                         )
+                   )
+        );
+        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+
+        $instance->get('\Weasel\Annotation\BoringAnnotation');
+    }
+
+    /**
+     * @covers \Weasel\Annotation\AnnotationConfigurator
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Enum must be an array
+     */
+    public function testNonArrayEnum()
+    {
+
+        $annotation = new Config\Annotations\Annotation(array('class'), 6);
+        $classAnnotations = array('\Weasel\Annotation\Config\Annotations\Annotation' => array($annotation));
+
+
+        $mock =
+            $this->getMock('\Weasel\Annotation\AnnotationReader',
+                           array('getClassAnnotations',
+                                 'getMethodAnnotations',
+                                 'getPropertyAnnotations'
+                           ), array(), '', false
+            );
+        $mock->expects($this->any())->method('getClassAnnotations')->will($this->returnValue($classAnnotations));
+        $mock->expects($this->any())->method('getMethodAnnotations')
+            ->will($this->returnValue(array()));
+        $mock->expects($this->any())->method('getPropertyAnnotations')
+            ->will($this->returnValueMap(array(
+                                              array("b",
+                                                    array('\Weasel\Annotation\Config\Annotations\Enum' => array(
+                                                        new Config\Annotations\Enum(null)
+                                                    )
+                                                    )
+                                              ),
+                                         )
+                   )
+        );
+        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+
+        $instance->get('\Weasel\Annotation\BoringAnnotation');
+    }
+
+    /**
+     * @covers \Weasel\Annotation\AnnotationConfigurator
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Did not find an @Annotation annotation on
      */

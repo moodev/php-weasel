@@ -109,7 +109,7 @@ class AnnotationConfigurator implements AnnotationConfigProvider
 
             if (isset($annotEnum)) {
                 if (!$property->isStatic()) {
-                    throw new \Exception("Enums must be static properties");
+                    throw new \RuntimeException("Enums must be static properties");
                 }
                 $name = $annotEnum->getName();
                 if (!isset($name)) {
@@ -117,7 +117,7 @@ class AnnotationConfigurator implements AnnotationConfigProvider
                 }
                 $value = $property->getValue(null);
                 if (!is_array($value)) {
-                    throw new \Exception("Enum must be an array");
+                    throw new \RuntimeException("Enum must be an array");
                 }
                 $metaConfig->addEnum(new Config\Enum($name, $value));
             }
