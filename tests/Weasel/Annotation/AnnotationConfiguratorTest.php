@@ -239,6 +239,56 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers \Weasel\Annotation\AnnotationConfigurator
+     */
+    public function testEnum()
+    {
+
+        $annotation = new Config\Annotations\Annotation(array('class'), 6);
+        $classAnnotations = array('\Weasel\Annotation\Config\Annotations\Annotation' => array($annotation));
+
+
+        $mock =
+            $this->getMock('\Weasel\Annotation\AnnotationReader',
+                           array('getClassAnnotations',
+                                 'getMethodAnnotations',
+                                 'getPropertyAnnotations'
+                           ), array(), '', false
+            );
+        $mock->expects($this->any())->method('getClassAnnotations')->will($this->returnValue($classAnnotations));
+        $mock->expects($this->any())->method('getMethodAnnotations')
+            ->will($this->returnValue(array()));
+        $mock->expects($this->any())->method('getPropertyAnnotations')
+            ->will($this->returnValueMap(array(
+                                              array("a",
+                                                    array()
+                                              ),
+                                              array("b",
+                                                    array()
+                                              ),
+                                              array("enumTest",
+                                                    array('\Weasel\Annotation\Config\Annotations\Enum' => array(
+                                                        new Config\Annotations\Enum("toast")
+                                                    )
+                                                    )
+                                              )
+                                         )
+                   )
+        );
+        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+
+        $result = $instance->get('\Weasel\Annotation\BoringAnnotation');
+
+        $expected = new Config\Annotation('\Weasel\Annotation\BoringAnnotation', array('class'), 6);
+        $expected->addEnum(new Config\Enum("toast", array("FOO" => 1,
+                                                          "BAR" => 2
+                                                    ))
+        );
+
+        $this->assertEquals($expected, $result, "Got " . print_r($result, true));
+    }
+
+    /**
+     * @covers \Weasel\Annotation\AnnotationConfigurator
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Did not find an @Annotation annotation on
      */
@@ -457,7 +507,7 @@ class BoringAnnotation
 {
     public $a;
 
-    public $b;
+    public static $b = 666;
 
     public static $enumTest = array(
         "FOO" => 1,
