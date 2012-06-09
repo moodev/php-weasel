@@ -29,9 +29,9 @@ class AnnotationConfigurator implements AnnotationConfigProvider
             self::$builtIns = Config\BuiltInsProvider::getConfig();
         }
         if (isset($readerFactory)) {
-            $this->readerFactory = $readerFactory;
+            $this->setReaderFactory($readerFactory);
         } else {
-            $this->readerFactory = new AnnotationReaderFactory();
+            $this->setReaderFactory(new AnnotationReaderFactory());
         }
 
     }
@@ -55,7 +55,7 @@ class AnnotationConfigurator implements AnnotationConfigProvider
 
         $metaConfig = new Config\Annotation($name, $annotation->getOn(), $annotation->getMax());
 
-        foreach ($class->getMethods() as $method) {
+        foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
             /**
              * @var \ReflectionMethod $method
              * @var \Weasel\Annotation\Config\Annotations\AnnotationCreator $creator
@@ -70,7 +70,7 @@ class AnnotationConfigurator implements AnnotationConfigProvider
                 $metaConfig->setCreatorMethod($method->getName());
                 $creatorArgs = $method->getParameters();
                 if (count($creatorArgs) != count($creator->getParams())) {
-                    throw new \Exception("Creator args don't match with method args");
+                    throw new \RuntimeException("Creator args don't match with method args");
                 }
                 $i = 0;
                 foreach ($creator->getParams() as $param) {
@@ -86,7 +86,7 @@ class AnnotationConfigurator implements AnnotationConfigProvider
             }
         }
 
-        foreach ($class->getProperties() as $property) {
+        foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             /**
              * @var \ReflectionProperty $property
              * @var \Weasel\Annotation\Config\Annotations\Property $annotProperty
@@ -96,8 +96,8 @@ class AnnotationConfigurator implements AnnotationConfigProvider
             );
 
             if (isset($annotProperty)) {
-                $propertyConfig = new Config\Property($property->getName(), $annotProperty->getType);
-                $metaConfig->addProperty($property->getName(), $propertyConfig);
+                $propertyConfig = new Config\Property($property->getName(), $annotProperty->getType());
+                $metaConfig->addProperty($propertyConfig);
             }
 
             /**
