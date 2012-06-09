@@ -43,17 +43,31 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
                                  'getPropertyAnnotations'
                            ), array(), '', false
             );
-        $mock->expects($this->at(0))->method('getClassAnnotations')->will($this->returnValue($classAnnotations));
-        $mock->expects($this->at(1))->method('getMethodAnnotations')->with($this->equalTo("__construct"))
+        $mock->expects($this->any())->method('getClassAnnotations')->will($this->returnValue($classAnnotations));
+        $mock->expects($this->any())->method('getMethodAnnotations')
+            ->will($this->returnValueMap(array(
+                                              array(
+                                                  "__construct",
+                                                  array()
+                                              ),
+                                              array(
+                                                  "setA",
+                                                  array()
+                                              ),
+                                              array(
+                                                  "getA",
+                                                  array()
+                                              ),
+                                              array(
+                                                  "creator",
+                                                  array()
+                                              ),
+                                         )
+                   )
+        );
+        $mock->expects($this->any())->method('getPropertyAnnotations')->with($this->equalTo("a"))
             ->will($this->returnValue(array()));
-        $mock->expects($this->at(2))->method('getMethodAnnotations')->with($this->equalTo("setA"))
-            ->will($this->returnValue(array()));
-        $mock->expects($this->at(3))->method('getMethodAnnotations')->with($this->equalTo("getA"))
-            ->will($this->returnValue(array()));
-        $mock->expects($this->at(4))->method('getPropertyAnnotations')->with($this->equalTo("a"))
-            ->will($this->returnValue(array()));
-        $mock->expects($this->at(5))->method('getPropertyAnnotations')->with($this->equalTo("a"))
-            ->will($this->returnValue(array()));
+
         $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
 
         $result = $instance->get('\Weasel\Annotation\BoringAnnotation');
@@ -91,16 +105,25 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
                                  'getPropertyAnnotations'
                            ), array(), '', false
             );
-        $mock->expects($this->at(0))->method('getClassAnnotations')->will($this->returnValue($classAnnotations));
-        $mock->expects($this->at(1))->method('getMethodAnnotations')->with($this->equalTo("__construct"))
-            ->will($this->returnValue($constructorAnnotations));
-        $mock->expects($this->at(2))->method('getMethodAnnotations')->with($this->equalTo("setA"))
-            ->will($this->returnValue(array()));
-        $mock->expects($this->at(3))->method('getMethodAnnotations')->with($this->equalTo("getA"))
-            ->will($this->returnValue(array()));
-        $mock->expects($this->at(4))->method('getPropertyAnnotations')->with($this->equalTo("a"))
-            ->will($this->returnValue(array()));
-        $mock->expects($this->at(5))->method('getPropertyAnnotations')->with($this->equalTo("a"))
+        $mock->expects($this->any())->method('getClassAnnotations')->will($this->returnValue($classAnnotations));
+        $mock->expects($this->any())->method('getMethodAnnotations')
+            ->will($this->returnValueMap(array(
+                                              array("__construct",
+                                                    $constructorAnnotations
+                                              ),
+                                              array("setA",
+                                                    array()
+                                              ),
+                                              array("getA",
+                                                    array()
+                                              ),
+                                              array("creator",
+                                                    array()
+                                              ),
+                                         )
+                   )
+        );
+        $mock->expects($this->any())->method('getPropertyAnnotations')->with($this->equalTo("a"))
             ->will($this->returnValue(array()));
         $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
 
@@ -112,10 +135,13 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
         $expected->addCreatorParam(new Config\Param("bar", "integer", true));
         $expected->addCreatorParam(new Config\Param("baz", "boolean", false));
 
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected, $result, "Got " . print_r($result, true));
 
     }
 
+    /**
+     * @covers \Weasel\Annotation\AnnotationConfigurator
+     */
     public function testStaticCreator()
     {
 
@@ -138,30 +164,127 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
                                  'getPropertyAnnotations'
                            ), array(), '', false
             );
-        $mock->expects($this->at(0))->method('getClassAnnotations')->will($this->returnValue($classAnnotations));
-        $mock->expects($this->at(1))->method('getMethodAnnotations')->with($this->equalTo("__construct"))
-            ->will($this->returnValue(array()));
-        $mock->expects($this->at(2))->method('getMethodAnnotations')->with($this->equalTo("setA"))
-            ->will($this->returnValue($constructorAnnotations));
-        $mock->expects($this->at(3))->method('getMethodAnnotations')->with($this->equalTo("getA"))
-            ->will($this->returnValue(array()));
-        $mock->expects($this->at(4))->method('getPropertyAnnotations')->with($this->equalTo("a"))
-            ->will($this->returnValue(array()));
-        $mock->expects($this->at(5))->method('getPropertyAnnotations')->with($this->equalTo("a"))
+        $mock->expects($this->any())->method('getClassAnnotations')->will($this->returnValue($classAnnotations));
+        $mock->expects($this->any())->method('getMethodAnnotations')
+            ->will($this->returnValueMap(array(
+                                              array("__construct",
+                                                    array()
+                                              ),
+                                              array("setA",
+                                                    array()
+                                              ),
+                                              array("getA",
+                                                    array()
+                                              ),
+                                              array("creator",
+                                                    $constructorAnnotations
+                                              ),
+                                         )
+                   )
+        );
+        $mock->expects($this->any())->method('getPropertyAnnotations')->with($this->equalTo("a"))
             ->will($this->returnValue(array()));
         $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
 
         $result = $instance->get('\Weasel\Annotation\BoringAnnotation');
 
         $expected = new Config\Annotation('\Weasel\Annotation\BoringAnnotation', array('class'), 6);
-        $expected->setCreatorMethod('setA');
+        $expected->setCreatorMethod('creator');
         $expected->addCreatorParam(new Config\Param("foo", "string", true));
 
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @covers \Weasel\Annotation\AnnotationConfigurator
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Did not find an @Annotation annotation on
+     */
+    public function testThatsNoAnnotation()
+    {
+
+        $mock =
+            $this->getMock('\Weasel\Annotation\AnnotationReader',
+                           array('getClassAnnotations',
+                                 'getMethodAnnotations',
+                                 'getPropertyAnnotations'
+                           ), array(), '', false
+            );
+        $mock->expects($this->any())->method('getClassAnnotations')->will($this->returnValue(array()));
+        $mock->expects($this->any())->method('getMethodAnnotations')
+            ->will($this->returnValueMap(array(
+                                              array("__construct",
+                                                    array()
+                                              ),
+                                              array("setA",
+                                                    array()
+                                              ),
+                                              array("getA",
+                                                    array()
+                                              ),
+                                              array("creator",
+                                                    array()
+                                              ),
+                                         )
+                   )
+        );
+        $mock->expects($this->any())->method('getPropertyAnnotations')
+            ->will($this->returnValue(array()));
+        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+
+        $instance->get('\Weasel\Annotation\BoringAnnotation');
+
+    }
+
+    /**
+     * @covers \Weasel\Annotation\AnnotationConfigurator
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Non-static methods cannot be configured as creators
+     */
     public function testNonStaticCreatorFail()
     {
+        $annotation = new Config\Annotations\Annotation(array('class'), 6);
+        $classAnnotations = array('\Weasel\Annotation\Config\Annotations\Annotation' => array($annotation));
+
+        $constructorParams = array();
+        $constructorParams[] = new Config\Annotations\Parameter("foo", "string", true);
+
+        $constructorAnnotation = new Config\Annotations\AnnotationCreator($constructorParams);
+
+        $constructorAnnotations =
+            array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array($constructorAnnotation));
+
+
+        $mock =
+            $this->getMock('\Weasel\Annotation\AnnotationReader',
+                           array('getClassAnnotations',
+                                 'getMethodAnnotations',
+                                 'getPropertyAnnotations'
+                           ), array(), '', false
+            );
+        $mock->expects($this->any())->method('getClassAnnotations')->will($this->returnValue($classAnnotations));
+        $mock->expects($this->any())->method('getMethodAnnotations')
+            ->will($this->returnValueMap(array(
+                                              array("__construct",
+                                                    array()
+                                              ),
+                                              array("setA",
+                                                    $constructorAnnotations
+                                              ),
+                                              array("getA",
+                                                    array()
+                                              ),
+                                              array("creator",
+                                                    array()
+                                              ),
+                                         )
+                   )
+        );
+        $mock->expects($this->any())->method('getPropertyAnnotations')
+            ->will($this->returnValue(array()));
+        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+
+        $instance->get('\Weasel\Annotation\BoringAnnotation');
 
     }
 }
@@ -193,6 +316,11 @@ class BoringAnnotation
                   $b,
                   $c
             );
+    }
+
+    public static function creator($a = null)
+    {
+        return new BoringAnnotation($a);
     }
 
     public function setA($a)

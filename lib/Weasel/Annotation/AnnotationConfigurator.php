@@ -50,7 +50,7 @@ class AnnotationConfigurator implements AnnotationConfigProvider
          */
         $annotation = $reader->getSingleClassAnnotation('\Weasel\Annotation\Config\Annotations\Annotation');
         if (!isset($annotation)) {
-            throw new \Exception("Did not find an @Annotation annotation on $name");
+            throw new \RuntimeException("Did not find an @Annotation annotation on $name");
         }
 
         $metaConfig = new Config\Annotation($name, $annotation->getOn(), $annotation->getMax());
@@ -64,6 +64,9 @@ class AnnotationConfigurator implements AnnotationConfigProvider
                                                           '\Weasel\Annotation\Config\Annotations\AnnotationCreator'
             );
             if (isset($creator)) {
+                if (!$method->isStatic() && !$method->isConstructor()) {
+                    throw new \RuntimeException("Non-static methods cannot be configured as creators");
+                }
                 $metaConfig->setCreatorMethod($method->getName());
                 $creatorArgs = $method->getParameters();
                 if (count($creatorArgs) != count($creator->getParams())) {
