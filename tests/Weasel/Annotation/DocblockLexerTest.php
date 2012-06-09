@@ -119,6 +119,40 @@ class DocblockLexerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Weasel\Annotation\DocblockLexer
+     */
+    public function testEOL()
+    {
+        $lexer = new DocblockLexer("\n\n\r\n\n");
+
+        $cur = $lexer->get();
+        $peek = $lexer->peek();
+        $next = $lexer->next();
+
+        $this->assertEquals(DocblockLexer::T_EOL, $cur["type"]);
+        $this->assertNull($peek);
+        $this->assertNull($next);
+
+    }
+
+    /**
+     * @covers \Weasel\Annotation\DocblockLexer
+     */
+    public function testPreamble()
+    {
+        $lexer = new DocblockLexer("\n   * \r\n *\t");
+
+        $cur = $lexer->get();
+        $peek = $lexer->peek();
+        $next = $lexer->next();
+
+        $this->assertEquals(DocblockLexer::T_PREAMBLE, $cur["type"]);
+        $this->assertEquals(DocblockLexer::T_PREAMBLE, $peek);
+        $this->assertEquals(DocblockLexer::T_PREAMBLE, $next["type"]);
+
+    }
+
+    /**
      * @covers \Weasel\Annotation\DocblockLexer::peek
      * @covers \Weasel\Annotation\DocblockLexer::cur
      * @covers \Weasel\Annotation\DocblockLexer::_wsSkippingPeek

@@ -112,6 +112,37 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \Weasel\Annotation\DocblockParser
      */
+    public function testTwoAnnotations()
+    {
+
+        $mockConfigurator = new MockConfigurator();
+        $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
+        $mockConfigurator->addAnnotation($annotation);
+
+        $parser = new DocblockParser($mockConfigurator);
+
+        $parsed = $parser->parse(
+            '/**
+              * @Gloop
+              * @Gloop
+              */',
+            "class",
+            array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
+        );
+
+        $gloop = new Gloop();
+
+        $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop,
+                                                                            $gloop
+  )
+                            ), $parsed
+        );
+
+    }
+
+    /**
+     * @covers \Weasel\Annotation\DocblockParser
+     */
     public function testEmptyArgsAnnotation()
     {
 

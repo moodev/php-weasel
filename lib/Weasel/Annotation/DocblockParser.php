@@ -66,11 +66,16 @@ class DocblockParser
     protected function _DocBlock(DocblockLexer $lexer, $location, $namespaces)
     {
         $annotations = array();
-        while ($lexer->skipToType(DocblockLexer::T_AT)) {
+        while ($lexer->skipToType(DocblockLexer::T_PREAMBLE)) {
+            $next = $lexer->next();
+            if ($next["type"] !== DocblockLexer::T_AT) {
+                // Skip because it doesn't have an annotation at the start
+                continue;
+            }
             $pos = $lexer->cur();
             try {
                 $annotation = $this->_Annotation($lexer, $location, $namespaces);
-                $this->_expectNext($lexer, DocblockLexer::T_WHITESPACE);
+                $this->_expectNext($lexer, DocblockLexer::$TREAT_AS_WS);
                 if (isset($annotation)) {
                     $annotations[$annotation[0]][] = $annotation[1];
                 } else {

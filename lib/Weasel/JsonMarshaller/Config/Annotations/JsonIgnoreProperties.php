@@ -23,7 +23,10 @@ class JsonIgnoreProperties
     /**
      * @param $names
      * @param $ignoreUnknown
-     * @AnnotationCreator({@Parameter(name="names", type="string[]", required=false), @Parameter(name="ignoreUnknown", type="boolean", required=false)})
+     * @AnnotationCreator({
+     * @Parameter(name="names", type="string[]", required=false),
+     * @Parameter(name="ignoreUnknown", type="boolean", required=false)
+     * })
      */
     public function __construct($names, $ignoreUnknown)
     {

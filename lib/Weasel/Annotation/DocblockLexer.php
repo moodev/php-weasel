@@ -10,6 +10,8 @@ class DocblockLexer
 
     const T_MEH = 1;
     const T_WHITESPACE = 2;
+    const T_EOL = 3;
+    const T_PREAMBLE = 4;
     const T_NULL = 10;
     const T_QUOTED_STRING = 11;
     const T_INTEGER = 12;
@@ -28,6 +30,11 @@ class DocblockLexer
     const T_BACKSLASH = 67;
     const T_COLON = 68;
     const T_DOT = 69;
+
+    public static $TREAT_AS_WS = array(self::T_WHITESPACE,
+                                       self::T_EOL,
+                                       self::T_PREAMBLE
+    );
 
     protected $tokens = array();
 
@@ -51,16 +58,20 @@ class DocblockLexer
         // Yay.
         $split = preg_split(
             '(' . implode('|', array(
-                                    '("(?:[^"]|"")*")',
                                     // Quoted strings
-                                    '([+-]?[0-9]+(?:\.[0-9]+|[eE][+-]?[0-9]+)?)',
+                                    '("(?:[^"]|"")*")',
                                     // Numeric
-                                    '([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)',
+                                    '([+-]?[0-9]+(?:\.[0-9]+|[eE][+-]?[0-9]+)?)',
                                     // Identifier
+                                    '([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)',
+                                    // Line preamble
+                                    '(\v+\s+\*[^\S\v])',
+                                    // End of line
+                                    '(\v+)',
+                                    // All other whitespace
                                     '(\s+)',
-                                    // Whitespace
-                                    '(.)',
                                     // Everything else will be split into single chars
+                                    '(.)',
                                )
             ) . ')',
             $input,
@@ -129,6 +140,14 @@ class DocblockLexer
             return self::T_IDENTIFIER;
         }
 
+        if (preg_match('/^(\v+\s+\*\s+)$/', $value)) {
+            return self::T_PREAMBLE;
+        }
+
+        if (preg_match('/^\v+$/', $value)) {
+            return self::T_EOL;
+        }
+
         if (preg_match('/^\s+$/', $value)) {
             return self::T_WHITESPACE;
         }
@@ -158,13 +177,16 @@ class DocblockLexer
         }
     }
 
-    public function skip($type = self::T_WHITESPACE)
+    public function skip($types = null)
     {
+        if (!isset($types)) {
+            $types = self::$TREAT_AS_WS;
+        }
         if (!$cur = $this->get()) {
             return null;
         }
         do {
-            if ($cur['type'] !== $type) {
+            if (!in_array($cur['type'], $types)) {
                 return $cur;
             }
         } while ($cur = $this->next());
@@ -201,7 +223,7 @@ class DocblockLexer
     {
         if ($num === 0) {
             $cur = $this->get();
-            if ($cur["type"] !== self::T_WHITESPACE) {
+            if (!in_array($cur["type"], self::$TREAT_AS_WS)) {
                 return $cur["type"];
             }
         }
