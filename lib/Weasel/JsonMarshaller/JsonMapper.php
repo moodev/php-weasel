@@ -32,6 +32,11 @@ class JsonMapper
         return json_encode($this->_encodeObject($object), JSON_FORCE_OBJECT);
     }
 
+    public function writeArray($object)
+    {
+        return $this->_encodeObject($object);
+    }
+
     protected function _encodeObject($object, $typeInfo = null)
     {
         $class = get_class($object);
