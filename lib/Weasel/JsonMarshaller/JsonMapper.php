@@ -29,10 +29,10 @@ class JsonMapper
 
     public function writeString($object)
     {
-        return json_encode($this->_encodeObject($object), JSON_FORCE_OBJECT);
+        return json_encode($this->encodeObject($object), JSON_FORCE_OBJECT);
     }
 
-    protected function _encodeObject($object, $typeInfo = null)
+    public function encodeObject($object, $typeInfo = null)
     {
         $class = get_class($object);
         $classconfig = $this->configProvider->getConfig($class);
@@ -405,7 +405,7 @@ class JsonMapper
                     if (!is_object($value)) {
                         throw new \Exception("Expected object but found something else (or type $type is bad)");
                     }
-                    return $this->_encodeObject($value, $typeInfo);
+                    return $this->encodeObject($value, $typeInfo);
             }
         }
 
