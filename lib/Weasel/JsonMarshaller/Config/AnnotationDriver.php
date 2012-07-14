@@ -19,10 +19,14 @@ class AnnotationDriver implements JsonConfigProvider
     protected $configurator;
     protected $cache = array();
 
-    public function __construct($logger = null)
+    public function __construct($logger = null, $annotationConfigurator = null)
     {
-        // Create ourselves an annotation configurator of a sane type
-        $this->configurator = new \Weasel\Annotation\ArrayCachingAnnotationConfigurator($logger);
+        if (isset($annotationConfigurator)) {
+            $this->configurator = $annotationConfigurator;
+        } else {
+            // Create ourselves an annotation configurator of a sane type
+            $this->configurator = new \Weasel\Annotation\AnnotationConfigurator($logger);
+        }
     }
 
     /**
