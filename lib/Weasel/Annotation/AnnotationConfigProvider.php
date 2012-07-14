@@ -11,7 +11,7 @@ interface AnnotationConfigProvider
 
     /**
      * @abstract
-     * @return \Weasel\Logger\Logger
+     * @return \Weasel\Common\Logger\Logger
      */
     public function getLogger();
 

@@ -134,7 +134,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop,
                                                                             $gloop
-  )
+                             )
                             ), $parsed
         );
 
@@ -611,8 +611,8 @@ class MockConfigurator extends AnnotationConfigurator
 
     public function getLogger()
     {
-        $logger = new \Weasel\Logger\FileLogger();
-        $logger->setLogLevel(\Weasel\Logger\Logger::LOG_LEVEL_DEBUG);
+        $logger = new \Weasel\Common\Logger\FileLogger();
+        $logger->setLogLevel(\Weasel\Common\Logger\Logger::LOG_LEVEL_DEBUG);
     }
 
 }

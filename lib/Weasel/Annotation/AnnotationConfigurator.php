@@ -22,7 +22,8 @@ class AnnotationConfigurator implements AnnotationConfigProvider
      */
     protected $readerFactory = null;
 
-    public function __construct(\Weasel\Logger\Logger $logger = null, AnnotationReaderFactory $readerFactory = null)
+    public function __construct(\Weasel\Common\Logger\Logger $logger = null,
+                                AnnotationReaderFactory $readerFactory = null)
     {
         $this->logger = $logger;
         if (!isset(self::$builtIns)) {
