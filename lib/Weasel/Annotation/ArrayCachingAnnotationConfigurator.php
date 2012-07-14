@@ -7,17 +7,20 @@
 namespace Weasel\Annotation;
 
 
+use Weasel\Common\Cache\ArrayCache;
+
+/**
+ * Left over from prior to new cache system.
+ * Stop using this. Use an AnnotationConfigurator, and call setCache.
+ * @deprecated
+ */
 class ArrayCachingAnnotationConfigurator extends AnnotationConfigurator
 {
-
-    protected $cache = array();
-
-    public function get($name)
+    public function __construct(\Weasel\Common\Logger\Logger $logger = null,
+                                AnnotationReaderFactory $readerFactory = null)
     {
-        if (!isset($this->cache[$name])) {
-            $this->cache[$name] = parent::get($name);
-        }
-        return $this->cache[$name];
+        parent::__construct($logger, $readerFactory);
+        $this->setCache(new ArrayCache("AnnotationConfigurator"));
     }
 
 

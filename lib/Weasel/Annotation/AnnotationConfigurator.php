@@ -6,6 +6,10 @@
  */
 namespace Weasel\Annotation;
 
+use Weasel\Common\Cache\Cache;
+use Weasel\Common\Cache\CacheException;
+use Weasel\Common\Cache\Exception;
+
 
 class AnnotationConfigurator implements AnnotationConfigProvider
 {
@@ -16,6 +20,11 @@ class AnnotationConfigurator implements AnnotationConfigProvider
     protected static $builtIns;
 
     protected $logger;
+
+    /**
+     * @var Cache
+     */
+    protected $cache;
 
     /**
      * @var AnnotationReaderFactory
@@ -39,6 +48,13 @@ class AnnotationConfigurator implements AnnotationConfigProvider
 
     public function get($name)
     {
+        if (isset($this->cache)) {
+            try {
+                return $this->cache->get($name, "Annotation");
+            } catch (CacheException $e) {
+            }
+        }
+
         if (self::$builtIns->getAnnotation($name)) {
             return self::$builtIns->getAnnotation($name);
         }
@@ -125,6 +141,13 @@ class AnnotationConfigurator implements AnnotationConfigProvider
 
         }
 
+        if (isset($this->cache)) {
+            try {
+                $this->cache->set($name, $metaConfig, "Annotation");
+            } catch (CacheException $e) {
+            }
+        }
+
         return $metaConfig;
     }
 
@@ -140,6 +163,16 @@ class AnnotationConfigurator implements AnnotationConfigProvider
     public function setReaderFactory($readerFactory)
     {
         $this->readerFactory = $readerFactory;
+        return $this;
+    }
+
+    /**
+     * @param \Weasel\Common\Cache\Cache $cache
+     * @return AnnotationConfigurator
+     */
+    public function setCache($cache)
+    {
+        $this->cache = $cache;
         return $this;
     }
 

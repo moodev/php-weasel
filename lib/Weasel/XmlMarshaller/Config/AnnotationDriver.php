@@ -17,7 +17,12 @@ class AnnotationDriver implements ConfigProvider
 
     public function __construct($logger = null)
     {
-        $this->configurator = new \Weasel\Annotation\ArrayCachingAnnotationConfigurator($logger);
+        if (isset($annotationConfigurator)) {
+            $this->configurator = $annotationConfigurator;
+        } else {
+            // Create ourselves an annotation configurator of a sane type
+            $this->configurator = new \Weasel\Annotation\AnnotationConfigurator($logger);
+        }
     }
 
     /**
