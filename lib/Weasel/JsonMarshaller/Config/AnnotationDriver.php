@@ -17,7 +17,7 @@ class AnnotationDriver implements JsonConfigProvider
 
     protected $classPaths = array();
     protected $configurator;
-    protected $cache;
+    protected $cache = array();
 
     public function __construct($logger = null)
     {
