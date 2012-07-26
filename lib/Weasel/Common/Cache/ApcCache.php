@@ -12,17 +12,19 @@ class ApcCache extends Cache
     /**
      * @param string $key Key to load from cache.
      * @param null $namespace
-     * @throws Exception\NotFound
+     * @param bool $found
      * @return mixed
      */
-    public function get($key, $namespace = null)
+    public function get($key, $namespace = null, &$found = true)
     {
         $key = $this->_getRealKeyName($key, $namespace);
         $success = false;
         $res = apc_fetch($key, $success);
         if (!$success) {
-            throw new Exception\NotFound($key);
+            $found = false;
+            return null;
         }
+        $found = true;
         return $res;
     }
 

@@ -15,9 +15,10 @@ abstract class Cache
      * @abstract
      * @param string $key Key to load from cache.
      * @param string $namespace
+     * @param bool $found True if the key was found in the cache, false if it wasn't. Useful if the cache can store nulls.
      * @return mixed
      */
-    public abstract function get($key, $namespace = null);
+    public abstract function get($key, $namespace = null, &$found = true);
 
     /**
      * @abstract

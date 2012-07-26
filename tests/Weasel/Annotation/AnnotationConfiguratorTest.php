@@ -18,7 +18,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
 
         $mock = $this->getMock('\Weasel\Annotation\AnnotationReaderFactory', array(), array(), '', false);
         $mock->expects($this->never())->method('getReaderForClass');
-        $instance = new AnnotationConfigurator(null, $mock);
+        $instance = new AnnotationConfigurator(null, null, $mock);
 
         $annotation = $instance->get('\Weasel\Annotation\Config\Annotations\Annotation');
 
@@ -68,7 +68,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
         $mock->expects($this->any())->method('getPropertyAnnotations')
             ->will($this->returnValue(array()));
 
-        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+        $instance = new AnnotationConfigurator(null, null, new MockAnnotationReaderFactory($mock));
 
         $result = $instance->get('\Weasel\Annotation\BoringAnnotation');
 
@@ -125,7 +125,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
         );
         $mock->expects($this->any())->method('getPropertyAnnotations')
             ->will($this->returnValue(array()));
-        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+        $instance = new AnnotationConfigurator(null, null, new MockAnnotationReaderFactory($mock));
 
         $result = $instance->get('\Weasel\Annotation\BoringAnnotation');
 
@@ -184,7 +184,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
         );
         $mock->expects($this->any())->method('getPropertyAnnotations')
             ->will($this->returnValue(array()));
-        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+        $instance = new AnnotationConfigurator(null, null, new MockAnnotationReaderFactory($mock));
 
         $result = $instance->get('\Weasel\Annotation\BoringAnnotation');
 
@@ -226,7 +226,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
                                          )
                    )
         );
-        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+        $instance = new AnnotationConfigurator(null, null, new MockAnnotationReaderFactory($mock));
 
         $result = $instance->get('\Weasel\Annotation\BoringAnnotation');
 
@@ -274,7 +274,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
                                          )
                    )
         );
-        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+        $instance = new AnnotationConfigurator(null, null, new MockAnnotationReaderFactory($mock));
 
         $result = $instance->get('\Weasel\Annotation\BoringAnnotation');
 
@@ -324,7 +324,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
                                          )
                    )
         );
-        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+        $instance = new AnnotationConfigurator(null, null, new MockAnnotationReaderFactory($mock));
 
         $result = $instance->get('\Weasel\Annotation\BoringAnnotation');
 
@@ -370,7 +370,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
                                          )
                    )
         );
-        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+        $instance = new AnnotationConfigurator(null, null, new MockAnnotationReaderFactory($mock));
 
         $instance->get('\Weasel\Annotation\BoringAnnotation');
     }
@@ -408,7 +408,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
                                          )
                    )
         );
-        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+        $instance = new AnnotationConfigurator(null, null, new MockAnnotationReaderFactory($mock));
 
         $instance->get('\Weasel\Annotation\BoringAnnotation');
     }
@@ -448,7 +448,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
         );
         $mock->expects($this->any())->method('getPropertyAnnotations')
             ->will($this->returnValue(array()));
-        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+        $instance = new AnnotationConfigurator(null, null, new MockAnnotationReaderFactory($mock));
 
         $instance->get('\Weasel\Annotation\BoringAnnotation');
 
@@ -500,7 +500,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
         );
         $mock->expects($this->any())->method('getPropertyAnnotations')
             ->will($this->returnValue(array()));
-        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+        $instance = new AnnotationConfigurator(null, null, new MockAnnotationReaderFactory($mock));
 
         $instance->get('\Weasel\Annotation\BoringAnnotation');
 
@@ -554,7 +554,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
         );
         $mock->expects($this->any())->method('getPropertyAnnotations')
             ->will($this->returnValue(array()));
-        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+        $instance = new AnnotationConfigurator(null, null, new MockAnnotationReaderFactory($mock));
 
         $instance->get('\Weasel\Annotation\BoringAnnotation');
     }
@@ -607,7 +607,7 @@ class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
         );
         $mock->expects($this->any())->method('getPropertyAnnotations')
             ->will($this->returnValue(array()));
-        $instance = new AnnotationConfigurator(null, new MockAnnotationReaderFactory($mock));
+        $instance = new AnnotationConfigurator(null, null, new MockAnnotationReaderFactory($mock));
 
         $instance->get('\Weasel\Annotation\BoringAnnotation');
     }

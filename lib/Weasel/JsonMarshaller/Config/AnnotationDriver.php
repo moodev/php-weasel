@@ -17,9 +17,13 @@ class AnnotationDriver implements JsonConfigProvider
 
     protected $classPaths = array();
     protected $configurator;
-    protected $cache = array();
 
-    public function __construct($logger = null, $annotationConfigurator = null)
+    /**
+     * @var \Weasel\Common\Cache\Cache
+     */
+    protected $cache = null;
+
+    public function __construct($logger = null, $annotationConfigurator = null, $cache = null)
     {
         if (isset($annotationConfigurator)) {
             $this->configurator = $annotationConfigurator;
@@ -27,6 +31,7 @@ class AnnotationDriver implements JsonConfigProvider
             // Create ourselves an annotation configurator of a sane type
             $this->configurator = new \Weasel\Annotation\AnnotationConfigurator($logger);
         }
+        $this->setCache($cache);
     }
 
     /**
@@ -37,10 +42,17 @@ class AnnotationDriver implements JsonConfigProvider
     public function getConfig($class)
     {
         $key = strtolower($class);
-        if (!array_key_exists($key, $this->cache)) {
-            $this->cache[$key] = $this->_getConfig($class);
+        if (isset($this->cache)) {
+            $found = false;
+            $cached = $this->cache->get($key, "JsonConfig", $found);
+            if ($found) {
+                return $cached;
+            }
         }
-        return $this->cache[$key];
+        $config = $this->_getConfig($class);
+
+        $this->cache->set($key, $config, "JsonConfig");
+        return $config;
     }
 
     /**
@@ -59,4 +71,8 @@ class AnnotationDriver implements JsonConfigProvider
 
     }
 
+    public function setCache($cache)
+    {
+        $this->cache = $cache;
+    }
 }

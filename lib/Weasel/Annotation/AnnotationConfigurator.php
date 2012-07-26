@@ -32,9 +32,11 @@ class AnnotationConfigurator implements AnnotationConfigProvider
     protected $readerFactory = null;
 
     public function __construct(\Weasel\Common\Logger\Logger $logger = null,
+                                \Weasel\Common\Cache\Cache $cache = null,
                                 AnnotationReaderFactory $readerFactory = null)
     {
         $this->logger = $logger;
+        $this->setCache($cache);
         if (!isset(self::$builtIns)) {
             self::$builtIns = Config\BuiltInsProvider::getConfig();
         }
@@ -49,9 +51,10 @@ class AnnotationConfigurator implements AnnotationConfigProvider
     public function get($name)
     {
         if (isset($this->cache)) {
-            try {
-                return $this->cache->get($name, "Annotation");
-            } catch (CacheException $e) {
+            $found = false;
+            $cached = $this->cache->get($name, "Annotation", $found);
+            if ($found) {
+                return $cached;
             }
         }
 
@@ -142,10 +145,7 @@ class AnnotationConfigurator implements AnnotationConfigProvider
         }
 
         if (isset($this->cache)) {
-            try {
-                $this->cache->set($name, $metaConfig, "Annotation");
-            } catch (CacheException $e) {
-            }
+            $this->cache->set($name, $metaConfig, "Annotation");
         }
 
         return $metaConfig;

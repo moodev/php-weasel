@@ -14,16 +14,18 @@ class ArrayCache extends Cache
     /**
      * @param string $key Key to load from cache.
      * @param null|string $namespace
-     * @throws Exception\NotFound
+     * @param bool $found
      * @return mixed
      */
-    public function get($key, $namespace = null)
+    public function get($key, $namespace = null, &$found = true)
     {
         $key = $this->_getRealKeyName($key, $namespace);
         if (array_key_exists($key, $this->cache)) {
+            $found = true;
             return $this->cache[$key];
         }
-        throw new Exception\NotFound($key);
+        $found = false;
+        return null;
     }
 
     /**
