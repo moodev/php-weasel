@@ -6,6 +6,10 @@
  */
 namespace Weasel\Annotation;
 
+use Weasel\Common\Cache\Cache;
+use Weasel\Common\Cache\CacheException;
+use Weasel\Common\Cache\Exception;
+
 
 class AnnotationConfigurator implements AnnotationConfigProvider
 {
@@ -18,13 +22,21 @@ class AnnotationConfigurator implements AnnotationConfigProvider
     protected $logger;
 
     /**
+     * @var Cache
+     */
+    protected $cache;
+
+    /**
      * @var AnnotationReaderFactory
      */
     protected $readerFactory = null;
 
-    public function __construct(\Weasel\Logger\Logger $logger = null, AnnotationReaderFactory $readerFactory = null)
+    public function __construct(\Weasel\Common\Logger\Logger $logger = null,
+                                \Weasel\Common\Cache\Cache $cache = null,
+                                AnnotationReaderFactory $readerFactory = null)
     {
         $this->logger = $logger;
+        $this->setCache($cache);
         if (!isset(self::$builtIns)) {
             self::$builtIns = Config\BuiltInsProvider::getConfig();
         }
@@ -38,6 +50,14 @@ class AnnotationConfigurator implements AnnotationConfigProvider
 
     public function get($name)
     {
+        if (isset($this->cache)) {
+            $found = false;
+            $cached = $this->cache->get($name, "Annotation", $found);
+            if ($found) {
+                return $cached;
+            }
+        }
+
         if (self::$builtIns->getAnnotation($name)) {
             return self::$builtIns->getAnnotation($name);
         }
@@ -124,6 +144,10 @@ class AnnotationConfigurator implements AnnotationConfigProvider
 
         }
 
+        if (isset($this->cache)) {
+            $this->cache->set($name, $metaConfig, "Annotation");
+        }
+
         return $metaConfig;
     }
 
@@ -139,6 +163,16 @@ class AnnotationConfigurator implements AnnotationConfigProvider
     public function setReaderFactory($readerFactory)
     {
         $this->readerFactory = $readerFactory;
+        return $this;
+    }
+
+    /**
+     * @param \Weasel\Common\Cache\Cache $cache
+     * @return AnnotationConfigurator
+     */
+    public function setCache($cache)
+    {
+        $this->cache = $cache;
         return $this;
     }
 

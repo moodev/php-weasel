@@ -19,4 +19,6 @@ interface JsonConfigProvider
      */
     public function getConfig($class);
 
+    public function setCache($cache);
+
 }
