@@ -26,6 +26,15 @@ class JsonMapper
         return $this->_decodeClass($decoded, $class);
     }
 
+    public function readArray($string, $class)
+    {
+        $response = array();
+        $decoded = json_decode($string, true);
+        foreach($decoded as $object) {
+            $response[] = $this->_decodeClass($object, $class);
+        }
+        return $response;
+    }
 
     public function writeString($object)
     {
