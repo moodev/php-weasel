@@ -25,4 +25,6 @@ class ClassSerialization
      * @var \Weasel\JsonMarshaller\Config\Serialization\TypeInfo
      */
     public $typeInfo;
+
+    public $anyGetter = null;
 }
