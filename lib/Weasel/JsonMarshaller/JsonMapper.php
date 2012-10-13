@@ -46,7 +46,7 @@ class JsonMapper
     {
         $response = array();
         $decoded = json_decode($string, true);
-        foreach($decoded as $object) {
+        foreach ($decoded as $object) {
             $response[] = $this->_decodeClass($object, $class);
         }
         return $response;
@@ -73,6 +73,10 @@ class JsonMapper
         }
 
         $result = array();
+        if (isset($config->anyGetter)) {
+            $method = $config->anyGetter;
+            $result = $object->$method();
+        }
 
         foreach ($config->properties as $key => $propConfig) {
 
@@ -310,6 +314,9 @@ class JsonMapper
                     $object->$meth($decodedValue);
 
                 }
+            } elseif (isset($deconfig->anySetter)) {
+                $method = $deconfig->anySetter;
+                $object->$method($key, $value);
             } elseif (!$deconfig->ignoreUnknown) {
                 if (!isset($canIgnoreProperties[$key])) {
                     trigger_error("Unknown property: $key", E_USER_WARNING);
