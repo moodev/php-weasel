@@ -17,7 +17,7 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(new \DateTime("2012-11-12 12:12:12", new \DateTimeZone("UTC")),
-                  "2012-11-12T12:12:12+00:00"
+                  "2012-11-12T12:12:12+0000"
             ),
         );
     }
@@ -44,7 +44,7 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
     public function provideDataForDecode()
     {
         return array(
-            array("2012-11-12T12:12:12+00:00",
+            array("2012-11-12T12:12:12+0000",
                   new \DateTime("2012-11-12 12:12:12", new \DateTimeZone("UTC"))
             ),
         );
@@ -105,7 +105,8 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
             array(
                  null,
                  1,
-                 "foo"
+                 "foo",
+                 "2012-01-02 11:11:11"
             )
         );
     }
