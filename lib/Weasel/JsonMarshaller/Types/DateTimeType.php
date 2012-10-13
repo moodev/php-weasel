@@ -13,6 +13,12 @@ use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 class DateTimeType implements Type
 {
 
+    protected $dateTimeFormatString;
+
+    public function __construct($dateTimeFormatString = "c")
+    {
+        $this->dateTimeFormatString = $dateTimeFormatString;
+    }
 
     public function decodeValue($value, JsonMapper $mapper)
     {
@@ -37,7 +43,7 @@ class DateTimeType implements Type
         if (!$value instanceof DateTime) {
             throw new InvalidTypeException('\DateTime', $value);
         }
-        return $value->format("c");
+        return $value->format($this->dateTimeFormatString);
     }
 
 }
