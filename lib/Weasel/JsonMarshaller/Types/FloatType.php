@@ -16,7 +16,7 @@ class FloatType implements Type
         if (!is_numeric($value)) {
             throw new InvalidTypeException("float", $value);
         }
-        return (float)$value;
+        return (float)($value + 0);
     }
 
     public function decodeValue($value, JsonMapper $mapper)
