@@ -10,7 +10,7 @@ use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 
 require_once(__DIR__ . '/../../../../lib/WeaselAutoloader.php');
 
-class FloatTypeTest extends \PHPUnit_Framework_TestCase
+class StringTypeTest extends \PHPUnit_Framework_TestCase
 {
 
     public function provideDataForEncode()
@@ -19,50 +19,45 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
                 return array($a);
             },
             array(
-                 2,
-                 1.2123123123123,
-                 3,
-                 1e8,
-                 "123",
-                 "0xaa",
-                 "1e8"
+                 "foo",
+                 "fubar"
             )
         );
     }
 
     /**
      * @dataProvider provideDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\FloatType
+     * @covers \Weasel\JsonMarshaller\Types\StringType
      */
-    public function testEncodeFloat($value)
+    public function testEncodeString($value)
     {
 
-        $handler = new FloatType();
+        $handler = new StringType();
 
         $encoded =
             $handler->encodeValue($value,
                                   new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
             );
 
-        $this->assertInternalType("float", $encoded);
+        $this->assertInternalType("string", $encoded);
         $this->assertEquals($value, $encoded);
 
     }
 
     /**
      * @dataProvider provideDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\FloatType
+     * @covers \Weasel\JsonMarshaller\Types\StringType
      */
-    public function testDecodeFloat($value)
+    public function testDecodeString($value)
     {
-        $handler = new FloatType();
+        $handler = new StringType();
 
         $encoded =
             $handler->decodeValue($value,
                                   new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
             );
 
-        $this->assertInternalType("float", $encoded);
+        $this->assertInternalType("string", $encoded);
         $this->assertEquals($value, $encoded);
     }
 
@@ -72,21 +67,23 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
                 return array($a);
             },
             array(
-                 "hi mum!",
-                 "f00ff0f0abc",
-                 "0xzz"
+                 1.2,
+                 7,
+                 false,
+                 true,
+                 null
             )
         );
     }
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\FloatType
+     * @covers \Weasel\JsonMarshaller\Types\StringType
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
-    public function testNotAFloatEncode($value)
+    public function testNotAStringEncode($value)
     {
-        $handler = new FloatType();
+        $handler = new StringType();
         $handler->encodeValue($value,
                               new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
@@ -95,12 +92,12 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\FloatType
+     * @covers \Weasel\JsonMarshaller\Types\StringType
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
-    public function testNotAFloatDecode($value)
+    public function testNotAStringDecode($value)
     {
-        $handler = new FloatType();
+        $handler = new StringType();
         $handler->decodeValue($value,
                               new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );

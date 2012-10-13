@@ -10,7 +10,7 @@ use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 
 require_once(__DIR__ . '/../../../../lib/WeaselAutoloader.php');
 
-class FloatTypeTest extends \PHPUnit_Framework_TestCase
+class BoolTypeTest extends \PHPUnit_Framework_TestCase
 {
 
     public function provideDataForEncode()
@@ -19,51 +19,70 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
                 return array($a);
             },
             array(
-                 2,
-                 1.2123123123123,
-                 3,
-                 1e8,
-                 "123",
-                 "0xaa",
-                 "1e8"
+                 true,
+                 false
             )
         );
     }
 
     /**
      * @dataProvider provideDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\FloatType
+     * @covers \Weasel\JsonMarshaller\Types\BoolType
      */
-    public function testEncodeFloat($value)
+    public function testEncodeBool($value)
     {
 
-        $handler = new FloatType();
+        $handler = new BoolType();
 
         $encoded =
             $handler->encodeValue($value,
                                   new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
             );
 
-        $this->assertInternalType("float", $encoded);
+        $this->assertInternalType("bool", $encoded);
         $this->assertEquals($value, $encoded);
 
     }
 
-    /**
-     * @dataProvider provideDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\FloatType
-     */
-    public function testDecodeFloat($value)
+    public function provideDataForDecode()
     {
-        $handler = new FloatType();
+        return array(
+            array(true,
+                  true
+            ),
+            array(false,
+                  false
+            ),
+            array("true",
+                  true
+            ),
+            array("false",
+                  false
+            ),
+            array(1,
+                  true
+            ),
+            array(0,
+                  false
+            )
+        );
+    }
+
+    /**
+     * @dataProvider provideDataForDecode
+     * @covers \Weasel\JsonMarshaller\Types\BoolType
+     */
+    public function testDecodeBool($value, $expected)
+    {
+        $handler = new BoolType();
 
         $encoded =
             $handler->decodeValue($value,
                                   new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
             );
 
-        $this->assertInternalType("float", $encoded);
-        $this->assertEquals($value, $encoded);
+        $this->assertInternalType("bool", $encoded);
+        $this->assertEquals($expected, $encoded);
     }
 
     public function provideBrokenDataForEncode()
@@ -74,19 +93,21 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
             array(
                  "hi mum!",
                  "f00ff0f0abc",
-                 "0xzz"
+                 "0xzz",
+                 7,
+                 null
             )
         );
     }
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\FloatType
+     * @covers \Weasel\JsonMarshaller\Types\BoolType
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
-    public function testNotAFloatEncode($value)
+    public function testNotABoolEncode($value)
     {
-        $handler = new FloatType();
+        $handler = new BoolType();
         $handler->encodeValue($value,
                               new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
@@ -95,12 +116,12 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\FloatType
+     * @covers \Weasel\JsonMarshaller\Types\BoolType
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
-    public function testNotAFloatDecode($value)
+    public function testNotABoolDecode($value)
     {
-        $handler = new FloatType();
+        $handler = new BoolType();
         $handler->decodeValue($value,
                               new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
