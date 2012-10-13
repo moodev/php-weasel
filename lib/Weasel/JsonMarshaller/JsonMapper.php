@@ -31,6 +31,7 @@ class JsonMapper
         $this->registerType("float", new Types\FloatType());
         $this->registerType("integer", new Types\IntType(), array("int"));
         $this->registerType("string", new Types\StringType());
+        $this->registerType("datetime", new Types\DateTimeType());
     }
 
     public function readString($string, $class)

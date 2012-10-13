@@ -6,24 +6,27 @@
  */
 namespace Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\JsonMapper;
+use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 
 class StringType implements Type
 {
 
-    public function decodeValue($value, JsonMapper $mapper)
+    protected function checkAndCastValue($value)
     {
         if (!is_string($value)) {
-            throw new \Exception("Type error, expected string but got " . gettype($value));
+            throw new InvalidTypeException("string", $value);
         }
         return (string)$value;
     }
 
+    public function decodeValue($value, JsonMapper $mapper)
+    {
+        return $this->checkAndCastValue($value);
+    }
+
     public function encodeValue($value, JsonMapper $mapper)
     {
-        if (!is_string($value)) {
-            throw new \Exception("Type error");
-        }
-        return (string)$value;
+        return $this->checkAndCastValue($value);
     }
 
 }

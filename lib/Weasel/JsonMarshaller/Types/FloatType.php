@@ -6,24 +6,27 @@
  */
 namespace Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\JsonMapper;
+use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 
 class FloatType implements Type
 {
 
-    public function decodeValue($value, JsonMapper $mapper)
+    protected function checkAndCast($value)
     {
         if (!is_numeric($value)) {
-            throw new \Exception("Type error, expected numeric but got " . $value);
+            throw new InvalidTypeException("float", $value);
         }
         return (float)$value;
     }
 
+    public function decodeValue($value, JsonMapper $mapper)
+    {
+        return $this->checkAndCast($value);
+    }
+
     public function encodeValue($value, JsonMapper $mapper)
     {
-        if (!is_float($value)) {
-            throw new \Exception("Type error");
-        }
-        return (float)$value;
+        return $this->checkAndCast($value);
     }
 
 }

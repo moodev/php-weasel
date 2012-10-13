@@ -6,6 +6,7 @@
  */
 namespace Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\JsonMapper;
+use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 
 interface Type
 {

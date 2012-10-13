@@ -6,24 +6,27 @@
  */
 namespace Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\JsonMapper;
+use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 
 class IntType implements Type
 {
 
-    public function decodeValue($value, JsonMapper $mapper)
+    protected function checkAndCastValue($value)
     {
-        if (!is_numeric($value)) {
-            throw new \Exception("Type error, expected numeric but got " . $value);
+        if (!is_int($value) && !ctype_digit($value)) {
+            throw new InvalidTypeException("integer", $value);
         }
         return (int)$value;
     }
 
+    public function decodeValue($value, JsonMapper $mapper)
+    {
+        return $this->checkAndCastValue($value);
+    }
+
     public function encodeValue($value, JsonMapper $mapper)
     {
-        if (!is_int($value)) {
-            throw new \Exception("Type error");
-        }
-        return (int)$value;
+        return $this->checkAndCastValue($value);
     }
 
 }
