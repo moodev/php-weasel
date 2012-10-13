@@ -47,7 +47,9 @@ class AnnotationDriver implements ConfigProvider
         }
         $config = $this->_getConfig($class);
 
-        $this->cache->set($key, $config, "XmlConfig");
+        if (isset($this->cache)) {
+            $this->cache->set($key, $config, "XmlConfig");
+        }
         return $config;
     }
 
