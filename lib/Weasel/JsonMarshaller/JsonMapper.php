@@ -14,10 +14,23 @@ class JsonMapper
      */
     protected $configProvider;
 
+    /**
+     * @var Types\Type[]
+     */
+    protected $typeHandlers = array();
 
     public function __construct(\Weasel\JsonMarshaller\Config\JsonConfigProvider $configProvider)
     {
         $this->configProvider = $configProvider;
+        $this->registerBuiltInTypes();
+    }
+
+    protected function registerBuiltInTypes()
+    {
+        $this->registerType("boolean", new Types\BoolType(), array("bool"));
+        $this->registerType("float", new Types\FloatType());
+        $this->registerType("integer", new Types\IntType(), array("int"));
+        $this->registerType("string", new Types\StringType());
     }
 
     public function readString($string, $class)
@@ -148,7 +161,8 @@ class JsonMapper
     }
 
 
-    protected function _instantiateClassFromPropertyCreator($array, $class,
+    protected function _instantiateClassFromPropertyCreator($array,
+                                                            $class,
                                                             Config\Deserialization\PropertyCreator $creator)
     {
         $args = array();
@@ -307,46 +321,16 @@ class JsonMapper
         if (!isset($value)) {
             return null;
         }
-        if (!preg_match('/^(.*)\\[(int|integer|string|bool|boolean|float|)\\]$/i', $type, $matches)) {
-            switch ($type) {
-                case "bool":
-                case "boolean":
-                    if (is_bool($value)) {
-                        return (bool)$value;
-                    }
-                    if ($value === "true" || $value === 1) {
-                        return true;
-                    }
-                    if ($value === "false" || $value === 0) {
-                        return false;
-                    }
-                    throw new \Exception("Type error");
-                    break;
-                case "int":
-                case "integer":
-                    if (!is_numeric($value)) {
-                        throw new \Exception("Type error, expected numeric but got " . $value);
-                    }
-                    return (int)$value;
-                    break;
-                case "string":
-                    if (!is_string($value)) {
-                        throw new \Exception("Type error, expected string but got " . gettype($value));
-                    }
-                    return (string)$value;
-                case "float":
-                    if (!is_numeric($value)) {
-                        throw new \Exception("Type error, expected numeric but got " . $value);
-                    }
-                    return (float)$value;
-                default:
-                    if (!is_array($value)) {
-                        throw new \Exception(
-                            "Expected array but found something else (or type $type is bad) got: " . gettype($value
-                            ));
-                    }
-                    return $this->_decodeClass($value, $type);
+        if (!preg_match('/^(.*)\\[([^\\]]*)\\]$/i', $type, $matches)) {
+            if (isset($this->typeHandlers[$type])) {
+                return $this->typeHandlers[$type]->decodeValue($value, $this);
             }
+            if (!is_array($value)) {
+                throw new \Exception(
+                    "Expected array but found something else (or type $type is bad) got: " . gettype($value
+                    ));
+            }
+            return $this->_decodeClass($value, $type);
         }
 
         $elementType = $matches[1];
@@ -380,38 +364,14 @@ class JsonMapper
         if (!isset($value)) {
             return null;
         }
-        if (!preg_match('/^(.*)\\[(int|integer|string|bool|boolean|float|)\\]$/i', $type, $matches)) {
-            switch ($type) {
-                case "bool":
-                case "boolean":
-                    if (!is_bool($value)) {
-                        throw new \Exception("Type error");
-                    }
-                    return (bool)$value;
-                    break;
-                case "int":
-                case "integer":
-                    if (!is_int($value)) {
-                        throw new \Exception("Type error");
-                    }
-                    return (int)$value;
-                    break;
-                case "string":
-                    if (!is_string($value)) {
-                        throw new \Exception("Type error");
-                    }
-                    return (string)$value;
-                case "float":
-                    if (!is_float($value)) {
-                        throw new \Exception("Type error");
-                    }
-                    return (float)$value;
-                default:
-                    if (!is_object($value)) {
-                        throw new \Exception("Expected object but found something else (or type $type is bad)");
-                    }
-                    return $this->_encodeObject($value, $typeInfo);
+        if (!preg_match('/^(.*)\\[([^\\]]*)\\]$/i', $type, $matches)) {
+            if (isset($this->typeHandlers[$type])) {
+                return $this->typeHandlers[$type]->encodeValue($value, $this);
             }
+            if (!is_object($value)) {
+                throw new \Exception("Expected object but found something else (or type $type is bad)");
+            }
+            return $this->_encodeObject($value, $typeInfo);
         }
 
         $elementType = $matches[1];
@@ -430,5 +390,19 @@ class JsonMapper
         }
         return $result;
 
+    }
+
+
+    /**
+     * @param string $name
+     * @param Types\Type $handler
+     * @param string[] $aliases
+     */
+    public function registerType($name, $handler, $aliases = array())
+    {
+        $this->typeHandlers[$name] = $handler;
+        foreach ($aliases as $alias) {
+            $this->typeHandlers[$alias] = $handler;
+        }
     }
 }
