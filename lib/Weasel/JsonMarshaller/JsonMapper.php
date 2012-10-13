@@ -6,6 +6,8 @@
  */
 namespace Weasel\JsonMarshaller;
 
+use Weasel\Common\Utils\ReflectionUtils;
+
 class JsonMapper
 {
 
@@ -175,14 +177,10 @@ class JsonMapper
             $args[] = $val;
         }
 
-        // TODO: Avoid reflectors up to N (4?) args
         if ($creator->method === '__construct') {
-
-            $rClass = new \ReflectionClass($class);
-            return $rClass->newInstanceArgs($args);
+            return ReflectionUtils::instantiateClassByConstructor($class, $args);
         } else {
-            $rMethod = new \ReflectionMethod($class, $creator->method);
-            return $rMethod->invokeArgs(null, $args);
+            return ReflectionUtils::invokeStaticMethod($class, $creator->method, $args);
         }
     }
 
