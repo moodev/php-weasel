@@ -12,22 +12,29 @@ class JsonMapper
 {
 
     /**
-     * @var \Weasel\JsonMarshaller\Config\JsonConfigProvider
+     * @var \Weasel\JsonMarshaller\Config\JsonConfigProvider The source of our configuration
      */
     protected $configProvider;
 
     /**
-     * @var Types\Type[]
+     * @var Types\Type[] Array mapping type names to their handlers
      */
     protected $typeHandlers = array();
 
+    /**
+     * Setup a JsonMapper from a config provider
+     * @param Config\JsonConfigProvider $configProvider
+     */
     public function __construct(\Weasel\JsonMarshaller\Config\JsonConfigProvider $configProvider)
     {
         $this->configProvider = $configProvider;
-        $this->registerBuiltInTypes();
+        $this->_registerBuiltInTypes();
     }
 
-    protected function registerBuiltInTypes()
+    /**
+     * Setup the types we consider "built-in".
+     */
+    protected function _registerBuiltInTypes()
     {
         $this->registerType("boolean", new Types\BoolType(), array("bool"));
         $this->registerType("float", new Types\FloatType());
@@ -36,12 +43,24 @@ class JsonMapper
         $this->registerType("datetime", new Types\DateTimeType());
     }
 
+    /**
+     * Given a string of JSON, decode it into an instance of the named $class.
+     * @param string $string JSON string containing an object
+     * @param string $class Full namespaced name of the class this JSON represents.
+     * @return mixed A populated instance of $class
+     */
     public function readString($string, $class)
     {
         $decoded = json_decode($string, true);
         return $this->_decodeClass($decoded, $class);
     }
 
+    /**
+     * Given a string containing a JSON array decode it into an array of the named $class.
+     * @param string $string JSON string containing an array
+     * @param string $class Full namespaced name of the class this JSON array contains
+     * @return array Array of populated $class instances
+     */
     public function readArray($string, $class)
     {
         $response = array();
@@ -52,16 +71,34 @@ class JsonMapper
         return $response;
     }
 
+    /**
+     * Serialize an object to a string of JSON.
+     * @param object $object Object to serialize
+     * @return string The JSON
+     */
     public function writeString($object)
     {
         return json_encode($this->_encodeObject($object), JSON_FORCE_OBJECT);
     }
 
+    /**
+     * Serialize an object to an array suitable for passing to json_encode.
+     * @param object $object The object to serialize
+     * @return array An array suitable for json_encode.
+     */
     public function writeArray($object)
     {
         return $this->_encodeObject($object);
     }
 
+    /**
+     * Encode an object to an array representation based on our configuration.
+     * @param object $object Object to serialize.
+     * @param Config\Serialization\TypeInfo $typeInfo TypeInfo to override that from the class config, used when a
+     * property has TypeInfo associated with it.
+     * @return array
+     * @throws \Exception
+     */
     protected function _encodeObject($object, $typeInfo = null)
     {
         $class = get_class($object);
