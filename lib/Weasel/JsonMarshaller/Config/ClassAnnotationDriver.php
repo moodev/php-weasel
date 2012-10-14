@@ -121,6 +121,22 @@ class ClassAnnotationDriver
         $this->config->deserialization->properties[$property] = $setterConfig;
     }
 
+    protected function _configureAnyGetter(\ReflectionMethod $method)
+    {
+        if ($method->getNumberOfParameters() != 0) {
+            throw new \Exception("anyGetter {$method->getName()} must not have parameters");
+        }
+        $this->config->serialization->anyGetter = $method->getName();
+    }
+
+    protected function _configureAnySetter(\ReflectionMethod $method)
+    {
+        if ($method->getNumberOfParameters() != 2) {
+            throw new \Exception("anySetter {$method->getName()} must have exactly two parameters");
+        }
+        $this->config->deserialization->anySetter = $method->getName();
+    }
+
     protected function _configureCreator(\ReflectionMethod $method)
     {
         $name = $method->getName();
@@ -173,6 +189,16 @@ class ClassAnnotationDriver
             $this->_configureCreator($method);
         } elseif ($method->isConstructor()) {
             $this->_configureCreator($method);
+        } elseif ($this->annotationReader->getSingleMethodAnnotation($method->getName(),
+                                                                     self::_ANS . 'JsonAnyGetter'
+        )
+        ) {
+            $this->_configureAnyGetter($method);
+        } elseif ($this->annotationReader->getSingleMethodAnnotation($method->getName(),
+                                                                     self::_ANS . 'JsonAnySetter'
+        )
+        ) {
+            $this->_configureAnySetter($method);
         } elseif (strpos($name, 'get') === 0) {
             $this->_configureGetter($method);
         } elseif (strpos($name, 'set') === 0) {
