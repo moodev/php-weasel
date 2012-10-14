@@ -6,7 +6,7 @@
  */
 namespace Weasel\JsonMarshaller\Config\Serialization;
 
-class PropertySerialization
+abstract class PropertySerialization
 {
 
     /**
