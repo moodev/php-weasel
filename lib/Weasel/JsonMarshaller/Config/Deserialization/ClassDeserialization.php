@@ -39,4 +39,6 @@ class ClassDeserialization
      */
     public $typeInfo;
 
+    public $anySetter = null;
+
 }
