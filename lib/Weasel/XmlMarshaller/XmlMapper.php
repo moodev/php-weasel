@@ -131,9 +131,9 @@ class XmlMapper
         $knownValues = array();
 
         if (!$xml->isEmptyElement) {
-            do {
+            while (true) {
                 if (!$xml->read()) {
-                    throw new \Exception("XML Read failure parsing for {$class}");
+                    throw new \Exception("XML read error");
                 }
                 switch ($xml->nodeType) {
                     case \XMLReader::ELEMENT:
@@ -152,16 +152,15 @@ class XmlMapper
                         }
                         break;
                     case \XMLReader::END_ELEMENT:
-                        break;
+                        break 2;
                     case \XMLReader::WHITESPACE:
                     case \XMLReader::COMMENT:
                     case \XMLReader::SIGNIFICANT_WHITESPACE:
                         break;
                     default:
                         throw new \Exception("XML Parsing error, found unexpected {$xml->nodeType} while parsing for {$class}");
-
                 }
-            } while ($xml->nodeType != \XMLReader::END_ELEMENT);
+            }
         }
 
         $notSeenAtts = array_diff($deConfig->requiredAttributes, $seenAttributes);
@@ -208,7 +207,7 @@ class XmlMapper
 
         $collection = array();
 
-        do {
+        while (true) {
             if (!$xml->read()) {
                 throw new \Exception("XML Read failure parsing wrapper");
             }
@@ -228,7 +227,7 @@ class XmlMapper
                     $collection[] = $this->_readElementAsType($xml, $type);
                     break;
                 case \XMLReader::END_ELEMENT:
-                    break;
+                    break 2;
                 case \XMLReader::WHITESPACE:
                 case \XMLReader::SIGNIFICANT_WHITESPACE:
                 case \XMLReader::COMMENT:
@@ -237,7 +236,7 @@ class XmlMapper
                     throw new \Exception("XML Parsing error, found unexpected {$xml->nodeType}");
 
             }
-        } while ($xml->nodeType != \XMLReader::END_ELEMENT);
+        }
 
         return array($elementConfig->property,
                      $collection
@@ -327,6 +326,19 @@ class XmlMapper
                 case "float":
                 case "string":
                     $ret = $this->_decodeSimpleValue($xml->readInnerXml(), $type);
+                    if (!$xml->isEmptyElement) {
+                        $open = 1;
+                        while ($open > 0) {
+                            if (!$xml->read()) {
+                                throw new \Exception("XML Read failure parsing simple value");
+                            }
+                            if ($xml->nodeType == \XMLReader::ELEMENT && !$xml->isEmptyElement) {
+                                $open++;
+                            } elseif ($xml->nodeType == \XMLReader::END_ELEMENT) {
+                                $open--;
+                            }
+                        }
+                    }
                     break;
                 default:
                     // Object! (hopefully)
@@ -350,7 +362,6 @@ class XmlMapper
 
         }
 
-        $xml->next();
         return $ret;
     }
 

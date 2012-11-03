@@ -144,6 +144,8 @@ class JsonMapper
 
                 $meth = $propConfig->method;
                 $value = $object->$meth();
+            } else {
+                throw new \Exception("No idea how to serialize something with the given config");
             }
 
 
