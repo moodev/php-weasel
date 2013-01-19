@@ -6,6 +6,8 @@
  */
 namespace Weasel\Annotation;
 
+use RuntimeException;
+
 class PhpParser
 {
 
@@ -34,18 +36,33 @@ class PhpParser
 
         $tokens = token_get_all('<?php ' . $data);
         $namespaces = array();
+        $curNamespace = '\\';
         while ($token = array_shift($tokens)) {
             if (!is_array($token)) {
                 continue;
             }
             $name = $token[0];
             if ($name === T_NAMESPACE) {
+                $curNamespace = $this->_Namespace($tokens);
                 $namespaces = array();
                 continue;
             }
 
             if ($name === T_USE) {
                 $namespaces = array_merge($namespaces, $this->_Use($tokens));
+            }
+
+            if ($name === T_CLASS) {
+                $foundClass = $this->_Class($tokens);
+                if ($foundClass[0] != '\\') {
+                    $foundClass = $curNamespace . '\\' . $foundClass;
+                }
+                if ($foundClass === $class->getName()) {
+                    if ($class->getNamespaceName() !== $curNamespace) {
+                        throw new \RuntimeException("Parsing error: Thought $foundClass was in {$class->getNamespaceName()} but it isn't.");
+                    }
+                    break;
+                }
             }
 
         }
@@ -72,9 +89,17 @@ class PhpParser
 
         while ($token = array_shift($tokens)) {
             if (!is_array($token)) {
+                $namespace = ltrim($namespace, '\\');
                 if ($token === ',') {
+                    if (!isset($alias)) {
+                        $alias = $lastSegment;
+                    }
                     $namespaces[$alias] = $namespace;
-                    $alias = "";
+                    $alias = null;
+                    $lastSegment = null;
+                    $aliasPart = false;
+                    $namespace = "";
+                    continue;
                 } elseif ($token === ';') {
                     if (!isset($alias)) {
                         $alias = $lastSegment;
@@ -94,7 +119,7 @@ class PhpParser
             } elseif ($token[0] === T_AS) {
                 $aliasPart = true;
                 $alias = "";
-            } elseif ($token[0] === T_WHITESPACE) {
+            } elseif ($token[0] === T_WHITESPACE || $token[0] === T_COMMENT || $token[0] === T_DOC_COMMENT) {
                 // Meh
             } elseif ($aliasPart && ($token[0] === T_STRING || $token[0] === T_NS_SEPARATOR)) {
                 $alias .= $token[1];
@@ -109,7 +134,6 @@ class PhpParser
 
     protected function _readPrologue(\ReflectionClass $class)
     {
-        // TODO: Handle silly corner cases where someone has decided to play PHP Golf.
         $file = $class->getFileName();
         $line = $class->getStartLine();
 
@@ -123,11 +147,83 @@ class PhpParser
                 }
                 $buffer .= $data;
             }
+
             fclose($handle);
         }
 
         return $buffer;
 
+    }
+
+    private function _Namespace($tokens)
+    {
+        $namespace = "";
+
+        while ($token = array_shift($tokens)) {
+            if (!is_array($token)) {
+                switch ($token) {
+                    case ";":
+                    case "{":
+                        return $namespace;
+                    default:
+                        throw new RuntimeException("Parse error: got $token expected ;");
+                }
+            } else {
+                switch ($token[0]) {
+                    case T_STRING:
+                    case T_NS_SEPARATOR:
+                        $namespace .= $token[1];
+                        break;
+                    case T_WHITESPACE:
+                        if (empty($namespace)) {
+                            break;
+                        } else {
+                            return $namespace;
+                        }
+                    case T_COMMENT:
+                    case T_DOC_COMMENT:
+                        break;
+                    default:
+                        throw new RuntimeException("Parse error: got {$token[1]} expected part of namespace");
+                }
+            }
+        }
+        return $namespace;
+    }
+
+    private function _Class($tokens)
+    {
+        $class = "";
+
+        while ($token = array_shift($tokens)) {
+            if (!is_array($token)) {
+                switch ($token) {
+                    case "{":
+                        return $class;
+                    default:
+                        throw new RuntimeException("Parse error: got $token expected {");
+                }
+            } else {
+                switch ($token[0]) {
+                    case T_STRING:
+                    case T_NS_SEPARATOR:
+                        $class .= $token[1];
+                        break;
+                    case T_WHITESPACE:
+                        if (empty($class)) {
+                            break;
+                        } else {
+                            return $class;
+                        }
+                    case T_COMMENT:
+                    case T_DOC_COMMENT:
+                        break;
+                    default:
+                        throw new RuntimeException("Parse error: got {$token[1]} expected part of class name");
+                }
+            }
+        }
+        return $class;
     }
 
 }
