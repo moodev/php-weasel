@@ -8,6 +8,7 @@ namespace Weasel\JsonMarshaller;
 
 use Weasel\Common\Utils\ReflectionUtils;
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
+use InvalidArgumentException;
 
 class JsonMapper
 {
@@ -53,6 +54,9 @@ class JsonMapper
     public function readString($string, $class)
     {
         $decoded = json_decode($string, true);
+        if ($decoded === null) {
+            throw new InvalidArgumentException("Unable to decode JSON: $string");
+        }
         return $this->_decodeClass($decoded, $class);
     }
 
@@ -216,7 +220,7 @@ class JsonMapper
                         break;
                     }
                     $result = array($classId,
-                                    $result
+                        $result
                     );
                     break;
                 case Config\Serialization\TypeInfo::TI_AS_WRAPPER_OBJECT:
@@ -398,7 +402,7 @@ class JsonMapper
         if (!preg_match('/^(.*)\\[([^\\]]*)\\]$/i', $type, $matches)) {
             if (isset($this->typeHandlers[$type])) {
                 return array($type,
-                             $this->typeHandlers[$type]
+                    $this->typeHandlers[$type]
                 );
             }
             return array("complex");
@@ -411,8 +415,8 @@ class JsonMapper
             $indexType = "int";
         }
         return array("array",
-                     $indexType,
-                     $elementType
+            $indexType,
+            $elementType
         );
     }
 
