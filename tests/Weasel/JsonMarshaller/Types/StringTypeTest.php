@@ -15,13 +15,10 @@ class StringTypeTest extends \PHPUnit_Framework_TestCase
 
     public function provideDataForEncode()
     {
-        return array_map(function ($a) {
-                return array($a);
-            },
-            array(
-                 "foo",
-                 "fubar"
-            )
+        return array(
+            array("foo", '"foo"'),
+            array("fubar", '"fubar"'),
+            array('flibble"flobble', '"flibble\"flobble"')
         );
     }
 
@@ -29,18 +26,18 @@ class StringTypeTest extends \PHPUnit_Framework_TestCase
      * @dataProvider provideDataForEncode
      * @covers \Weasel\JsonMarshaller\Types\StringType
      */
-    public function testEncodeString($value)
+    public function testEncodeString($value, $expected)
     {
 
         $handler = new StringType();
 
         $encoded =
             $handler->encodeValue($value,
-                                  new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
             );
 
         $this->assertInternalType("string", $encoded);
-        $this->assertEquals($value, $encoded);
+        $this->assertEquals($expected, $encoded);
 
     }
 
@@ -54,7 +51,7 @@ class StringTypeTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->decodeValue($value,
-                                  new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
             );
 
         $this->assertInternalType("string", $encoded);
@@ -67,11 +64,11 @@ class StringTypeTest extends \PHPUnit_Framework_TestCase
                 return array($a);
             },
             array(
-                 1.2,
-                 7,
-                 false,
-                 true,
-                 null
+                1.2,
+                7,
+                false,
+                true,
+                null
             )
         );
     }
@@ -85,7 +82,7 @@ class StringTypeTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new StringType();
         $handler->encodeValue($value,
-                              new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
         $this->fail("Should not get here");
     }
@@ -99,7 +96,7 @@ class StringTypeTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new StringType();
         $handler->decodeValue($value,
-                              new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
         $this->fail("Should not get here");
     }

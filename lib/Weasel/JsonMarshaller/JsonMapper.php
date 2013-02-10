@@ -9,6 +9,8 @@ namespace Weasel\JsonMarshaller;
 use Weasel\Common\Utils\ReflectionUtils;
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 use InvalidArgumentException;
+use Weasel\JsonMarshaller\Types;
+use Weasel\JsonMarshaller\Types\OldTypeWrapper;
 
 class JsonMapper
 {
@@ -19,7 +21,7 @@ class JsonMapper
     protected $configProvider;
 
     /**
-     * @var Types\Type[] Array mapping type names to their handlers
+     * @var Types\JsonType[] Array mapping type names to their handlers
      */
     protected $typeHandlers = array();
 
@@ -38,11 +40,11 @@ class JsonMapper
      */
     protected function _registerBuiltInTypes()
     {
-        $this->registerType("boolean", new Types\BoolType(), array("bool"));
-        $this->registerType("float", new Types\FloatType());
-        $this->registerType("integer", new Types\IntType(), array("int"));
-        $this->registerType("string", new Types\StringType());
-        $this->registerType("datetime", new Types\DateTimeType());
+        $this->registerJsonType("boolean", new Types\BoolType(), array("bool"));
+        $this->registerJsonType("float", new Types\FloatType());
+        $this->registerJsonType("integer", new Types\IntType(), array("int"));
+        $this->registerJsonType("string", new Types\StringType());
+        $this->registerJsonType("datetime", new Types\DateTimeType());
     }
 
     /**
@@ -83,17 +85,18 @@ class JsonMapper
      */
     public function writeString($object)
     {
-        return json_encode($this->_encodeObject($object), JSON_FORCE_OBJECT);
+        return $this->_encodeObject($object);
     }
 
     /**
      * Serialize an object to an array suitable for passing to json_encode.
+     * This used to be useful. Now all it does is call json_decode on the result of a writeString().
      * @param object $object The object to serialize
      * @return array An array suitable for json_encode.
      */
     public function writeArray($object)
     {
-        return $this->_encodeObject($object);
+        return json_decode($this->writeString($object), true);
     }
 
     /**
@@ -118,15 +121,17 @@ class JsonMapper
             $typeInfo = $config->typeInfo;
         }
 
-        $result = array();
+        $properties = array();
         if (isset($config->anyGetter)) {
             $method = $config->anyGetter;
-            $result = $object->$method();
-            if (!isset($result)) {
-                $result = array();
-            }
-            if (!is_array($result)) {
-                throw new InvalidTypeException("array", $result);
+            $extras = $object->$method();
+            if (isset($extras)) {
+                if (!is_array($properties)) {
+                    throw new InvalidTypeException("array", $properties);
+                }
+                foreach ($extras as $key => $value) {
+                    $properties[$key] = json_encode($value);
+                }
             }
         }
 
@@ -167,7 +172,7 @@ class JsonMapper
                     }
             }
 
-            $result[$key] = $this->_encodeValue($value, $propConfig->type, $propConfig->typeInfo);
+            $properties[$key] = $this->_encodeValue($value, $propConfig->type, $propConfig->typeInfo);
             if (is_object($value) &&
                 $propConfig->typeInfo &&
                 $propConfig->typeInfo->typeInfoAs === Config\Serialization\TypeInfo::TI_AS_EXTERNAL_PROPERTY
@@ -177,7 +182,7 @@ class JsonMapper
                 if (isset($typeInfo->subTypes[$propClass])) {
                     $classId = $typeInfo->subTypes[$propClass];
 
-                    $result[$propConfig->typeInfo->typeInfoProperty] = $classId;
+                    $properties[$propConfig->typeInfo->typeInfoProperty] = $classId;
                 }
 
             }
@@ -212,31 +217,38 @@ class JsonMapper
                         break;
                     }
                     $property = $typeInfo->typeInfoProperty;
-                    $result[$property] = $this->_encodeValue($classId, "string");
+                    $properties[$property] = $this->_encodeValue($classId, "string");
                     break;
                 case Config\Serialization\TypeInfo::TI_AS_WRAPPER_ARRAY:
                     // We're actually going to encase this encoded object in an array containing the classId.
                     if (!isset($classId)) {
                         break;
                     }
-                    $result = array($classId,
-                        $result
-                    );
+                    return '[' . $this->_encodeValue($classId, 'string') . ', ' . $this->_objectToJson($properties) . ']';
                     break;
                 case Config\Serialization\TypeInfo::TI_AS_WRAPPER_OBJECT:
                     // Very similar yo the wrapper array case, but this time it's a map from the classId to the object.
                     if (!isset($classId)) {
                         break;
                     }
-                    $result = array($classId => $result);
+                    return '{' . $this->_encodeValue($classId, 'string') . ': ' . $this->_objectToJson($properties) . '}';
                     break;
                 default:
                     throw new \Exception("Unsupported type info storage at class level");
             }
         }
 
-        return $result;
+        return $this->_objectToJson($properties);
 
+    }
+
+    protected function _objectToJson($properties)
+    {
+        $elements = array();
+        foreach ($properties as $key => $property) {
+            $elements[] = $this->_encodeValue($key, 'string') . ': ' . $property;
+        }
+        return '{' . implode(', ', $elements) . '}';
     }
 
 
@@ -412,9 +424,9 @@ class JsonMapper
 
         $indexType = $matches[2];
         if (empty($indexType)) {
-            $indexType = "int";
+            return array("array", $elementType);
         }
-        return array("array",
+        return array("map",
             $indexType,
             $elementType
         );
@@ -433,7 +445,10 @@ class JsonMapper
                 }
                 return $this->_decodeClass($value, $type);
                 break;
+            /** @noinspection PhpMissingBreakStatementInspection */
             case "array":
+                array_unshift($typeData, 'int');
+            case "map":
                 list ($indexType, $elementType) = $typeData;
                 $result = array();
                 if (!is_array($value)) {
@@ -446,7 +461,7 @@ class JsonMapper
                 break;
             default:
                 /**
-                 * @var $typeHandler Types\Type
+                 * @var $typeHandler Types\JsonType
                  */
                 list ($typeHandler) = $typeData;
                 return $typeHandler->decodeValue($value, $this);
@@ -464,7 +479,7 @@ class JsonMapper
     protected function _encodeValue($value, $type, $typeInfo = null)
     {
         if (!isset($value)) {
-            return null;
+            return json_encode(null);
         }
         $typeData = $this->_parseType($type);
         switch (array_shift($typeData)) {
@@ -475,19 +490,28 @@ class JsonMapper
                 return $this->_encodeObject($value, $typeInfo);
                 break;
             case "array":
-                list ($indexType, $elementType) = $typeData;
-                $result = array();
+                list ($elementType) = $typeData;
                 if (!is_array($value)) {
                     $value = array($value);
                 }
-                foreach ($value as $key => $element) {
-                    $result[$this->_encodeValue($key, $indexType)] = $this->_encodeValue($element, $elementType);
+                $elements = array();
+                foreach ($value as $element) {
+                    $elements[] = $this->_encodeValue($element, $elementType);
                 }
-                return $result;
-                break;
+                return '[' . implode(', ', $elements) . ']';
+            case "map":
+                list ($indexType, $elementType) = $typeData;
+                if (!is_array($value)) {
+                    $value = array($value);
+                }
+                $elements = array();
+                foreach ($value as $key => $element) {
+                    $elements[] = $this->_encodeValue($key, $indexType) . ': ' . $this->_encodeValue($element, $elementType);
+                }
+                return '{' . implode(', ', $elements) . '}';
             default:
                 /**
-                 * @var $typeHandler Types\Type
+                 * @var $typeHandler Types\JsonType
                  */
                 list ($typeHandler) = $typeData;
                 return $typeHandler->encodeValue($value, $this);
@@ -498,15 +522,30 @@ class JsonMapper
 
 
     /**
+     * Register a custom type.
+     * @param string $name
+     * @param Types\JsonType $handler
+     * @param string[] $aliases
+     */
+    public function registerJsonType($name, $handler, $aliases = array())
+    {
+        $this->typeHandlers[$name] = $handler;
+        foreach ($aliases as $alias) {
+            $this->typeHandlers[$alias] = $handler;
+        }
+    }
+
+    /**
+     * Register an old style custom type.
+     * This is a compatibility handler and will be removed. Please use registerJsonType!
+     * @Deprecated
      * @param string $name
      * @param Types\Type $handler
      * @param string[] $aliases
      */
     public function registerType($name, $handler, $aliases = array())
     {
-        $this->typeHandlers[$name] = $handler;
-        foreach ($aliases as $alias) {
-            $this->typeHandlers[$alias] = $handler;
-        }
+        trigger_error("Types are deprecated, use JsonTypes through registerJsonType.", E_USER_DEPRECATED);
+        $this->registerJsonType($name, new OldTypeWrapper($handler), $aliases);
     }
 }

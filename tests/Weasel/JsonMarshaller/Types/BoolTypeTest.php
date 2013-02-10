@@ -15,13 +15,9 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
 
     public function provideDataForEncode()
     {
-        return array_map(function ($a) {
-                return array($a);
-            },
-            array(
-                 true,
-                 false
-            )
+        return array(
+            array(true, "true"),
+            array(false, "false")
         );
     }
 
@@ -29,18 +25,18 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
      * @dataProvider provideDataForEncode
      * @covers \Weasel\JsonMarshaller\Types\BoolType
      */
-    public function testEncodeBool($value)
+    public function testEncodeBool($value, $expected)
     {
 
         $handler = new BoolType();
 
         $encoded =
             $handler->encodeValue($value,
-                                  new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
             );
 
-        $this->assertInternalType("bool", $encoded);
-        $this->assertEquals($value, $encoded);
+        $this->assertInternalType("string", $encoded);
+        $this->assertEquals($expected, $encoded);
 
     }
 
@@ -48,22 +44,22 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(true,
-                  true
+                true
             ),
             array(false,
-                  false
+                false
             ),
             array("true",
-                  true
+                true
             ),
             array("false",
-                  false
+                false
             ),
             array(1,
-                  true
+                true
             ),
             array(0,
-                  false
+                false
             )
         );
     }
@@ -78,7 +74,7 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->decodeValue($value,
-                                  new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
             );
 
         $this->assertInternalType("bool", $encoded);
@@ -91,11 +87,11 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
                 return array($a);
             },
             array(
-                 "hi mum!",
-                 "f00ff0f0abc",
-                 "0xzz",
-                 7,
-                 null
+                "hi mum!",
+                "f00ff0f0abc",
+                "0xzz",
+                7,
+                null
             )
         );
     }
@@ -109,7 +105,7 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new BoolType();
         $handler->encodeValue($value,
-                              new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
         $this->fail("Should not get here");
     }
@@ -123,7 +119,7 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new BoolType();
         $handler->decodeValue($value,
-                              new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
         $this->fail("Should not get here");
     }

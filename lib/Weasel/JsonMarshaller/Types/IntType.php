@@ -8,7 +8,7 @@ namespace Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\JsonMapper;
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 
-class IntType implements Type
+class IntType implements JsonType
 {
 
     protected function checkAndCastValue($value)
@@ -26,7 +26,7 @@ class IntType implements Type
 
     public function encodeValue($value, JsonMapper $mapper)
     {
-        return $this->checkAndCastValue($value);
+        return json_encode($this->checkAndCastValue($value));
     }
 
 }
