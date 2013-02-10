@@ -8,7 +8,7 @@ namespace Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\JsonMapper;
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 
-class BoolType implements Type
+class BoolType implements JsonType
 {
 
     public function decodeValue($value, JsonMapper $mapper)
@@ -30,7 +30,7 @@ class BoolType implements Type
         if (!is_bool($value)) {
             throw new InvalidTypeException("boolean", $value);
         }
-        return (bool)$value;
+        return json_encode((bool)$value);
     }
 
 }

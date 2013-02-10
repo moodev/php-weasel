@@ -17,7 +17,7 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(new \DateTime("2012-11-12 12:12:12", new \DateTimeZone("UTC")),
-                  "2012-11-12T12:12:12+0000"
+                '"2012-11-12T12:12:12+0000"'
             ),
         );
     }
@@ -33,7 +33,7 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->encodeValue($value,
-                                  new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
             );
 
         $this->assertInternalType("string", $encoded);
@@ -45,7 +45,7 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array("2012-11-12T12:12:12+0000",
-                  new \DateTime("2012-11-12 12:12:12", new \DateTimeZone("UTC"))
+                new \DateTime("2012-11-12 12:12:12", new \DateTimeZone("UTC"))
             ),
         );
     }
@@ -63,7 +63,7 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->decodeValue($value,
-                                  new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
             );
 
         $this->assertInstanceOf('\DateTime', $encoded);
@@ -76,9 +76,9 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
                 return array($a);
             },
             array(
-                 null,
-                 1,
-                 "foo"
+                null,
+                1,
+                "foo"
             )
         );
     }
@@ -92,7 +92,7 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new DateTimeType();
         $handler->encodeValue($value,
-                              new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
         $this->fail("Should not get here");
     }
@@ -103,10 +103,10 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
                 return array($a);
             },
             array(
-                 null,
-                 1,
-                 "foo",
-                 "2012-01-02 11:11:11"
+                null,
+                1,
+                "foo",
+                "2012-01-02 11:11:11"
             )
         );
     }
@@ -120,7 +120,7 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new DateTimeType();
         $handler->decodeValue($value,
-                              new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
         $this->fail("Should not get here");
     }
