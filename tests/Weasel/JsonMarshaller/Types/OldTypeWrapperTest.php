@@ -7,10 +7,11 @@
 namespace Weasel\JsonMarshaller\Types;
 
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
+use Weasel\JsonMarshaller\JsonMapper;
 
 require_once(__DIR__ . '/../../../../lib/WeaselAutoloader.php');
 
-class IntTypeTest extends \PHPUnit_Framework_TestCase
+class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
 {
 
     public function provideDataForEncode()
@@ -24,12 +25,12 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\IntType
+     * @covers \Weasel\JsonMarshaller\Types\OldTypeWrapper
      */
     public function testEncodeInt($value, $expected)
     {
 
-        $handler = new IntType();
+        $handler = new OldTypeWrapper(new OldIntType());
 
         $encoded =
             $handler->encodeValue($value,
@@ -56,11 +57,11 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideDataForDecode
-     * @covers \Weasel\JsonMarshaller\Types\IntType
+     * @covers \Weasel\JsonMarshaller\Types\OldTypeWrapper
      */
     public function testDecodeInt($value)
     {
-        $handler = new IntType();
+        $handler = new OldTypeWrapper(new OldIntType());
 
         $encoded =
             $handler->decodeValue($value,
@@ -87,12 +88,12 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\IntType
+     * @covers \Weasel\JsonMarshaller\Types\OldTypeWrapper
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
     public function testNotAIntEncode($value)
     {
-        $handler = new IntType();
+        $handler = new OldTypeWrapper(new OldIntType());
         $handler->encodeValue($value,
             new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
@@ -101,16 +102,39 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\IntType
+     * @covers \Weasel\JsonMarshaller\Types\OldTypeWrapper
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
     public function testNotAIntDecode($value)
     {
-        $handler = new IntType();
+        $handler = new OldTypeWrapper(new OldIntType());
         $handler->decodeValue($value,
             new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
         $this->fail("Should not get here");
+    }
+
+}
+
+class OldIntType implements Type
+{
+
+    protected function checkAndCastValue($value)
+    {
+        if (!is_int($value) && !ctype_digit($value)) {
+            throw new InvalidTypeException("integer", $value);
+        }
+        return (int)$value;
+    }
+
+    public function decodeValue($value, JsonMapper $mapper)
+    {
+        return $this->checkAndCastValue($value);
+    }
+
+    public function encodeValue($value, JsonMapper $mapper)
+    {
+        return $this->checkAndCastValue($value);
     }
 
 }

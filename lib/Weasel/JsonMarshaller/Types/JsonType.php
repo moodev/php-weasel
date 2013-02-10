@@ -8,12 +8,7 @@ namespace Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\JsonMapper;
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 
-
-/**
- * @Deprecated
- * Custom types should extend JsonType, not this.
- */
-interface Type
+interface JsonType
 {
     /**
      * Deserialize something to its PHP type.
@@ -24,7 +19,7 @@ interface Type
     public function decodeValue($value, JsonMapper $mapper);
 
     /**
-     * Serialize a PHP value.
+     * Serialize a PHP value to Json.
      * @param $value
      * @param \Weasel\JsonMarshaller\JsonMapper $mapper
      * @return string

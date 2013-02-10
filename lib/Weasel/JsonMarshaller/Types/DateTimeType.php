@@ -10,7 +10,7 @@ use Exception;
 use DateTime;
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 
-class DateTimeType implements Type
+class DateTimeType implements JsonType
 {
 
     protected $dateTimeFormat;
@@ -47,7 +47,7 @@ class DateTimeType implements Type
         if (!$value instanceof DateTime) {
             throw new InvalidTypeException('\DateTime', $value);
         }
-        return $value->format($this->dateTimeFormat);
+        return json_encode($value->format($this->dateTimeFormat));
     }
 
 }

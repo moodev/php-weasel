@@ -15,18 +15,14 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
 
     public function provideDataForEncode()
     {
-        return array_map(function ($a) {
-                return array($a);
-            },
-            array(
-                 2,
-                 1.2123123123123,
-                 3,
-                 1e8,
-                 "123",
-                 "0xaa",
-                 "1e8"
-            )
+        return array(
+            array(2, '2'),
+            array(1.2123123123123, '1.2123123123123'),
+            array(3, '3'),
+            array(1e8, '100000000'),
+            array("123", '123'),
+            array("0xaa", '170'),
+            array("1e8", '100000000'),
         );
     }
 
@@ -34,18 +30,18 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
      * @dataProvider provideDataForEncode
      * @covers \Weasel\JsonMarshaller\Types\FloatType
      */
-    public function testEncodeFloat($value)
+    public function testEncodeFloat($value, $expected)
     {
 
         $handler = new FloatType();
 
         $encoded =
             $handler->encodeValue($value,
-                                  new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
             );
 
-        $this->assertInternalType("float", $encoded);
-        $this->assertEquals($value, $encoded);
+        $this->assertInternalType("string", $encoded);
+        $this->assertEquals($expected, $encoded);
 
     }
 
@@ -59,7 +55,7 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->decodeValue($value,
-                                  new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
             );
 
         $this->assertInternalType("float", $encoded);
@@ -72,9 +68,9 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
                 return array($a);
             },
             array(
-                 "hi mum!",
-                 "f00ff0f0abc",
-                 "0xzz"
+                "hi mum!",
+                "f00ff0f0abc",
+                "0xzz"
             )
         );
     }
@@ -88,7 +84,7 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new FloatType();
         $handler->encodeValue($value,
-                              new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
         $this->fail("Should not get here");
     }
@@ -102,7 +98,7 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new FloatType();
         $handler->decodeValue($value,
-                              new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
         );
         $this->fail("Should not get here");
     }

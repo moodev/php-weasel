@@ -54,6 +54,10 @@ class PhpParser
 
             if ($name === T_CLASS) {
                 $foundClass = $this->_Class($tokens);
+                if (empty($foundClass)) {
+                    // Class name is not on the same line as the class keyword. We're good to assume that we've read the right thing.
+                    break;
+                }
                 if ($foundClass[0] != '\\') {
                     $foundClass = $curNamespace . '\\' . $foundClass;
                 }
