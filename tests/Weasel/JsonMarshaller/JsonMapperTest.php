@@ -14,6 +14,9 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
 {
 
 
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testReadStringBasicObject()
     {
         $configProvider = new MockedConfigProvider();
@@ -36,6 +39,9 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new MockTestClass("foo"), $result);
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testReadStringPrimitive()
     {
         $configProvider = new MockedConfigProvider();
@@ -53,6 +59,9 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("foo", $result);
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testReadStringArrayPrimitive()
     {
         $configProvider = new MockedConfigProvider();
@@ -70,6 +79,9 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array("foo", "bar", "baz"), $result);
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testReadStringMapPrimitive()
     {
         $configProvider = new MockedConfigProvider();
@@ -87,6 +99,9 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array("a" => 123, "b" => 34, "c" => 99), $result);
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testReadStringArrayOfBasicObject()
     {
         $configProvider = new MockedConfigProvider();
@@ -118,6 +133,9 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(new MockTestClass("foo"), new MockTestClass("bar"), new MockTestClass("baz")), $result);
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testWriteStringBasicObject()
     {
         $configProvider = new MockedConfigProvider();
@@ -134,6 +152,9 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array("blah" => "foo"), $result);
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testWriteStringPrimitive()
     {
         $configProvider = new MockedConfigProvider();
@@ -150,6 +171,10 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("blah", $result);
     }
 
+
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testWriteStringArrayPrimitive()
     {
         $configProvider = new MockedConfigProvider();
@@ -166,6 +191,9 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array("foo", "bar", "baz"), $result);
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testWriteStringMapPrimitive()
     {
         $configProvider = new MockedConfigProvider();
@@ -183,6 +211,9 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array("a" => 123, "b" => 34, "c" => 99), $result);
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testWriteStringArrayOfBasicObject()
     {
         $configProvider = new MockedConfigProvider();
@@ -206,6 +237,9 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(array("blah" => "foo"), array("blah" => "bar"), array("blah" => "baz")), $result);
     }
 
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testReadArrayOfBasicObject()
     {
         $configProvider = new MockedConfigProvider();
