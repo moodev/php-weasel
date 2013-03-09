@@ -104,11 +104,12 @@ class JsonMapper
      * @param object $object Object to serialize.
      * @param Config\Serialization\TypeInfo $typeInfo TypeInfo to override that from the class config, used when a
      * property has TypeInfo associated with it.
+     * @param string $type Type this is being encoded into.
      * @throws Exception\InvalidTypeException
      * @throws \Exception
      * @return array
      */
-    protected function _encodeObject($object, $typeInfo = null)
+    protected function _encodeObject($object, $typeInfo = null, $type = null)
     {
         $class = get_class($object);
         $classconfig = $this->configProvider->getConfig($class);
@@ -118,10 +119,6 @@ class JsonMapper
         $config = $classconfig->serialization;
         if (!isset($config)) {
             throw new \Exception("No serialization configuration found for class $class");
-        }
-
-        if (!isset($typeInfo)) {
-            $typeInfo = $config->typeInfo;
         }
 
         $properties = array();
@@ -188,6 +185,17 @@ class JsonMapper
                     $properties[$propConfig->typeInfo->typeInfoProperty] = $classId;
                 }
 
+            }
+        }
+
+        if (!$typeInfo) {
+            // Typeinfo wasn't passed in on the property, we need to see if we have any to load
+            if (isset($type)) {
+                // We load typeinfo stuff from our base type, not the actual class we're serializing.
+                $parentConfig = $this->configProvider->getConfig($type);
+                if (isset($parentConfig)) {
+                    $typeInfo = $parentConfig->serialization->typeInfo;
+                }
             }
         }
 
@@ -490,7 +498,7 @@ class JsonMapper
                 if (!is_object($value)) {
                     throw new InvalidTypeException($type, $value);
                 }
-                return $this->_encodeObject($value, $typeInfo);
+                return $this->_encodeObject($value, $typeInfo, $type);
                 break;
             case "array":
                 list ($elementType) = $typeData;

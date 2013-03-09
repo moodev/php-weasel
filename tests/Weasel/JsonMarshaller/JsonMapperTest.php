@@ -134,7 +134,8 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $object->blah = new MockTestClassC("dog");
 
         $expected = array(
-            $mtcc => array("hi" => "dog")
+            "blah" =>
+            array($mtcc => array("hi" => "dog"))
         );
         $result = $mapper->writeArray($object);
         $this->assertInternalType("array", $result);
