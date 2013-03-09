@@ -186,7 +186,7 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
 
         $mapper = new JsonMapper($configProvider);
 
-        $result = $mapper->writeArray(array("foo", "bar", "baz"));
+        $result = $mapper->writeArray(array("foo", "bar", "baz"), 'string[]');
 
         $this->assertEquals(array("foo", "bar", "baz"), $result);
     }
@@ -205,7 +205,7 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
 
         $mapper = new JsonMapper($configProvider);
 
-        $result = $mapper->writeArray(array("a" => 123, "b" => 34, "c" => 99));
+        $result = $mapper->writeArray(array("a" => 123, "b" => 34, "c" => 99), 'int[string]');
 
         $this->assertInternalType("array", $result);
         $this->assertEquals(array("a" => 123, "b" => 34, "c" => 99), $result);
@@ -230,10 +230,10 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
                 new MockTestClass("foo"),
                 new MockTestClass("bar"),
                 new MockTestClass("baz"),
-            )
+            ),
+            $mtc . '[]'
         );
 
-        $this->assertInternalType("array", $result);
         $this->assertEquals(array(array("blah" => "foo"), array("blah" => "bar"), array("blah" => "baz")), $result);
     }
 
@@ -439,6 +439,7 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
 
         $mapper = new JsonMapper($this->buildTypeInfoTestConfig('TI_AS_PROPERTY'));
 
+        $input = array();
         $arr = array();
         $object = new MockTestClass();
         $object->blah = new MockTestClassC("dog");
@@ -446,22 +447,40 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $object = new MockTestClass();
         $object->blah = new MockTestClassD("car");
         $arr[] = $object;
+        $input[] = $arr;
+        $arr = array();
+        $object = new MockTestClass();
+        $object->blah = new MockTestClassD("wobble");
+        $arr[] = $object;
+        $input[] = $arr;
+        $input[] = array();
 
         $expected = array(
             array(
-                "blah" => array(
-                    "type" => $mtcc,
-                    "hi" => "dog"
+                array(
+                    "blah" => array(
+                        "hi" => "dog",
+                        "type" => $mtcc,
+                    )
+                ),
+                array(
+                    "blah" => array(
+                        "bi" => "car",
+                        "type" => $mtcd,
+                    )
                 )
             ),
             array(
-                "blah" => array(
-                    "type" => $mtcd,
-                    "bi" => "car"
-                )
-            )
+                array(
+                    "blah" => array(
+                        "bi" => "wobble",
+                        "type" => $mtcd,
+                    )
+                ),
+            ),
+            array()
         );
-        $result = $mapper->writeArray($arr);
+        $result = $mapper->writeArray($input, $mtcc . '[][]');
         $this->assertEquals($expected, $result);
     }
 

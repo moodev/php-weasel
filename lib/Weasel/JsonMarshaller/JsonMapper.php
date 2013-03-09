@@ -76,120 +76,16 @@ class JsonMapper
         return $this->readString($string, $class . '[]');
     }
 
-    protected function _guessArrayType(array $data)
-    {
-        $keyType = null;
-        $valueType = null;
-        $isMap = false;
-        $nestType = null;
-        $nestKeys = '';
-        $i = 0;
-        foreach ($data as $key => $value) {
-            if ($keyType !== "string") {
-                if (is_int($key)) {
-                    $keyType = "integer";
-                    if ($key !== $i) {
-                        // Non sequential keys, it's not an "array", it's a "map"
-                        $isMap = true;
-                    }
-                } else {
-                    $keyType = "string";
-                    $isMap = true;
-                }
-            }
-
-            $phpType = gettype($value);
-            switch ($phpType) {
-                case "object":
-                    $cValueType = get_class($value);
-                    if (!isset($valueType)) {
-                        $valueType = $cValueType;
-                    } else {
-                        $valueType = $this->_findCommonBaseClass($valueType, $cValueType);
-                    }
-                    break;
-                case "array":
-                    $aValueType = $this->_guessArrayType($value);
-                    $cValueType = $aValueType[0] . $aValueType[1];
-                    if (!isset($valueType)) {
-                        $nestType = $cValueType[0];
-                        $nestKeys = $cValueType[1];
-                        $valueType = $nestType . $nestKeys;
-                    } elseif ($valueType !== $cValueType) {
-                        if ($cValueType[1] !== $nestKeys) {
-                            throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
-                        } else {
-                            $nestType = $this->_findCommonBaseClass($nestType, $cValueType[0]);
-                            $valueType = $nestType . $nestKeys;
-                        }
-                    }
-                    break;
-                case "NULL":
-                    break;
-                default:
-                    $cValueType = $this->_phpTypeToWeaselType($phpType);
-                    if (!isset($valueType)) {
-                        $valueType = $cValueType;
-                    } elseif ($valueType !== $cValueType) {
-                        throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
-                    }
-            }
-            $i++;
-        }
-
-        return array(($nestType ? : $valueType), $nestKeys . '[' . ($isMap ? $keyType : '') . ']');
-
-    }
-
-    protected function _findCommonBaseClass($classA, $classB)
-    {
-        if ($classA === $classB) {
-            return $classA;
-        }
-
-        $rca = new ReflectionClass($classA);
-        $rcb = new ReflectionClass($classB);
-
-        $rcap = array();
-        $cur = $rca;
-        do {
-            $rcap[$cur->getName()] = true;
-        } while ($cur = $cur->getParentClass());
-
-        $cur = $rcb;
-        do {
-            if (isset($rcap[$cur->getName()])) {
-                return $cur->getName();
-            }
-        } while ($cur = $cur->getParentClass());
-
-        throw new \RuntimeException("Unable to find common base class for $classA and $classB");
-
-    }
-
-    protected function _phpTypeToWeaselType($type)
-    {
-        switch ($type) {
-            case "double":
-                $type = "float";
-                break;
-            case "string":
-            case "integer":
-                break;
-            default:
-                throw new InvalidArgumentException("Unknown type: $type");
-        }
-        return $type;
-    }
-
     protected function _guessType($data)
     {
         $type = gettype($data);
 
         switch ($type) {
-            case "array":
-                $aType = $this->_guessArrayType($data);
-                $type = $aType[0] . $aType[1];
+            case "integer":
+            case "string":
+                break;
+            case "double":
+                $type = "float";
                 break;
             case "object":
                 $type = get_class($data);
@@ -198,7 +94,7 @@ class JsonMapper
                 $type = "string";
                 break;
             default:
-                $type = $this->_phpTypeToWeaselType($type);
+                throw new InvalidArgumentException("Unable to guess type of data, please provide a type specification.");
         }
 
         return $type;
@@ -208,8 +104,7 @@ class JsonMapper
      * Serialize an data to a string of JSON.
      * @param mixed $data Data to serialize
      * @param string $type Type of the data being encoded. If not provided then this will be guessed.
-     *                      Guessing may not work reliably with complex array structures, or if $data is a subclass
-     *                      of the class you actually want to serialize as.
+     *                      Guessing only works with primitives and simple objects.
      * @return string The JSON
      */
     public function writeString($data, $type = null)
