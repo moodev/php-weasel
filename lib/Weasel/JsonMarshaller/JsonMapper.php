@@ -81,10 +81,12 @@ class JsonMapper
         $keyType = null;
         $valueType = null;
         $isMap = false;
+        $nestType = null;
+        $nestKeys = '';
         $i = 0;
         foreach ($data as $key => $value) {
             if ($keyType !== "string") {
-                if (is_int($key) || ctype_digit($key)) {
+                if (is_int($key)) {
                     $keyType = "integer";
                     if ($key !== $i) {
                         // Non sequential keys, it's not an "array", it's a "map"
@@ -96,60 +98,46 @@ class JsonMapper
                 }
             }
 
-            $cValueType = gettype($value);
-            if ($cValueType === "array") {
-                $cValueType = $this->_guessArrayType($value);
-            } elseif ($cValueType === "object") {
-                if ($valueType && !class_exists($valueType)) {
-                    throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
-                }
-                $cValueType = get_class($value);
-                if ($valueType) {
-                    $cValueType = $this->_findCommonBaseClass($valueType, $cValueType);
-                }
-            }
-            if (!$valueType || $valueType === $cValueType) {
-                $valueType = $cValueType;
-            } else {
-                switch ($cValueType) {
-                    case "integer":
-                        switch ($valueType) {
-                            case "double":
-                            case "string":
-                                break;
-                            default:
-                                throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
+            $phpType = gettype($value);
+            switch ($phpType) {
+                case "object":
+                    $cValueType = get_class($value);
+                    if (!isset($valueType)) {
+                        $valueType = $cValueType;
+                    } else {
+                        $valueType = $this->_findCommonBaseClass($valueType, $cValueType);
+                    }
+                    break;
+                case "array":
+                    $aValueType = $this->_guessArrayType($value);
+                    $cValueType = $aValueType[0] . $aValueType[1];
+                    if (!isset($valueType)) {
+                        $nestType = $cValueType[0];
+                        $nestKeys = $cValueType[1];
+                        $valueType = $nestType . $nestKeys;
+                    } elseif ($valueType !== $cValueType) {
+                        if ($cValueType[1] !== $nestKeys) {
+                            throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
+                        } else {
+                            $nestType = $this->_findCommonBaseClass($nestType, $cValueType[0]);
+                            $valueType = $nestType . $nestKeys;
                         }
-                        break;
-                    case "double":
-                        switch ($valueType) {
-                            case "integer":
-                                $valueType = $cValueType;
-                                break;
-                            case "string":
-                                break;
-                            default:
-                                throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
-                        }
-                        break;
-                    case "string":
-                        switch ($valueType) {
-                            case "integer":
-                            case "double":
-                                $valueType = "string";
-                                break;
-                            default:
-                                throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
-                        }
-                        break;
-                    default:
+                    }
+                    break;
+                case "NULL":
+                    break;
+                default:
+                    $cValueType = $this->_phpTypeToWeaselType($phpType);
+                    if (!isset($valueType)) {
+                        $valueType = $cValueType;
+                    } elseif ($valueType !== $cValueType) {
                         throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
-                }
+                    }
             }
-
             $i++;
         }
-        return $valueType . '[' . ($isMap ? $keyType : '') . ']';
+
+        return array(($nestType ? : $valueType), $nestKeys . '[' . ($isMap ? $keyType : '') . ']');
 
     }
 
@@ -179,6 +167,20 @@ class JsonMapper
 
     }
 
+    protected function _phpTypeToWeaselType($type)
+    {
+        switch ($type) {
+            case "double":
+                $type = "float";
+                break;
+            case "string":
+            case "integer":
+                break;
+            default:
+                throw new InvalidArgumentException("Unknown type: $type");
+        }
+        return $type;
+    }
 
     protected function _guessType($data)
     {
@@ -186,22 +188,17 @@ class JsonMapper
 
         switch ($type) {
             case "array":
-                $type = $this->_guessArrayType($data);
+                $aType = $this->_guessArrayType($data);
+                $type = $aType[0] . $aType[1];
                 break;
             case "object":
                 $type = get_class($data);
-                break;
-            case "double":
-                $type = "float";
-                break;
-            case "string":
-            case "integer":
                 break;
             case "NULL":
                 $type = "string";
                 break;
             default:
-                throw new InvalidArgumentException("Unknown type: $type");
+                $type = $this->_phpTypeToWeaselType($type);
         }
 
         return $type;
