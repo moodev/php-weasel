@@ -14,6 +14,59 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
 {
 
 
+    public function testReadStringBasicObject()
+    {
+        $configProvider = new MockedConfigProvider();
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, "blah", "string");
+        $configProvider->fakeConfig[$mtc] = $config;
+
+        $mapper = new JsonMapper($configProvider);
+
+        $result = $mapper->readString(json_encode(array(
+                    "blah" => "foo"
+                )
+            ),
+            $mtc
+        );
+
+        $this->assertInstanceOf($mtc, $result);
+        $this->assertEquals(new MockTestClass("foo"), $result);
+    }
+
+    public function testReadStringArrayOfBasicObject()
+    {
+        $configProvider = new MockedConfigProvider();
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, "blah", "string");
+        $configProvider->fakeConfig[$mtc] = $config;
+
+        $mapper = new JsonMapper($configProvider);
+
+        $result = $mapper->readArray(json_encode(
+                array(
+                    array(
+                        "blah" => "foo"
+                    ),
+                    array(
+                        "blah" => "bar"
+                    ),
+                    array(
+                        "blah" => "baz"
+                    ),
+                )
+            ),
+            $mtc
+        );
+
+        $this->assertInternalType("array", $result);
+        $this->assertEquals(array(new MockTestClass("foo"), new MockTestClass("bar"), new MockTestClass("baz")), $result);
+    }
+
     /**
      * @covers \Weasel\JsonMarshaller\JsonMapper
      */
@@ -274,6 +327,11 @@ class MockTestClass
     public function anySetter($key, $value)
     {
         $this->any[$key] = $value;
+    }
+
+    public function __construct($blah = null)
+    {
+        $this->blah = $blah;
     }
 }
 
