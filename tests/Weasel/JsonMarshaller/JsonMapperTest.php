@@ -6,6 +6,8 @@
  */
 namespace Weasel\JsonMarshaller;
 
+use Weasel\JsonMarshaller\Config\JsonConfigProvider;
+
 require_once(__DIR__ . '/../../../lib/WeaselAutoloader.php');
 
 class JsonMapperTest extends \PHPUnit_Framework_TestCase
@@ -31,10 +33,10 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $mapper = new JsonMapper($configProvider);
 
         $result = $mapper->readString(json_encode(array(
-                                                       "cows" => "blork",
-                                                  )
-                                      ),
-                                      $mtc
+                    "cows" => "blork",
+                )
+            ),
+            $mtc
         );
 
         $this->assertInstanceOf($mtc, $result);
@@ -65,29 +67,75 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array("cows" => "blork"), $result);
     }
 
+    protected function addPropConfig(Config\ClassMarshaller $config, $name, $type)
+    {
+        $prop = new Config\Serialization\DirectSerialization();
+        $prop->type = $type;
+        $prop->property = $name;
+        $config->serialization->properties[$name] = $prop;
+
+        $prop = new Config\Deserialization\DirectDeserialization();
+        $prop->type = $type;
+        $prop->property = $name;
+        $config->deserialization->properties[$name] = $prop;
+
+        return $config;
+    }
+
+    /**
+     * Build a handy configuration for testing object inheritance using TypeInfo.
+     *
+     * @param string $typeInfoAs A string containing the name of one of the TypeInfo TI_AS_ constants.
+     * @param string $typeInfoUse A string containing the name of one of the TypeInfo TI_USE_ constants.
+     * @return MockedConfigProvider A config provider with a useful config for testing TypeInfo.
+     */
+    protected function buildTypeInfoTestConfig($typeInfoAs, $typeInfoUse = "TI_USE_CLASS")
+    {
+        $configProvider = new MockedConfigProvider();
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+        $mtcb = 'Weasel\JsonMarshaller\MockTestClassB';
+        $mtcc = 'Weasel\JsonMarshaller\MockTestClassC';
+
+        $config = new Config\ClassMarshaller();
+        $config->serialization->typeInfo = new Config\Serialization\TypeInfo();
+        $config->serialization->typeInfo->typeInfoAs = constant('\Weasel\JsonMarshaller\Config\Serialization\TypeInfo::' . $typeInfoAs);
+        $config->serialization->typeInfo->typeInfo = constant('\Weasel\JsonMarshaller\Config\Serialization\TypeInfo::' . $typeInfoUse);
+        $config->serialization->typeInfo->typeInfoProperty = "type";
+        $config->serialization->typeInfo->subTypes[$mtcc] = $mtcc;
+        $config->deserialization->typeInfo = new Config\Deserialization\TypeInfo();
+        $config->deserialization->typeInfo->typeInfoAs = constant('\Weasel\JsonMarshaller\Config\Deserialization\TypeInfo::' . $typeInfoAs);
+        $config->deserialization->typeInfo->typeInfo = constant('\Weasel\JsonMarshaller\Config\Deserialization\TypeInfo::' . $typeInfoUse);
+        $config->deserialization->typeInfo->typeInfoProperty = "type";
+        $config->deserialization->typeInfo->subTypes[$mtcc] = $mtcc;
+        $configProvider->fakeConfig[$mtcb] = $config;
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, "hi", "string");
+        $configProvider->fakeConfig[$mtcc] = $config;
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, 'blah', $mtcb);
+        $configProvider->fakeConfig[$mtc] = $config;
+
+        return $configProvider;
+
+    }
+
     /**
      * @covers \Weasel\JsonMarshaller\JsonMapper
      */
     public function testEncodeWrapperObject()
     {
-        $configProvider = new MockedConfigProvider();
-        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+        $mtcc = 'Weasel\JsonMarshaller\MockTestClassC';
 
-        $config = new Config\ClassMarshaller();
-        $config->serialization = new Config\Serialization\ClassSerialization();
-        $config->serialization->typeInfo = new Config\Serialization\TypeInfo();
-        $config->serialization->typeInfo->typeInfoAs = Config\Serialization\TypeInfo::TI_AS_WRAPPER_OBJECT;
-        $config->serialization->typeInfo->typeInfo = Config\Serialization\TypeInfo::TI_USE_CLASS;
-        $config->serialization->typeInfo->subTypes[$mtc] = $mtc;
-        $configProvider->fakeConfig[$mtc] = $config;
-
-        $mapper = new JsonMapper($configProvider);
+        $mapper = new JsonMapper($this->buildTypeInfoTestConfig('TI_AS_WRAPPER_OBJECT'));
 
         $object = new MockTestClass();
-        $object->blah = new MockTestClassB();
+        $object->blah = new MockTestClassC("dog");
 
         $expected = array(
-            $mtc => array()
+            "blah" =>
+            array($mtcc => array("hi" => "dog"))
         );
         $result = $mapper->writeArray($object);
         $this->assertInternalType("array", $result);
@@ -99,39 +147,115 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
      */
     public function testEncodeWrapperArray()
     {
-        $configProvider = new MockedConfigProvider();
-        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
-        $mtcb = 'Weasel\JsonMarshaller\MockTestClassB';
+        $mtcc = 'Weasel\JsonMarshaller\MockTestClassC';
 
-        $config = new Config\ClassMarshaller();
-        $config->serialization = new Config\Serialization\ClassSerialization();
-        $config->serialization->typeInfo = new Config\Serialization\TypeInfo();
-        $config->serialization->typeInfo->typeInfoAs = Config\Serialization\TypeInfo::TI_AS_WRAPPER_ARRAY;
-        $config->serialization->typeInfo->typeInfo = Config\Serialization\TypeInfo::TI_USE_CLASS;
-        $config->serialization->typeInfo->subTypes[$mtcb] = $mtcb;
-        $configProvider->fakeConfig[$mtcb] = $config;
-
-        $config = new Config\ClassMarshaller();
-        $config->serialization = new Config\Serialization\ClassSerialization();
-        $prop = new Config\Serialization\DirectSerialization();
-        $prop->type = $mtcb;
-        $prop->property = 'blah';
-        $config->serialization->properties['blah'] = $prop;
-        $configProvider->fakeConfig[$mtc] = $config;
-
-        $mapper = new JsonMapper($configProvider);
+        $mapper = new JsonMapper($this->buildTypeInfoTestConfig('TI_AS_WRAPPER_ARRAY'));
 
         $object = new MockTestClass();
-        $object->blah = new MockTestClassB();
+        $object->blah = new MockTestClassC("dog");
 
         $expected = array(
             "blah" => array(
-                $mtcb,
-                array()
+                $mtcc,
+                array("hi" => "dog")
             )
         );
         $result = $mapper->writeArray($object);
         $this->assertInternalType("array", $result);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
+    public function testEncodeTypeinfoAsProperty()
+    {
+        $mtcc = 'Weasel\JsonMarshaller\MockTestClassC';
+
+        $mapper = new JsonMapper($this->buildTypeInfoTestConfig('TI_AS_PROPERTY'));
+
+        $object = new MockTestClass();
+        $object->blah = new MockTestClassC("dog");
+
+        $expected = array(
+            "blah" => array(
+                "type" => $mtcc,
+                "hi" => "dog"
+            )
+        );
+        $result = $mapper->writeArray($object);
+        $this->assertInternalType("array", $result);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
+    public function testDecodeTypeinfoAsProperty()
+    {
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+        $mtcc = 'Weasel\JsonMarshaller\MockTestClassC';
+
+        $mapper = new JsonMapper($this->buildTypeInfoTestConfig('TI_AS_PROPERTY'));
+
+        $json = json_encode(array(
+            "blah" => array(
+                "type" => $mtcc,
+                "hi" => "dog"
+            )
+        ));
+
+        $expected = new MockTestClass();
+        $expected->blah = new MockTestClassC("dog");
+
+        $result = $mapper->readString($json, $mtc);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
+    public function testDecodeTypeinfoAsWrapperObject()
+    {
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+        $mtcc = 'Weasel\JsonMarshaller\MockTestClassC';
+
+        $mapper = new JsonMapper($this->buildTypeInfoTestConfig('TI_AS_WRAPPER_OBJECT'));
+
+        $json = json_encode(array(
+            "blah" => array(
+                "$mtcc" => array("hi" => "dog")
+            )
+        ));
+
+        $expected = new MockTestClass();
+        $expected->blah = new MockTestClassC("dog");
+
+        $result = $mapper->readString($json, $mtc);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
+    public function testDecodeTypeinfoAsWrapperArray()
+    {
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+        $mtcc = 'Weasel\JsonMarshaller\MockTestClassC';
+
+        $mapper = new JsonMapper($this->buildTypeInfoTestConfig('TI_AS_WRAPPER_ARRAY'));
+
+        $json = json_encode(array(
+            "blah" => array(
+                $mtcc,
+                array("hi" => "dog")
+            )
+        ));
+
+        $expected = new MockTestClass();
+        $expected->blah = new MockTestClassC("dog");
+
+        $result = $mapper->readString($json, $mtc);
         $this->assertEquals($expected, $result);
     }
 }
@@ -155,10 +279,20 @@ class MockTestClass
 
 class MockTestClassB
 {
+}
+
+class MockTestClassC extends MockTestClassB
+{
+    public $hi;
+
+    public function __construct($hi = "cat")
+    {
+        $this->hi = $hi;
+    }
 
 }
 
-class MockedConfigProvider implements \Weasel\JsonMarshaller\Config\JsonConfigProvider
+class MockedConfigProvider implements JsonConfigProvider
 {
 
     /**
