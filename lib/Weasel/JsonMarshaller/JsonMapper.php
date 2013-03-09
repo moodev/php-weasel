@@ -184,8 +184,24 @@ class JsonMapper
     {
         $type = gettype($data);
 
-        if ($type == "array") {
-            $type = $this->_guessArrayType($data);
+        switch ($type) {
+            case "array":
+                $type = $this->_guessArrayType($data);
+                break;
+            case "object":
+                $type = get_class($data);
+                break;
+            case "double":
+                $type = "float";
+                break;
+            case "string":
+            case "integer":
+                break;
+            case "NULL":
+                $type = "string";
+                break;
+            default:
+                throw new InvalidArgumentException("Unknown type: $type");
         }
 
         return $type;

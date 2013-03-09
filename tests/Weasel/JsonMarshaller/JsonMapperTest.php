@@ -623,6 +623,9 @@ class MockedConfigProvider implements JsonConfigProvider
      */
     public function getConfig($class)
     {
+        if (!class_exists($class)) {
+            throw new \ReflectionException("Unable to find class $class");
+        }
         if (isset($this->fakeConfig[$class])) {
             return $this->fakeConfig[$class];
         }
