@@ -11,6 +11,7 @@ use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 use InvalidArgumentException;
 use Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\Types\OldTypeWrapper;
+use ReflectionClass;
 
 class JsonMapper
 {
@@ -75,26 +76,148 @@ class JsonMapper
         return $this->readString($string, $class . '[]');
     }
 
+    protected function _guessArrayType(array $data)
+    {
+        $keyType = null;
+        $valueType = null;
+        $isMap = false;
+        $i = 0;
+        foreach ($data as $key => $value) {
+            if ($keyType !== "string") {
+                if (is_int($key) || ctype_digit($key)) {
+                    $keyType = "integer";
+                    if ($key !== $i) {
+                        // Non sequential keys, it's not an "array", it's a "map"
+                        $isMap = true;
+                    }
+                } else {
+                    $keyType = "string";
+                    $isMap = true;
+                }
+            }
+
+            $cValueType = gettype($value);
+            if ($cValueType === "array") {
+                $cValueType = $this->_guessArrayType($value);
+            } elseif ($cValueType === "object") {
+                if ($valueType && !class_exists($valueType)) {
+                    throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
+                }
+                $cValueType = get_class($value);
+                if ($valueType) {
+                    $cValueType = $this->_findCommonBaseClass($valueType, $cValueType);
+                }
+            }
+            if (!$valueType || $valueType === $cValueType) {
+                $valueType = $cValueType;
+            } else {
+                switch ($cValueType) {
+                    case "integer":
+                        switch ($valueType) {
+                            case "double":
+                            case "string":
+                                break;
+                            default:
+                                throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
+                        }
+                        break;
+                    case "double":
+                        switch ($valueType) {
+                            case "integer":
+                                $valueType = $cValueType;
+                                break;
+                            case "string":
+                                break;
+                            default:
+                                throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
+                        }
+                        break;
+                    case "string":
+                        switch ($valueType) {
+                            case "integer":
+                            case "double":
+                                $valueType = "string";
+                                break;
+                            default:
+                                throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
+                        }
+                        break;
+                    default:
+                        throw new InvalidArgumentException("Unable to guess consistent types. Hoped for $valueType but found $cValueType");
+                }
+            }
+
+            $i++;
+        }
+        return $valueType . '[' . ($isMap ? $keyType : '') . ']';
+
+    }
+
+    protected function _findCommonBaseClass($classA, $classB)
+    {
+        if ($classA === $classB) {
+            return $classA;
+        }
+
+        $rca = new ReflectionClass($classA);
+        $rcb = new ReflectionClass($classB);
+
+        $rcap = array();
+        $cur = $rca;
+        do {
+            $rcap[$cur->getName()] = true;
+        } while ($cur = $cur->getParentClass());
+
+        $cur = $rcb;
+        do {
+            if (isset($rcap[$cur->getName()])) {
+                return $cur->getName();
+            }
+        } while ($cur = $cur->getParentClass());
+
+        throw new \RuntimeException("Unable to find common base class for $classA and $classB");
+
+    }
+
+
+    protected function _guessType($data)
+    {
+        $type = gettype($data);
+
+        if ($type == "array") {
+            $type = $this->_guessArrayType($data);
+        }
+
+        return $type;
+    }
+
     /**
-     * Serialize an object to a string of JSON.
-     * @param object $object Object to serialize
+     * Serialize an data to a string of JSON.
+     * @param mixed $data Data to serialize
+     * @param string $type Type of the data being encoded. If not provided then this will be guessed.
+     *                      Guessing may not work reliably with complex array structures, or if $data is a subclass
+     *                      of the class you actually want to serialize as.
      * @return string The JSON
      */
-    public function writeString($object)
+    public function writeString($data, $type = null)
     {
-        return $this->_encodeObject($object);
+        if (!isset($type)) {
+            $type = $this->_guessType($data);
+        }
+        return $this->_encodeValue($data, $type);
     }
 
     /**
      * Serialize an object to an array suitable for passing to json_encode.
      * This used to be useful. Now all it does is call json_decode on the result of a writeString().
      * It's probably not what you want to use.
-     * @param object $object The object to serialize
+     * @param mixed $data The data to serialize
      * @return array An array suitable for json_encode.
+     * @deprecated This is no longer useful since all it does is call json_decode on the result of a writeString() operation.
      */
-    public function writeArray($object)
+    public function writeArray($data)
     {
-        return json_decode($this->writeString($object), true);
+        return json_decode($this->writeString($data), true);
     }
 
     /**
