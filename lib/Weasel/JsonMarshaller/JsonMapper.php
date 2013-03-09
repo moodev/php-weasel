@@ -116,6 +116,9 @@ class JsonMapper
             throw new \Exception("No configuration found for class $class");
         }
         $config = $classconfig->serialization;
+        if (!isset($config)) {
+            throw new \Exception("No serialization configuration found for class $class");
+        }
 
         if (!isset($typeInfo)) {
             $typeInfo = $config->typeInfo;
