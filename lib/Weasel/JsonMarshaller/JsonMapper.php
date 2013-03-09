@@ -212,12 +212,15 @@ class JsonMapper
      * This used to be useful. Now all it does is call json_decode on the result of a writeString().
      * It's probably not what you want to use.
      * @param mixed $data The data to serialize
+     * @param string $type Type of the data being encoded. If not provided then this will be guessed.
+     *                      Guessing may not work reliably with complex array structures, or if $data is a subclass
+     *                      of the class you actually want to serialize as.
      * @return array An array suitable for json_encode.
      * @deprecated This is no longer useful since all it does is call json_decode on the result of a writeString() operation.
      */
-    public function writeArray($data)
+    public function writeArray($data, $type = null)
     {
-        return json_decode($this->writeString($data), true);
+        return json_decode($this->writeString($data, $type), true);
     }
 
     /**
