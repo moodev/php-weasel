@@ -36,7 +36,89 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new MockTestClass("foo"), $result);
     }
 
+    public function testReadStringPrimitive()
+    {
+        $configProvider = new MockedConfigProvider();
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, "blah", "string");
+        $configProvider->fakeConfig[$mtc] = $config;
+
+        $mapper = new JsonMapper($configProvider);
+
+        $result = $mapper->readString(json_encode("foo"), "string");
+
+        $this->assertInternalType("string", $result);
+        $this->assertEquals("foo", $result);
+    }
+
+    public function testReadStringArrayPrimitive()
+    {
+        $configProvider = new MockedConfigProvider();
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, "blah", "string");
+        $configProvider->fakeConfig[$mtc] = $config;
+
+        $mapper = new JsonMapper($configProvider);
+
+        $result = $mapper->readString(json_encode(array("foo", "bar", "baz")), "string[]");
+
+        $this->assertInternalType("array", $result);
+        $this->assertEquals(array("foo", "bar", "baz"), $result);
+    }
+
+    public function testReadStringMapPrimitive()
+    {
+        $configProvider = new MockedConfigProvider();
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, "blah", "string");
+        $configProvider->fakeConfig[$mtc] = $config;
+
+        $mapper = new JsonMapper($configProvider);
+
+        $result = $mapper->readString(json_encode(array("a" => 123, "b" => 34, "c" => 99)), "int[string]");
+
+        $this->assertInternalType("array", $result);
+        $this->assertEquals(array("a" => 123, "b" => 34, "c" => 99), $result);
+    }
+
     public function testReadStringArrayOfBasicObject()
+    {
+        $configProvider = new MockedConfigProvider();
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, "blah", "string");
+        $configProvider->fakeConfig[$mtc] = $config;
+
+        $mapper = new JsonMapper($configProvider);
+
+        $result = $mapper->readString(json_encode(
+                array(
+                    array(
+                        "blah" => "foo"
+                    ),
+                    array(
+                        "blah" => "bar"
+                    ),
+                    array(
+                        "blah" => "baz"
+                    ),
+                )
+            ),
+            $mtc . '[]'
+        );
+
+        $this->assertInternalType("array", $result);
+        $this->assertEquals(array(new MockTestClass("foo"), new MockTestClass("bar"), new MockTestClass("baz")), $result);
+    }
+
+    public function testReadArrayOfBasicObject()
     {
         $configProvider = new MockedConfigProvider();
         $mtc = 'Weasel\JsonMarshaller\MockTestClass';

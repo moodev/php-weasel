@@ -50,16 +50,17 @@ class JsonMapper
     /**
      * Given a string of JSON, decode it into an instance of the named $class.
      * @param string $string JSON string containing an object
-     * @param string $class Full namespaced name of the class this JSON represents.
+     * @param string $type Type to deserialize to.
+     * @throws \InvalidArgumentException
      * @return mixed A populated instance of $class
      */
-    public function readString($string, $class)
+    public function readString($string, $type)
     {
         $decoded = json_decode($string, true);
         if ($decoded === null) {
             throw new InvalidArgumentException("Unable to decode JSON: $string");
         }
-        return $this->_decodeClass($decoded, $class);
+        return $this->_decodeValue($decoded, $type);
     }
 
     /**
@@ -67,15 +68,11 @@ class JsonMapper
      * @param string $string JSON string containing an array
      * @param string $class Full namespaced name of the class this JSON array contains
      * @return array Array of populated $class instances
+     * @deprecated Use readString with an array type.
      */
     public function readArray($string, $class)
     {
-        $response = array();
-        $decoded = json_decode($string, true);
-        foreach ($decoded as $object) {
-            $response[] = $this->_decodeClass($object, $class);
-        }
-        return $response;
+        return $this->readString($string, $class . '[]');
     }
 
     /**
@@ -91,6 +88,7 @@ class JsonMapper
     /**
      * Serialize an object to an array suitable for passing to json_encode.
      * This used to be useful. Now all it does is call json_decode on the result of a writeString().
+     * It's probably not what you want to use.
      * @param object $object The object to serialize
      * @return array An array suitable for json_encode.
      */
