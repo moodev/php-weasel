@@ -11,6 +11,7 @@ use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 use InvalidArgumentException;
 use Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\Types\OldTypeWrapper;
+use ReflectionClass;
 
 class JsonMapper
 {
@@ -50,16 +51,17 @@ class JsonMapper
     /**
      * Given a string of JSON, decode it into an instance of the named $class.
      * @param string $string JSON string containing an object
-     * @param string $class Full namespaced name of the class this JSON represents.
+     * @param string $type Type to deserialize to.
+     * @throws \InvalidArgumentException
      * @return mixed A populated instance of $class
      */
-    public function readString($string, $class)
+    public function readString($string, $type)
     {
         $decoded = json_decode($string, true);
         if ($decoded === null) {
             throw new InvalidArgumentException("Unable to decode JSON: $string");
         }
-        return $this->_decodeClass($decoded, $class);
+        return $this->_decodeValue($decoded, $type);
     }
 
     /**
@@ -67,36 +69,66 @@ class JsonMapper
      * @param string $string JSON string containing an array
      * @param string $class Full namespaced name of the class this JSON array contains
      * @return array Array of populated $class instances
+     * @deprecated Use readString with an array type.
      */
     public function readArray($string, $class)
     {
-        $response = array();
-        $decoded = json_decode($string, true);
-        foreach ($decoded as $object) {
-            $response[] = $this->_decodeClass($object, $class);
+        return $this->readString($string, $class . '[]');
+    }
+
+    protected function _guessType($data)
+    {
+        $type = gettype($data);
+
+        switch ($type) {
+            case "integer":
+            case "string":
+                break;
+            case "double":
+                $type = "float";
+                break;
+            case "object":
+                $type = get_class($data);
+                break;
+            case "NULL":
+                $type = "string";
+                break;
+            default:
+                throw new InvalidArgumentException("Unable to guess type of data, please provide a type specification.");
         }
-        return $response;
+
+        return $type;
     }
 
     /**
-     * Serialize an object to a string of JSON.
-     * @param object $object Object to serialize
+     * Serialize an data to a string of JSON.
+     * @param mixed $data Data to serialize
+     * @param string $type Type of the data being encoded. If not provided then this will be guessed.
+     *                      Guessing only works with primitives and simple objects.
      * @return string The JSON
      */
-    public function writeString($object)
+    public function writeString($data, $type = null)
     {
-        return $this->_encodeObject($object);
+        if (!isset($type)) {
+            $type = $this->_guessType($data);
+        }
+        return $this->_encodeValue($data, $type);
     }
 
     /**
      * Serialize an object to an array suitable for passing to json_encode.
      * This used to be useful. Now all it does is call json_decode on the result of a writeString().
-     * @param object $object The object to serialize
+     * It's probably not what you want to use.
+     * @param mixed $data The data to serialize
+     * @param string $type Type of the data being encoded. If not provided then this will be guessed.
+     *                      Guessing may not work reliably with complex array structures, or if $data is a subclass
+     *                      of the class you actually want to serialize as.
      * @return array An array suitable for json_encode.
+     * @deprecated This is no longer useful since all it does is call json_decode on the result of a writeString() operation.
      */
-    public function writeArray($object)
+    public function writeArray($data, $type = null)
     {
-        return json_decode($this->writeString($object), true);
+        return json_decode($this->writeString($data, $type), true);
     }
 
     /**
