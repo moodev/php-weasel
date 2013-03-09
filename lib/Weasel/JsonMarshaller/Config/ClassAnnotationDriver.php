@@ -190,12 +190,12 @@ class ClassAnnotationDriver
         } elseif ($method->isConstructor()) {
             $this->_configureCreator($method);
         } elseif ($this->annotationReader->getSingleMethodAnnotation($method->getName(),
-                                                                     self::_ANS . 'JsonAnyGetter'
+            self::_ANS . 'JsonAnyGetter'
         )
         ) {
             $this->_configureAnyGetter($method);
         } elseif ($this->annotationReader->getSingleMethodAnnotation($method->getName(),
-                                                                     self::_ANS . 'JsonAnySetter'
+            self::_ANS . 'JsonAnySetter'
         )
         ) {
             $this->_configureAnySetter($method);
@@ -363,7 +363,7 @@ class ClassAnnotationDriver
             foreach ($subTypes->getValue() as $type) {
                 switch ($typeConfig->typeInfo) {
                     case Serialization\TypeInfo::TI_USE_CLASS:
-                        $subName = $type->getValue();
+                        $subName = ltrim($type->getValue(), '\\');
                         break;
                     case Serialization\TypeInfo::TI_USE_MINIMAL_CLASS:
                         $exploded = explode('\\', $type->getValue(), 2);
@@ -379,7 +379,7 @@ class ClassAnnotationDriver
                     default:
                         throw new \Exception("Unsupported typeinfo mode");
                 }
-                $typeConfig->subTypes[$type->getValue()] = $subName;
+                $typeConfig->subTypes[ltrim($type->getValue(), '\\')] = $subName;
             }
         }
 
@@ -458,7 +458,7 @@ class ClassAnnotationDriver
             foreach ($subTypes->getValue() as $type) {
                 switch ($typeConfig->typeInfo) {
                     case Deserialization\TypeInfo::TI_USE_CLASS:
-                        $subName = $type->getValue();
+                        $subName = ltrim($type->getValue(), '\\');
                         break;
                     case Deserialization\TypeInfo::TI_USE_MINIMAL_CLASS:
                         $exploded = explode('\\', $type->getValue(), 2);
@@ -475,7 +475,7 @@ class ClassAnnotationDriver
                     default:
                         throw new \Exception("Unsupported typeinfo mode");
                 }
-                $typeConfig->subTypes[$subName] = $type->getValue();
+                $typeConfig->subTypes[$subName] = ltrim($type->getValue(), '\\');
             }
         }
 
