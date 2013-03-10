@@ -6,6 +6,9 @@
  */
 namespace Weasel\Common\Logger;
 
+/**
+ * @deprecated Use the PSR3 logger interface.
+ */
 interface Logger
 {
 

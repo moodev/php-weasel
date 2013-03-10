@@ -11,12 +11,6 @@ interface AnnotationConfigProvider
 
     /**
      * @abstract
-     * @return \Weasel\Common\Logger\Logger
-     */
-    public function getLogger();
-
-    /**
-     * @abstract
      * @param string $name The name of the annotation to load
      * @return \Weasel\Annotation\Config\Annotation The annotation object
      */

@@ -6,8 +6,9 @@
  */
 namespace Weasel\JsonMarshaller\Config;
 
-use Weasel\JsonMarshaller\Config\Annotations as Annotations;
-use Weasel\Annotation\AnnotationReader;
+use Weasel\JsonMarshaller\Config\Annotations;
+use Weasel\Annotation\AnnotationConfigurator;
+use Psr\Log\LoggerInterface;
 
 /**
  * A config provider that uses Annotations
@@ -23,13 +24,13 @@ class AnnotationDriver implements JsonConfigProvider
      */
     protected $cache = null;
 
-    public function __construct($logger = null, $annotationConfigurator = null, $cache = null)
+    public function __construct(LoggerInterface $logger = null, $annotationConfigurator = null, $cache = null)
     {
         if (isset($annotationConfigurator)) {
             $this->configurator = $annotationConfigurator;
         } else {
             // Create ourselves an annotation configurator of a sane type
-            $this->configurator = new \Weasel\Annotation\AnnotationConfigurator($logger);
+            $this->configurator = new AnnotationConfigurator($logger);
         }
         $this->setCache($cache);
     }
