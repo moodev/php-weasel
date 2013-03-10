@@ -168,7 +168,7 @@ class Annotation
      * @param \Weasel\Annotation\Config\Property $property
      * @return Annotation
      */
-    public function addProperty(\Weasel\Annotation\Config\Property $property)
+    public function addProperty(Property $property)
     {
         $this->properties[$property->getName()] = $property;
         return $this;
