@@ -8,16 +8,25 @@ namespace Weasel\JsonMarshaller\Config;
 
 use Weasel\JsonMarshaller\Config\Annotations as Annotations;
 use Weasel\Annotation\AnnotationReader;
+use Psr\Log\LoggerAwareInterface;
+use Weasel\Annotation\AnnotationReaderFactory;
+use Psr\Log\LoggerInterface;
+use Weasel\Annotation\AnnotationConfigProvider;
 
 /**
  * Load the configuration for a given class from annotations
  */
-class ClassAnnotationDriver
+class ClassAnnotationDriver implements LoggerAwareInterface
 {
     /**
      * The namespace the annotations live in. This is useful as various places require fully namespaced names.
      */
     const _ANS = '\Weasel\JsonMarshaller\Config\Annotations\\';
+
+    /**
+     * @var \Weasel\Annotation\AnnotationReaderFactory
+     */
+    protected $annotationReaderFactory;
 
     /**
      * @var \Weasel\Annotation\AnnotationReader
@@ -30,11 +39,6 @@ class ClassAnnotationDriver
     protected $rClass;
 
     /**
-     * @var \Weasel\Annotation\AnnotationConfigProvider
-     */
-    protected $configurator;
-
-    /**
      * @var ClassMarshaller
      */
     protected $config;
@@ -43,11 +47,21 @@ class ClassAnnotationDriver
      * @param \ReflectionClass $rClass A reflection for the class we're configuring
      * @param \Weasel\Annotation\AnnotationConfigProvider $configurator An annotation configurator
      */
-    public function __construct(\ReflectionClass $rClass, \Weasel\Annotation\AnnotationConfigProvider $configurator)
+    public function __construct(\ReflectionClass $rClass, AnnotationConfigProvider $configurator)
     {
-        $this->configurator = $configurator;
-        $this->annotationReader = new AnnotationReader($rClass, $configurator);
+        $this->annotationReaderFactory = new AnnotationReaderFactory($configurator);
         $this->rClass = $rClass;
+    }
+
+    /**
+     * @return AnnotationReader
+     */
+    public function getAnnotationReader()
+    {
+        if (!isset($this->annotationReader)) {
+            $this->annotationReader = $this->annotationReaderFactory->getReaderForClass($this->rClass);
+        }
+        return $this->annotationReader;
     }
 
     protected function _configureGetter(\ReflectionMethod $method)
@@ -56,7 +70,7 @@ class ClassAnnotationDriver
         /**
          * @var \Weasel\JsonMarshaller\Config\Annotations\JsonProperty $propertyConfig
          */
-        $propertyConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonProperty');
+        $propertyConfig = $this->getAnnotationReader()->getSingleMethodAnnotation($name, self::_ANS . 'JsonProperty');
         if (!isset($propertyConfig)) {
             return;
         }
@@ -72,11 +86,11 @@ class ClassAnnotationDriver
          * @var Annotations\JsonSubTypes $subTypes
          * @var Annotations\JsonInclude $includer
          */
-        $typeInfo = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonTypeInfo');
-        $subTypes = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonSubTypes');
+        $typeInfo = $this->getAnnotationReader()->getSingleMethodAnnotation($name, self::_ANS . 'JsonTypeInfo');
+        $subTypes = $this->getAnnotationReader()->getSingleMethodAnnotation($name, self::_ANS . 'JsonSubTypes');
 
         $getterConfig->typeInfo = $this->_getSerializationTypeInfo($typeInfo, $subTypes);
-        $includer = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonInclude');
+        $includer = $this->getAnnotationReader()->getSingleMethodAnnotation($name, self::_ANS . 'JsonInclude');
         $getterConfig->include = $this->_getIncluderValue($includer);
 
         if (isset($this->config->serialization->properties[$property])) {
@@ -94,7 +108,7 @@ class ClassAnnotationDriver
         /**
          * @var \Weasel\JsonMarshaller\Config\Annotations\JsonProperty $propertyConfig
          */
-        $propertyConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonProperty');
+        $propertyConfig = $this->getAnnotationReader()->getSingleMethodAnnotation($name, self::_ANS . 'JsonProperty');
         if (!isset($propertyConfig)) {
             return;
         }
@@ -108,8 +122,8 @@ class ClassAnnotationDriver
          * @var Annotations\JsonTypeInfo $typeInfo
          * @var Annotations\JsonSubTypes $subTypes
          */
-        $typeInfo = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonTypeInfo');
-        $subTypes = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonSubTypes');
+        $typeInfo = $this->getAnnotationReader()->getSingleMethodAnnotation($name, self::_ANS . 'JsonTypeInfo');
+        $subTypes = $this->getAnnotationReader()->getSingleMethodAnnotation($name, self::_ANS . 'JsonSubTypes');
         if (isset($this->config->deserialization->properties[$property])) {
             throw new \Exception("Deserialization for property of name $property has already been configured.");
         }
@@ -143,7 +157,7 @@ class ClassAnnotationDriver
         /**
          * @var \Weasel\JsonMarshaller\Config\Annotations\JsonCreator $creatorConfig
          */
-        $creatorConfig = $this->annotationReader->getSingleMethodAnnotation($name, self::_ANS . 'JsonCreator');
+        $creatorConfig = $this->getAnnotationReader()->getSingleMethodAnnotation($name, self::_ANS . 'JsonCreator');
         if (empty($creatorConfig)) {
             return;
         }
@@ -189,12 +203,12 @@ class ClassAnnotationDriver
             $this->_configureCreator($method);
         } elseif ($method->isConstructor()) {
             $this->_configureCreator($method);
-        } elseif ($this->annotationReader->getSingleMethodAnnotation($method->getName(),
+        } elseif ($this->getAnnotationReader()->getSingleMethodAnnotation($method->getName(),
             self::_ANS . 'JsonAnyGetter'
         )
         ) {
             $this->_configureAnyGetter($method);
-        } elseif ($this->annotationReader->getSingleMethodAnnotation($method->getName(),
+        } elseif ($this->getAnnotationReader()->getSingleMethodAnnotation($method->getName(),
             self::_ANS . 'JsonAnySetter'
         )
         ) {
@@ -212,7 +226,7 @@ class ClassAnnotationDriver
         /**
          * @var \Weasel\JsonMarshaller\Config\Annotations\JsonProperty $propertyConfig
          */
-        $propertyConfig = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonProperty');
+        $propertyConfig = $this->getAnnotationReader()->getSinglePropertyAnnotation($name, self::_ANS . 'JsonProperty');
         if (!isset($propertyConfig)) {
             return;
         }
@@ -226,8 +240,8 @@ class ClassAnnotationDriver
          * @var Annotations\JsonTypeInfo $typeInfo
          * @var Annotations\JsonSubTypes $subTypes
          */
-        $typeInfo = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonTypeInfo');
-        $subTypes = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonSubTypes');
+        $typeInfo = $this->getAnnotationReader()->getSinglePropertyAnnotation($name, self::_ANS . 'JsonTypeInfo');
+        $subTypes = $this->getAnnotationReader()->getSinglePropertyAnnotation($name, self::_ANS . 'JsonSubTypes');
 
         if (!isset($this->config->deserialization->properties[$propertyName])) {
             $setterConfig = new Deserialization\DirectDeserialization();
@@ -247,7 +261,7 @@ class ClassAnnotationDriver
             /**
              * @var Annotations\JsonInclude $includer
              */
-            $includer = $this->annotationReader->getSinglePropertyAnnotation($name, self::_ANS . 'JsonInclude');
+            $includer = $this->getAnnotationReader()->getSinglePropertyAnnotation($name, self::_ANS . 'JsonInclude');
             $getterConfig->include = $this->_getIncluderValue($includer);
             $getterConfig->typeInfo = $this->_getSerializationTypeInfo($typeInfo, $subTypes);
 
@@ -290,7 +304,7 @@ class ClassAnnotationDriver
      */
     protected function _getSubClassName(\ReflectionClass $rClass)
     {
-        $subClassReader = new AnnotationReader($rClass, $this->configurator);
+        $subClassReader = $this->annotationReaderFactory->getReaderForClass($rClass);
         /**
          * @var Annotations\JsonTypeName $subNameA
          */
@@ -498,14 +512,14 @@ class ClassAnnotationDriver
         /**
          * @var \Weasel\JsonMarshaller\Config\Annotations\JsonInclude $includer
          */
-        $includer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonInclude');
+        $includer = $this->getAnnotationReader()->getSingleClassAnnotation(self::_ANS . 'JsonInclude');
         $this->config->serialization->include = $this->_getIncluderValue($includer);
 
         /**
          * Work out what the class' "name" is, just in case inheritence is needed.
          * @var \Weasel\JsonMarshaller\Config\Annotations\JsonTypeName $typeNamer
          */
-        $typeNamer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonTypeName');
+        $typeNamer = $this->getAnnotationReader()->getSingleClassAnnotation(self::_ANS . 'JsonTypeName');
         $name = null;
         if (isset($typeNamer)) {
             $name = $typeNamer->getName();
@@ -520,8 +534,8 @@ class ClassAnnotationDriver
          * @var Annotations\JsonTypeInfo $typeInfo
          * @var Annotations\JsonSubTypes $subTypes
          */
-        $typeInfo = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonTypeInfo');
-        $subTypes = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonSubTypes');
+        $typeInfo = $this->getAnnotationReader()->getSingleClassAnnotation(self::_ANS . 'JsonTypeInfo');
+        $subTypes = $this->getAnnotationReader()->getSingleClassAnnotation(self::_ANS . 'JsonSubTypes');
         $this->config->deserialization->typeInfo = $this->_getDeserializationTypeInfo($typeInfo, $subTypes);
         $this->config->serialization->typeInfo = $this->_getSerializationTypeInfo($typeInfo, $subTypes);
 
@@ -539,7 +553,7 @@ class ClassAnnotationDriver
         /**
          * @var \Weasel\JsonMarshaller\Config\Annotations\JsonIgnoreProperties|null $ignorer
          */
-        $ignorer = $this->annotationReader->getSingleClassAnnotation(self::_ANS . 'JsonIgnoreProperties');
+        $ignorer = $this->getAnnotationReader()->getSingleClassAnnotation(self::_ANS . 'JsonIgnoreProperties');
         if (!empty($ignorer)) {
             // The ignorer config affects which properties we will consider.
             $this->config->deserialization->ignoreUnknown = $ignorer->getIgnoreUnknown();
@@ -552,4 +566,14 @@ class ClassAnnotationDriver
     }
 
 
+    /**
+     * Sets a logger instance on the object
+     *
+     * @param LoggerInterface $logger
+     * @return null
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->annotationReaderFactory->setLogger($logger);
+    }
 }

@@ -7,24 +7,28 @@
 namespace Weasel\Annotation;
 
 use RuntimeException;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
 
-class PhpParser
+class PhpParser implements LoggerAwareInterface
 {
 
     /**
-     * @var \Weasel\Common\Logger\Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
-    public function __construct($logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
-        $this->logger = $logger;
+        if (isset($logger)) {
+            $this->setLogger($logger);
+        }
     }
 
     public function parseClass(\ReflectionClass $class)
     {
         if (isset($this->logger)) {
-            $this->logger->logDebug("Parsing file " . $class->getFileName() . " for " . $class->getName());
+            $this->logger->debug("Parsing file " . $class->getFileName() . " for " . $class->getName());
         }
         return $this->_parse($class);
     }
@@ -230,4 +234,14 @@ class PhpParser
         return $class;
     }
 
+    /**
+     * Sets a logger instance on the object
+     *
+     * @param LoggerInterface $logger
+     * @return null
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 }

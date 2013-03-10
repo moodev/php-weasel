@@ -6,7 +6,14 @@
  */
 namespace Weasel\Common\Logger;
 
-class FileLogger implements Logger
+use Psr\Log\AbstractLogger;
+use Psr\Log\LogLevel;
+
+/**
+ * This exists as a lame shim so that anyone relying on it can move to a real logging framework.
+ * @deprecated Use a real logger, like monolog!
+ */
+class FileLogger extends AbstractLogger implements Logger
 {
 
     protected $_logLevel = 0;
@@ -28,9 +35,21 @@ class FileLogger implements Logger
 
     public function logDebug($entry)
     {
-        if ($this->_logLevel >= self::LOG_LEVEL_DEBUG) {
-            error_log($entry . "\n", 3, $this->_logFile);
-        }
+        $this->debug($entry);
     }
 
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
+     * @return null
+     */
+    public function log($level, $message, array $context = array())
+    {
+        if ($this->_logLevel >= self::LOG_LEVEL_DEBUG) {
+            error_log($message . "\n", 3, $this->_logFile);
+        }
+    }
 }
