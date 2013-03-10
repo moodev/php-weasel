@@ -51,7 +51,9 @@ class AnnotationDriver implements JsonConfigProvider
         }
         $config = $this->_getConfig($class);
 
-        $this->cache->set($key, $config, "JsonConfig");
+        if (isset($this->cache)) {
+            $this->cache->set($key, $config, "JsonConfig");
+        }
         return $config;
     }
 

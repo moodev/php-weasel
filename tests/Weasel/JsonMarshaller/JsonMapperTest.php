@@ -638,6 +638,7 @@ class MockedConfigProvider implements JsonConfigProvider
     /**
      * Obtain the config for a named class
      * @param string $class The class to get the config for
+     * @throws \ReflectionException
      * @return \Weasel\JsonMarshaller\Config\ClassMarshaller The config, or null if not found
      */
     public function getConfig($class)
