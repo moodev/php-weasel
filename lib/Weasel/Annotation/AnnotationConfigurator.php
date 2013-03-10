@@ -11,8 +11,9 @@ use Weasel\Common\Cache\Exception;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
+use Weasel\Common\Cache\CacheAwareInterface;
 
-class AnnotationConfigurator implements AnnotationConfigProvider, LoggerAwareInterface
+class AnnotationConfigurator implements AnnotationConfigProvider, LoggerAwareInterface, CacheAwareInterface
 {
 
     /**
@@ -41,7 +42,9 @@ class AnnotationConfigurator implements AnnotationConfigProvider, LoggerAwareInt
         if (isset($logger)) {
             $this->setLogger($logger);
         }
-        $this->setCache($cache);
+        if (isset($cache)) {
+            $this->setCache($cache);
+        }
         if (!isset(self::$builtIns)) {
             self::$builtIns = Config\BuiltInsProvider::getConfig();
         }
@@ -178,12 +181,10 @@ class AnnotationConfigurator implements AnnotationConfigProvider, LoggerAwareInt
 
     /**
      * @param \Weasel\Common\Cache\Cache $cache
-     * @return AnnotationConfigurator
      */
-    public function setCache($cache)
+    public function setCache(Cache $cache)
     {
         $this->cache = $cache;
-        return $this;
     }
 
     /**
