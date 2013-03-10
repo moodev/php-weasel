@@ -8,8 +8,6 @@ namespace Weasel\JsonMarshaller\Types;
 
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 
-require_once(__DIR__ . '/../../../../lib/WeaselAutoloader.php');
-
 class IntTypeTest extends \PHPUnit_Framework_TestCase
 {
 

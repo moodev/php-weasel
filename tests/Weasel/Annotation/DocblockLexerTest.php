@@ -6,8 +6,6 @@
  */
 namespace Weasel\Annotation\Tests;
 
-require_once(__DIR__ . '/../../../lib/WeaselAutoloader.php');
-
 use Weasel\Annotation\DocblockLexer;
 
 class DocblockLexerTest extends \PHPUnit_Framework_TestCase
@@ -17,60 +15,60 @@ class DocblockLexerTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array('    123  +942 -954 1 0 +0 -0  +5-1 ',
-                  array_fill(0, 9, DocblockLexer::T_INTEGER)
+                array_fill(0, 9, DocblockLexer::T_INTEGER)
             ),
             array('123  +942 -954 1 0 +0 -0  +5-1 ',
-                  array_fill(0, 9, DocblockLexer::T_INTEGER)
+                array_fill(0, 9, DocblockLexer::T_INTEGER)
             ),
             array('    12.3+9.42 -95.4 1.0 0.0 +0.0-0.0 5e5 12E75 -23e93 94e-12',
-                  array_fill(0, 11, DocblockLexer::T_FLOAT)
+                array_fill(0, 11, DocblockLexer::T_FLOAT)
             ),
             array('    true false
             true',
-                  array_fill(0, 3, DocblockLexer::T_BOOLEAN)
+                array_fill(0, 3, DocblockLexer::T_BOOLEAN)
             ),
             array('   @ @   @@',
-                  array_fill(0, 4, DocblockLexer::T_AT)
+                array_fill(0, 4, DocblockLexer::T_AT)
             ),
             array('    \\\\ \\\\\\',
-                  array_fill(0, 5, DocblockLexer::T_BACKSLASH)
+                array_fill(0, 5, DocblockLexer::T_BACKSLASH)
             ),
             array(' "foo bar" """w  he e" "w  @oo""ar gh""me h 123" "hello
             world"',
-                  array_fill(0, 4, DocblockLexer::T_QUOTED_STRING)
+                array_fill(0, 4, DocblockLexer::T_QUOTED_STRING)
             ),
             array(':: :',
-                  array_fill(0, 3, DocblockLexer::T_COLON)
+                array_fill(0, 3, DocblockLexer::T_COLON)
             ),
             array('} }}',
-                  array_fill(0, 3, DocblockLexer::T_CLOSE_BRACE)
+                array_fill(0, 3, DocblockLexer::T_CLOSE_BRACE)
             ),
             array('{ { {',
-                  array_fill(0, 3, DocblockLexer::T_OPEN_BRACE)
+                array_fill(0, 3, DocblockLexer::T_OPEN_BRACE)
             ),
             array(') ))',
-                  array_fill(0, 3, DocblockLexer::T_CLOSE_PAREN)
+                array_fill(0, 3, DocblockLexer::T_CLOSE_PAREN)
             ),
             array('(( (',
-                  array_fill(0, 3, DocblockLexer::T_OPEN_PAREN)
+                array_fill(0, 3, DocblockLexer::T_OPEN_PAREN)
             ),
             array(', ,,',
-                  array_fill(0, 3, DocblockLexer::T_COMMA)
+                array_fill(0, 3, DocblockLexer::T_COMMA)
             ),
             array('..    .',
-                  array_fill(0, 3, DocblockLexer::T_DOT)
+                array_fill(0, 3, DocblockLexer::T_DOT)
             ),
             array('   = = =',
-                  array_fill(0, 3, DocblockLexer::T_EQUAL)
+                array_fill(0, 3, DocblockLexer::T_EQUAL)
             ),
             array(' foo bar baz',
-                  array_fill(0, 3, DocblockLexer::T_IDENTIFIER)
+                array_fill(0, 3, DocblockLexer::T_IDENTIFIER)
             ),
             array(' null null  null',
-                  array_fill(0, 3, DocblockLexer::T_NULL)
+                array_fill(0, 3, DocblockLexer::T_NULL)
             ),
             array(' + # ~',
-                  array_fill(0, 3, DocblockLexer::T_MEH)
+                array_fill(0, 3, DocblockLexer::T_MEH)
             ),
         );
 
