@@ -7,6 +7,7 @@
 namespace Weasel\JsonMarshaller\Types;
 
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
+use Weasel\WeaselDefaultAnnotationDrivenFactory;
 
 class IntTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,6 +21,15 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    protected $_mapper;
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $factory = new WeaselDefaultAnnotationDrivenFactory();
+        $this->_mapper = $factory->getJsonMapperInstance();
+    }
+
     /**
      * @dataProvider provideDataForEncode
      * @covers \Weasel\JsonMarshaller\Types\IntType
@@ -31,7 +41,7 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->encodeValue($value,
-                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                $this->_mapper
             );
 
         $this->assertInternalType("string", $encoded);
@@ -62,7 +72,7 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->decodeValue($value,
-                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                $this->_mapper
             );
 
         $this->assertInternalType("int", $encoded);
@@ -92,7 +102,7 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new IntType();
         $handler->encodeValue($value,
-            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            $this->_mapper
         );
         $this->fail("Should not get here");
     }
@@ -106,7 +116,7 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new IntType();
         $handler->decodeValue($value,
-            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            $this->_mapper
         );
         $this->fail("Should not get here");
     }

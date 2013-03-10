@@ -7,9 +7,11 @@
 namespace Weasel\JsonMarshaller\Types;
 
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
+use Weasel\WeaselDefaultAnnotationDrivenFactory;
 
 class BoolTypeTest extends \PHPUnit_Framework_TestCase
 {
+
 
     public function provideDataForEncode()
     {
@@ -18,6 +20,16 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
             array(false, "false")
         );
     }
+
+    protected $_mapper;
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $factory = new WeaselDefaultAnnotationDrivenFactory();
+        $this->_mapper = $factory->getJsonMapperInstance();
+    }
+
 
     /**
      * @dataProvider provideDataForEncode
@@ -30,7 +42,7 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->encodeValue($value,
-                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                $this->_mapper
             );
 
         $this->assertInternalType("string", $encoded);
@@ -72,7 +84,7 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->decodeValue($value,
-                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                $this->_mapper
             );
 
         $this->assertInternalType("bool", $encoded);
@@ -103,7 +115,7 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new BoolType();
         $handler->encodeValue($value,
-            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            $this->_mapper
         );
         $this->fail("Should not get here");
     }
@@ -117,7 +129,7 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new BoolType();
         $handler->decodeValue($value,
-            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            $this->_mapper
         );
         $this->fail("Should not get here");
     }

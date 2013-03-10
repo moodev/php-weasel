@@ -11,7 +11,7 @@ use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 use InvalidArgumentException;
 use Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\Types\OldTypeWrapper;
-use ReflectionClass;
+use Weasel\JsonMarshaller\Config\JsonConfigProvider;
 
 class JsonMapper
 {
@@ -30,7 +30,7 @@ class JsonMapper
      * Setup a JsonMapper from a config provider
      * @param Config\JsonConfigProvider $configProvider
      */
-    public function __construct(\Weasel\JsonMarshaller\Config\JsonConfigProvider $configProvider)
+    public function __construct(JsonConfigProvider $configProvider)
     {
         $this->configProvider = $configProvider;
         $this->_registerBuiltInTypes();
