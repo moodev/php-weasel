@@ -6,8 +6,6 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes;
 
-require_once(__DIR__ . '/../../../../../../lib/WeaselAutoloader.php');
-
 class TypeTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -46,8 +44,8 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals(array("value" => array(),
-                                  "name" => array()
-                            ), $found
+                "name" => array()
+            ), $found
         );
 
     }
@@ -72,17 +70,17 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-                          array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
-                              new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
-                                  array(
-                                       new \Weasel\Annotation\Config\Annotations\Parameter("value", 'string', true),
-                                       new \Weasel\Annotation\Config\Annotations\Parameter("name", 'string', false),
-                                  )
-                              )
-                          )
-                          ),
-                          "getValue" => array(),
-                          "getName" => array(),
+        array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
+            new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
+                array(
+                    new \Weasel\Annotation\Config\Annotations\Parameter("value", 'string', true),
+                    new \Weasel\Annotation\Config\Annotations\Parameter("name", 'string', false),
+                )
+            )
+        )
+        ),
+            "getValue" => array(),
+            "getName" => array(),
         );
 
         $this->assertEquals($expected, $found);

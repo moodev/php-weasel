@@ -6,8 +6,6 @@
  */
 namespace Weasel\Annotation\Tests;
 
-require_once(__DIR__ . '/../../../lib/WeaselAutoloader.php');
-
 use Weasel\Annotation\DocblockParser;
 use Weasel\Annotation\AnnotationConfigurator;
 
@@ -18,22 +16,22 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array('flibble fish',
-                  'string'
+                'string'
             ),
             array('test "some" quotes',
-                  'string'
+                'string'
             ),
             array(12356,
-                  'integer'
+                'integer'
             ),
             array(5.23,
-                  'float'
+                'float'
             ),
             array(true,
-                  'boolean'
+                'boolean'
             ),
             array(false,
-                  'boolean'
+                'boolean'
             ),
         );
     }
@@ -133,9 +131,9 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $gloop = new Gloop();
 
         $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop,
-                                                                            $gloop
-                             )
-                            ), $parsed
+                $gloop
+            )
+            ), $parsed
         );
 
     }
@@ -264,10 +262,10 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $gloop = new Gloop();
         $gloop->foo =
             array(array("ab",
-                        "cd"
-                  ),
-                  array("ef"),
-                  array()
+                "cd"
+            ),
+                array("ef"),
+                array()
             );
 
         $this->assertEquals(array('\Weasel\Annotation\Tests\Gloop' => array($gloop)), $parsed);
@@ -330,8 +328,8 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
               */',
             "class",
             array(
-                 'Gloop' => 'Weasel\Annotation\Tests\Gloop',
-                 'Glarp' => 'Weasel\Annotation\Tests\Glarp'
+                'Gloop' => 'Weasel\Annotation\Tests\Gloop',
+                'Glarp' => 'Weasel\Annotation\Tests\Glarp'
             )
 
         );
@@ -374,9 +372,9 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
               */',
             "class",
             array(
-                 'Gloop' => 'Weasel\Annotation\Tests\Gloop',
-                 'Glarp' => 'Weasel\Annotation\Tests\Glarp',
-                 'Multi' => 'Weasel\Annotation\Tests\Multi'
+                'Gloop' => 'Weasel\Annotation\Tests\Gloop',
+                'Glarp' => 'Weasel\Annotation\Tests\Glarp',
+                'Multi' => 'Weasel\Annotation\Tests\Multi'
             )
 
         );
@@ -489,9 +487,9 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $annotation = new \Weasel\Annotation\Config\Annotation('\Weasel\Annotation\Tests\Gloop', array('class'));
         $annotation->addProperty(new \Weasel\Annotation\Config\Property('foo', 'integer'));
         $annotation->addEnum(new \Weasel\Annotation\Config\Enum('Snorks', array("FOO" => 1,
-                                                                                "BAR" => 2,
-                                                                                "BAZ" => 3
-                                                                          ))
+                "BAR" => 2,
+                "BAZ" => 3
+            ))
         );
         $mockConfigurator->addAnnotation($annotation);
 
@@ -525,9 +523,9 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $annotation->addCreatorParam(new \Weasel\Annotation\Config\Param('foo', 'integer', false));
         $annotation->addCreatorParam(new \Weasel\Annotation\Config\Param('baz', 'integer', false));
         $annotation->addEnum(new \Weasel\Annotation\Config\Enum('Snorks', array("FOO" => 1,
-                                                                                "BAR" => 2,
-                                                                                "BAZ" => 3
-                                                                          ))
+                "BAR" => 2,
+                "BAZ" => 3
+            ))
         );
         $mockConfigurator->addAnnotation($annotation);
 

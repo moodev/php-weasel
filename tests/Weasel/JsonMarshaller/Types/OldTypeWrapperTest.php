@@ -9,8 +9,6 @@ namespace Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 use Weasel\JsonMarshaller\JsonMapper;
 
-require_once(__DIR__ . '/../../../../lib/WeaselAutoloader.php');
-
 class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
 {
 

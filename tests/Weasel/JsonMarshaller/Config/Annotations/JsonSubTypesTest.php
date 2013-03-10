@@ -6,8 +6,6 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
-require_once(__DIR__ . '/../../../../../lib/WeaselAutoloader.php');
-
 class JsonSubTypesTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -22,9 +20,9 @@ class JsonSubTypesTest extends \PHPUnit_Framework_TestCase
 
         $expected = array(
             '\Weasel\Annotation\Config\Annotations\Annotation' => array(new \Weasel\Annotation\Config\Annotations\Annotation(array("class",
-                                                                                                                                   "method",
-                                                                                                                                   "property"
-                                                                                                                             ), null)
+                "method",
+                "property"
+            ), null)
             ),
         );
 
@@ -73,15 +71,15 @@ class JsonSubTypesTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-                          array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
-                              new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
-                                  array(
-                                       new \Weasel\Annotation\Config\Annotations\Parameter("value", '\Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type[]', true),
-                                  )
-                              )
-                          )
-                          ),
-                          "getValue" => array(),
+        array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
+            new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
+                array(
+                    new \Weasel\Annotation\Config\Annotations\Parameter("value", '\Weasel\JsonMarshaller\Config\Annotations\JsonSubTypes\Type[]', true),
+                )
+            )
+        )
+        ),
+            "getValue" => array(),
         );
 
         $this->assertEquals($expected, $found);

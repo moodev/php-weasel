@@ -6,8 +6,6 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
-require_once(__DIR__ . '/../../../../../lib/WeaselAutoloader.php');
-
 class JsonIgnorePropertiesTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -46,8 +44,8 @@ class JsonIgnorePropertiesTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals(array("names" => array(),
-                                  "ignoreUnknown" => array()
-                            ), $found
+                "ignoreUnknown" => array()
+            ), $found
         );
 
     }
@@ -72,17 +70,17 @@ class JsonIgnorePropertiesTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-                          array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
-                              new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
-                                  array(
-                                       new \Weasel\Annotation\Config\Annotations\Parameter("names", 'string[]', false),
-                                       new \Weasel\Annotation\Config\Annotations\Parameter("ignoreUnknown", 'boolean', false),
-                                  )
-                              )
-                          )
-                          ),
-                          "getNames" => array(),
-                          "getIgnoreUnknown" => array(),
+        array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
+            new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
+                array(
+                    new \Weasel\Annotation\Config\Annotations\Parameter("names", 'string[]', false),
+                    new \Weasel\Annotation\Config\Annotations\Parameter("ignoreUnknown", 'boolean', false),
+                )
+            )
+        )
+        ),
+            "getNames" => array(),
+            "getIgnoreUnknown" => array(),
         );
 
         $this->assertEquals($expected, $found);

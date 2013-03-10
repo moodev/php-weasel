@@ -8,8 +8,6 @@ namespace Weasel\JsonMarshaller;
 
 use Weasel\JsonMarshaller\Config\JsonConfigProvider;
 
-require_once(__DIR__ . '/../../../lib/WeaselAutoloader.php');
-
 class JsonMapperTest extends \PHPUnit_Framework_TestCase
 {
 
