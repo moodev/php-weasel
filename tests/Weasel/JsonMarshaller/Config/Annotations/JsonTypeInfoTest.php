@@ -6,8 +6,6 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
-require_once(__DIR__ . '/../../../../../lib/WeaselAutoloader.php');
-
 class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -22,9 +20,9 @@ class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
 
         $expected = array(
             '\Weasel\Annotation\Config\Annotations\Annotation' => array(new \Weasel\Annotation\Config\Annotations\Annotation(array("class",
-                                                                                                                                   "method",
-                                                                                                                                   "property"
-                                                                                                                             ), null)
+                "method",
+                "property"
+            ), null)
             ),
         );
 
@@ -53,13 +51,13 @@ class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
         $expectedEnumAs = new \Weasel\Annotation\Config\Annotations\Enum("As");
 
         $this->assertEquals(array("enumId" => array('\Weasel\Annotation\Config\Annotations\Enum' => array($expectedEnumId),),
-                                  "enumAs" => array('\Weasel\Annotation\Config\Annotations\Enum' => array($expectedEnumAs),),
-                                  "use" => array(),
-                                  "include" => array(),
-                                  "property" => array(),
-                                  "visible" => array(),
-                                  "defaultImpl" => array()
-                            ), $found
+                "enumAs" => array('\Weasel\Annotation\Config\Annotations\Enum' => array($expectedEnumAs),),
+                "use" => array(),
+                "include" => array(),
+                "property" => array(),
+                "visible" => array(),
+                "defaultImpl" => array()
+            ), $found
         );
 
     }
@@ -84,23 +82,23 @@ class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-                          array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
-                              new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
-                                  array(
-                                       new \Weasel\Annotation\Config\Annotations\Parameter("use", 'integer', true),
-                                       new \Weasel\Annotation\Config\Annotations\Parameter("include", 'integer', false),
-                                       new \Weasel\Annotation\Config\Annotations\Parameter("property", 'string', false),
-                                       new \Weasel\Annotation\Config\Annotations\Parameter("visible", 'bool', false),
-                                       new \Weasel\Annotation\Config\Annotations\Parameter("defaultImpl", 'string', false),
-                                  )
-                              )
-                          )
-                          ),
-                          "getUse" => array(),
-                          "getInclude" => array(),
-                          "getProperty" => array(),
-                          "getVisible" => array(),
-                          "getDefaultImpl" => array(),
+        array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
+            new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
+                array(
+                    new \Weasel\Annotation\Config\Annotations\Parameter("use", 'integer', true),
+                    new \Weasel\Annotation\Config\Annotations\Parameter("include", 'integer', false),
+                    new \Weasel\Annotation\Config\Annotations\Parameter("property", 'string', false),
+                    new \Weasel\Annotation\Config\Annotations\Parameter("visible", 'bool', false),
+                    new \Weasel\Annotation\Config\Annotations\Parameter("defaultImpl", 'string', false),
+                )
+            )
+        )
+        ),
+            "getUse" => array(),
+            "getInclude" => array(),
+            "getProperty" => array(),
+            "getVisible" => array(),
+            "getDefaultImpl" => array(),
 
         );
 

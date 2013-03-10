@@ -6,8 +6,6 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
-require_once(__DIR__ . '/../../../../../lib/WeaselAutoloader.php');
-
 class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -69,15 +67,15 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
         }
 
         $expected = array("__construct" =>
-                          array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
-                              new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
-                                  array(
-                                       new \Weasel\Annotation\Config\Annotations\Parameter("params", '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty[]', false),
-                                  )
-                              )
-                          )
-                          ),
-                          "getParams" => array(),
+        array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
+            new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
+                array(
+                    new \Weasel\Annotation\Config\Annotations\Parameter("params", '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty[]', false),
+                )
+            )
+        )
+        ),
+            "getParams" => array(),
         );
 
         $this->assertEquals($expected, $found);
