@@ -13,6 +13,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Weasel\Annotation\AnnotationReaderFactory;
 use Weasel\Annotation\AnnotationConfigurator;
+use Weasel\Annotation\AnnotationConfigProvider;
 
 class ClassAnnotationDriver implements LoggerAwareInterface
 {
@@ -43,7 +44,7 @@ class ClassAnnotationDriver implements LoggerAwareInterface
      */
     protected $config;
 
-    public function __construct(\ReflectionClass $rClass, AnnotationConfigurator $configurator)
+    public function __construct(\ReflectionClass $rClass, AnnotationConfigProvider $configurator)
     {
         $this->annotationReaderFactory = new AnnotationReaderFactory($configurator);
         $this->rClass = $rClass;

@@ -11,6 +11,7 @@ use Psr\Log\LoggerInterface;
 use Weasel\Annotation\AnnotationConfigurator;
 use Weasel\Common\Cache\CacheAwareInterface;
 use Weasel\Common\Cache\Cache;
+use Weasel\Annotation\AnnotationConfigProvider;
 
 class AnnotationDriver implements ConfigProvider, CacheAwareInterface
 {
@@ -23,17 +24,9 @@ class AnnotationDriver implements ConfigProvider, CacheAwareInterface
      */
     protected $cache;
 
-    public function __construct(LoggerInterface $logger = null, $annotationConfigurator = null, $cache = null)
+    public function __construct(AnnotationConfigProvider $annotationConfigurator = null)
     {
-        if (isset($annotationConfigurator)) {
-            $this->configurator = $annotationConfigurator;
-        } else {
-            // Create ourselves an annotation configurator of a sane type
-            $this->configurator = new AnnotationConfigurator($logger, $cache);
-        }
-        if (isset($cache)) {
-            $this->setCache($cache);
-        }
+        $this->configurator = $annotationConfigurator;
     }
 
     public function setConfigurator(AnnotationConfigurator $annotationConfigurator)
