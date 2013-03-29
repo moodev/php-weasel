@@ -39,4 +39,10 @@ class TypeInfo
      */
     public $typeInfoProperty;
 
+    public function __toString()
+    {
+        return '[TypeInfo subTypes={' . implode(', ',
+            $this->subTypes) . '} typeInfo=' . $this->typeInfo . ' typeInfoAs=' . $this->typeInfoAs . ' typeInfoProperty=' . $this->typeInfoProperty . ']';
+    }
+
 }

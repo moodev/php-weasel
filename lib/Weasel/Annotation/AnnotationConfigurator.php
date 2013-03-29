@@ -7,11 +7,13 @@
 namespace Weasel\Annotation;
 
 use Weasel\Common\Cache\Cache;
-use Weasel\Common\Cache\CacheException;
 use Weasel\Common\Cache\Exception;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Weasel\Common\Cache\CacheAwareInterface;
 
-class AnnotationConfigurator implements AnnotationConfigProvider
+class AnnotationConfigurator implements AnnotationConfigProvider, LoggerAwareInterface, CacheAwareInterface
 {
 
     /**
@@ -26,24 +28,35 @@ class AnnotationConfigurator implements AnnotationConfigProvider
      */
     protected $cache;
 
+    protected $ownedFactory = false;
+
     /**
      * @var AnnotationReaderFactory
      */
     protected $readerFactory = null;
 
-    public function __construct(\Weasel\Common\Logger\Logger $logger = null,
-                                \Weasel\Common\Cache\Cache $cache = null,
+    public function __construct(LoggerInterface $logger = null,
+                                Cache $cache = null,
                                 AnnotationReaderFactory $readerFactory = null)
     {
-        $this->logger = $logger;
-        $this->setCache($cache);
+        if (isset($logger)) {
+            $this->setLogger($logger);
+        }
+        if (isset($cache)) {
+            $this->setCache($cache);
+        }
         if (!isset(self::$builtIns)) {
             self::$builtIns = Config\BuiltInsProvider::getConfig();
         }
         if (isset($readerFactory)) {
             $this->setReaderFactory($readerFactory);
         } else {
-            $this->setReaderFactory(new AnnotationReaderFactory());
+            $readerFactory = new AnnotationReaderFactory($this);
+            $this->ownedFactory = true;
+            if (isset($logger)) {
+                $readerFactory->setLogger($logger);
+            }
+            $this->setReaderFactory($readerFactory);
         }
 
     }
@@ -63,7 +76,7 @@ class AnnotationConfigurator implements AnnotationConfigProvider
         }
 
         $class = new \ReflectionClass($name);
-        $reader = $this->readerFactory->getReaderForClass($class, $this);
+        $reader = $this->readerFactory->getReaderForClass($class);
 
         /**
          * @var \Weasel\Annotation\Config\Annotations\Annotation $annotation
@@ -81,7 +94,7 @@ class AnnotationConfigurator implements AnnotationConfigProvider
              * @var \Weasel\Annotation\Config\Annotations\AnnotationCreator $creator
              */
             $creator = $reader->getSingleMethodAnnotation($method->getName(),
-                                                          '\Weasel\Annotation\Config\Annotations\AnnotationCreator'
+                '\Weasel\Annotation\Config\Annotations\AnnotationCreator'
             );
             if (isset($creator)) {
                 if (!$method->isStatic() && !$method->isConstructor()) {
@@ -112,7 +125,7 @@ class AnnotationConfigurator implements AnnotationConfigProvider
              * @var \Weasel\Annotation\Config\Annotations\Property $annotProperty
              */
             $annotProperty = $reader->getSinglePropertyAnnotation($property->getName(),
-                                                                  '\Weasel\Annotation\Config\Annotations\Property'
+                '\Weasel\Annotation\Config\Annotations\Property'
             );
 
             if (isset($annotProperty)) {
@@ -124,7 +137,7 @@ class AnnotationConfigurator implements AnnotationConfigProvider
              * @var \Weasel\Annotation\Config\Annotations\Enum $annotEnum
              */
             $annotEnum = $reader->getSinglePropertyAnnotation($property->getName(),
-                                                              '\Weasel\Annotation\Config\Annotations\Enum'
+                '\Weasel\Annotation\Config\Annotations\Enum'
             );
 
             if (isset($annotEnum)) {
@@ -168,12 +181,23 @@ class AnnotationConfigurator implements AnnotationConfigProvider
 
     /**
      * @param \Weasel\Common\Cache\Cache $cache
-     * @return AnnotationConfigurator
      */
-    public function setCache($cache)
+    public function setCache(Cache $cache)
     {
         $this->cache = $cache;
-        return $this;
     }
 
+    /**
+     * Sets a logger instance on the object
+     *
+     * @param LoggerInterface $logger
+     * @return null
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+        if ($this->ownedFactory) {
+            $this->readerFactory->setLogger($logger);
+        }
+    }
 }

@@ -6,6 +6,8 @@
  */
 namespace Weasel\XmlMarshaller;
 
+use Weasel\XmlMarshaller\Config\ConfigProvider;
+
 class XmlMapper
 {
 
@@ -14,7 +16,7 @@ class XmlMapper
      */
     protected $configProvider;
 
-    public function __construct(\Weasel\XmlMarshaller\Config\ConfigProvider $configProvider)
+    public function __construct(ConfigProvider $configProvider)
     {
         $this->configProvider = $configProvider;
     }
@@ -143,7 +145,7 @@ class XmlMapper
                             if (!isset($knownValues[$propType->id])) {
                                 $knownValues[$propType->id] =
                                     array($propType,
-                                          array()
+                                        array()
                                     );
                             }
                             $knownValues[$propType->id][1] = array_merge($knownValues[$propType->id][1], $val);
@@ -168,7 +170,7 @@ class XmlMapper
         if (!empty($notSeenAtts) || !empty($notSeenElements)) {
             // TODO fix.
             throw new \Exception("Missing required elements: " . implode(', ', $notSeenElements) . " and attributes: " .
-                                     implode(',', $notSeenAtts) . "on $class");
+                implode(',', $notSeenAtts) . "on $class");
         }
 
         foreach ($knownValues as $typeval) {
@@ -239,7 +241,7 @@ class XmlMapper
         }
 
         return array($elementConfig->property,
-                     $collection
+            $collection
         );
     }
 
@@ -303,7 +305,7 @@ class XmlMapper
         }
 
         return array($element->property,
-                     $this->_readElementAsType($xml, $type)
+            $this->_readElementAsType($xml, $type)
         );
     }
 
@@ -311,6 +313,7 @@ class XmlMapper
      * @param \XMLReader $xml
      * @param string $type
      * @param bool $root
+     * @throws \Exception
      * @return mixed
      */
     protected function _readElementAsType($xml, $type, $root = false)

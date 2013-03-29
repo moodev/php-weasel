@@ -15,5 +15,4 @@ interface ConfigProvider
      */
     public function getConfig($class);
 
-    public function setCache($cache);
 }

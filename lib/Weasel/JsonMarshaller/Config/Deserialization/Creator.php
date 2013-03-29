@@ -14,4 +14,9 @@ abstract class Creator
      */
     public $method;
 
+    public function __toString()
+    {
+        return '[Creator method=' . $this->method . ']';
+    }
+
 }

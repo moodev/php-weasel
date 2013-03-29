@@ -8,6 +8,7 @@ namespace Weasel\JsonMarshaller\Types;
 
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 use Weasel\JsonMarshaller\JsonMapper;
+use Weasel\WeaselDefaultAnnotationDrivenFactory;
 
 class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,6 +22,15 @@ class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    protected $_mapper;
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $factory = new WeaselDefaultAnnotationDrivenFactory();
+        $this->_mapper = $factory->getJsonMapperInstance();
+    }
+
     /**
      * @dataProvider provideDataForEncode
      * @covers \Weasel\JsonMarshaller\Types\OldTypeWrapper
@@ -32,7 +42,7 @@ class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->encodeValue($value,
-                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                $this->_mapper
             );
 
         $this->assertInternalType("string", $encoded);
@@ -63,7 +73,7 @@ class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->decodeValue($value,
-                new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+                $this->_mapper
             );
 
         $this->assertInternalType("int", $encoded);
@@ -93,7 +103,7 @@ class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new OldTypeWrapper(new OldIntType());
         $handler->encodeValue($value,
-            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            $this->_mapper
         );
         $this->fail("Should not get here");
     }
@@ -107,7 +117,7 @@ class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
     {
         $handler = new OldTypeWrapper(new OldIntType());
         $handler->decodeValue($value,
-            new \Weasel\JsonMarshaller\JsonMapper(new \Weasel\JsonMarshaller\Config\AnnotationDriver())
+            $this->_mapper
         );
         $this->fail("Should not get here");
     }

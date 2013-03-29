@@ -6,7 +6,10 @@
  */
 namespace Weasel\Annotation;
 
-class DocblockParser
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+
+class DocblockParser implements LoggerAwareInterface
 {
 
     /**
@@ -15,7 +18,7 @@ class DocblockParser
     protected $annotations;
 
     /**
-     * @var \Weasel\Common\Logger\Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -37,7 +40,6 @@ class DocblockParser
     public function __construct(AnnotationConfigProvider $annotations)
     {
         $this->annotations = $annotations;
-        $this->logger = $annotations->getLogger();
     }
 
     protected function _getAnnotation($name, $namespaces)
@@ -84,7 +86,7 @@ class DocblockParser
             } catch (\Exception $e) {
                 // OK, try starting 1 char after the @ to find the next annotation.
                 if ($this->logger) {
-                    $this->logger->logDebug("Skipping syntax error: " . $e->getMessage());
+                    $this->logger->debug("Skipping syntax error: " . $e->getMessage(), array("exception" => $e));
                 }
                 $lexer->seek($pos);
                 if (!$lexer->next()) {
@@ -125,22 +127,22 @@ class DocblockParser
         switch ($cur['type']) {
             case DocblockLexer::T_INTEGER:
                 $param = array('integer',
-                               $cur['token']
+                    $cur['token']
                 );
                 break;
             case DocblockLexer::T_FLOAT:
                 $param = array('float',
-                               $cur['token']
+                    $cur['token']
                 );
                 break;
             case DocblockLexer::T_BOOLEAN:
                 $param = array('boolean',
-                               $cur['token']
+                    $cur['token']
                 );
                 break;
             case DocblockLexer::T_QUOTED_STRING:
                 $param = array('string',
-                               $cur['token']
+                    $cur['token']
                 );
                 break;
             case DocblockLexer::T_AT:
@@ -150,7 +152,7 @@ class DocblockParser
             case DocblockLexer::T_OPEN_BRACE:
                 $array = $this->_Array($lexer, $location, $namespaces);
                 return array('array',
-                             $array
+                    $array
                 );
             default:
                 throw new \Exception("Parse error got {$cur["type"]} ({$cur['token']})");
@@ -167,7 +169,7 @@ class DocblockParser
         $value = $this->_ParamValue($lexer, $location, $namespaces);
 
         return array($nameToken['token'],
-                     $value
+            $value
         );
 
     }
@@ -230,7 +232,7 @@ class DocblockParser
         }
 
         return array("integer",
-                     $enumValues[$index]
+            $enumValues[$index]
         );
 
     }
@@ -244,7 +246,7 @@ class DocblockParser
         if (!$meta) {
             if ($this->logger) {
                 if (!in_array($identifier, self::$silentlyDiscard)) {
-                    $this->logger->logDebug("Skipping unknown annotation: $identifier");
+                    $this->logger->debug("Skipping unknown annotation: $identifier");
                 }
             }
             return null;
@@ -253,8 +255,7 @@ class DocblockParser
         if ($meta->getOn() && !in_array($location, $meta->getOn())) {
             throw new \Exception(
                 "Found annotation in wrong location, got $location but expected one of " . implode(", ",
-                                                                                                   $meta->getOn(
-                                                                                                   )
+                    $meta->getOn()
                 ));
         }
 
@@ -340,7 +341,7 @@ class DocblockParser
                         $actualParams[] = null;
                     } else {
                         $actualParams[] = $this->_collapseAndCheckType($namedParams[$paramConfig->getName()],
-                                                                       $paramConfig->getType()
+                            $paramConfig->getType()
                         );
                     }
                 }
@@ -372,7 +373,7 @@ class DocblockParser
         }
 
         return array($class,
-                     $annotation
+            $annotation
         );
     }
 
@@ -422,8 +423,8 @@ class DocblockParser
         $result = array();
         if (!is_array($paramValue)) {
             $paramValue = array(array($paramType,
-                                      $paramValue
-                                )
+                $paramValue
+            )
             );
         }
         foreach ($paramValue as $element) {
@@ -433,4 +434,14 @@ class DocblockParser
 
     }
 
+    /**
+     * Sets a logger instance on the object
+     *
+     * @param LoggerInterface $logger
+     * @return null
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 }
