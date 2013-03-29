@@ -100,6 +100,26 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \Weasel\JsonMarshaller\JsonMapper
      */
+    public function testReadStringMapIntKeys()
+    {
+        $configProvider = new MockedConfigProvider();
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, "blah", "string");
+        $configProvider->fakeConfig[$mtc] = $config;
+
+        $mapper = new JsonMapper($configProvider);
+
+        $result = $mapper->readString('{"77": 123, "33": 34, "22": 99}', "int[int]");
+
+        $this->assertInternalType("array", $result);
+        $this->assertEquals(array(77 => 123, 33 => 34, 22 => 99), $result);
+    }
+
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testReadStringArrayOfBasicObject()
     {
         $configProvider = new MockedConfigProvider();
@@ -184,9 +204,9 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
 
         $mapper = new JsonMapper($configProvider);
 
-        $result = $mapper->writeArray(array("foo", "bar", "baz"), 'string[]');
+        $result = $mapper->writeString(array("foo", "bar", "baz"), 'string[]');
 
-        $this->assertEquals(array("foo", "bar", "baz"), $result);
+        $this->assertEquals('["foo", "bar", "baz"]', $result);
     }
 
     /**
@@ -207,6 +227,49 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInternalType("array", $result);
         $this->assertEquals(array("a" => 123, "b" => 34, "c" => 99), $result);
+    }
+
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
+    public function testWriteStringMapIntKeys()
+    {
+        $configProvider = new MockedConfigProvider();
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, "blah", "string");
+        $configProvider->fakeConfig[$mtc] = $config;
+
+        $mapper = new JsonMapper($configProvider);
+
+        $result = $mapper->writeString(array(77 => 123, 42 => 34, 99 => 99), 'int[int]');
+
+        $expected = '{"77": 123, "42": 34, "99": 99}';
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test to show that something that PHP would normally think is an "array" gets encoded as a map when we ask for that.
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
+    public function testWriteStringMapIntKeysLooksLikeArray()
+    {
+        $configProvider = new MockedConfigProvider();
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, "blah", "string");
+        $configProvider->fakeConfig[$mtc] = $config;
+
+        $mapper = new JsonMapper($configProvider);
+
+        $result = $mapper->writeString(array(123, 34, 99), 'int[int]');
+
+        $expected = '{"0": 123, "1": 34, "2": 99}';
+
+        $this->assertEquals($expected, $result);
     }
 
     /**
