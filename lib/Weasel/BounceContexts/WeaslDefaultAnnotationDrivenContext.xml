@@ -3,8 +3,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:php="http://www.moo.com/xsd/bounce-php-1.0"
        xsi:schemaLocation="
-            http://www.moo.com/xsd/bounce-beans-1.0 https://raw.github.com/moodev/bounce/master/resources/bounce-beans-1.0.xsd
-            http://www.moo.com/xsd/bounce-php-1.0 https://raw.github.com/moodev/bounce/master/resources/bounce-php-1.0.xsd
+            http://www.moo.com/xsd/bounce-beans-1.0 http://www.moo.com/xsd/bounce-beans-1.0.xsd
+            http://www.moo.com/xsd/bounce-php-1.0 http://www.moo.com/xsd/bounce-php-1.0.xsd
 ">
 
     <bean name="annotationConfigProvider" class="\Weasel\Annotation\AnnotationConfigurator">
