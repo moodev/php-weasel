@@ -53,7 +53,7 @@ class XmlType
     @Parameter(name="namespace", type="string", required=false),
     @Parameter(name="propOrder", type="string[]", required=false)})
      */
-    public function __construct($factoryClass, $factoryMethod, $name, $namespace, $propOrder)
+    public function __construct($factoryClass = null, $factoryMethod = null, $name = null, $namespace = null, $propOrder = null)
     {
         $this->factoryClass = $factoryClass;
         $this->factoryMethod = $factoryMethod;

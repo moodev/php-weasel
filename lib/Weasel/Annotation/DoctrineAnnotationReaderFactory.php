@@ -7,8 +7,10 @@
 namespace Weasel\Annotation;
 
 use Doctrine\Common\Annotations\Reader;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 
-class DoctrineAnnotationReaderFactory
+class DoctrineAnnotationReaderFactory implements IAnnotationReaderFactory
 {
 
     /**
@@ -22,6 +24,7 @@ class DoctrineAnnotationReaderFactory
     public function __construct(Reader $annotationReader)
     {
         $this->annotationReader = $annotationReader;
+        AnnotationRegistry::registerAutoloadNamespace('Weasel', array(__DIR__ . '/../../'));
     }
 
     /**

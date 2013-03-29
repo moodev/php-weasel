@@ -28,12 +28,12 @@ class JsonTypeInfo extends NoUndeclaredProperties
     const AS_EXTERNAL_PROPERTY = 4;
 
     /**
-     * @var string
+     * @var int
      */
     public $use = self::ID_CLASS;
 
     /**
-     * @var string
+     * @var int
      */
     public $include = self::AS_PROPERTY;
 

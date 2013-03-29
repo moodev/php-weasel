@@ -24,7 +24,7 @@ class XmlRootElement
      * @param string $namespace
      * @AnnotationCreator({@Parameter(name="name", type="string", required=false), @Parameter(name="namespace", type="string", required=false)})
      */
-    public function __construct($name, $namespace)
+    public function __construct($name = null, $namespace = null)
     {
         $this->name = $name;
         $this->namespace = $namespace;

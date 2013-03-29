@@ -18,7 +18,7 @@ class JsonSubTypes
 {
 
     /**
-     * @var JsonSubTypes\Type[]
+     * @var array
      */
     public $value;
 

@@ -18,7 +18,7 @@ class JsonCreator extends NoUndeclaredProperties
 {
 
     /**
-     * @var \Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty[]
+     * @var array
      */
     public $params = array();
 

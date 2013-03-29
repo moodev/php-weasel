@@ -42,7 +42,12 @@ class DoctrineAnnotationReaderAdapter implements IAnnotationReader
      */
     public function getClassAnnotation($annotation)
     {
-        return $this->annotationReader->getClassAnnotation($this->rClass, $annotation);
+        $annotation = ltrim($annotation, '\\');
+        $res = $this->annotationReader->getClassAnnotation($this->rClass, $annotation);
+        if (!is_array($res)) {
+            $res = array($res);
+        }
+        return $res;
     }
 
     /**
@@ -51,8 +56,15 @@ class DoctrineAnnotationReaderAdapter implements IAnnotationReader
      */
     public function getSingleClassAnnotation($annotation)
     {
+        $annotation = ltrim($annotation, '\\');
         $res = $this->annotationReader->getClassAnnotation($this->rClass, $annotation);
-        return array_shift($res);
+        if (empty($res)) {
+            return null;
+        }
+        if (is_array($res)) {
+            return array_shift($res);
+        }
+        return $res;
     }
 
     /**
@@ -71,7 +83,12 @@ class DoctrineAnnotationReaderAdapter implements IAnnotationReader
      */
     public function getMethodAnnotation($method, $annotation)
     {
-        return $this->annotationReader->getMethodAnnotation($this->rClass->getMethod($method), $annotation);
+        $annotation = ltrim($annotation, '\\');
+        $res = $this->annotationReader->getMethodAnnotation($this->rClass->getMethod($method), $annotation);
+        if (!is_array($res)) {
+            $res = array($res);
+        }
+        return $res;
     }
 
     /**
@@ -81,8 +98,15 @@ class DoctrineAnnotationReaderAdapter implements IAnnotationReader
      */
     public function getSingleMethodAnnotation($method, $annotation)
     {
+        $annotation = ltrim($annotation, '\\');
         $res = $this->annotationReader->getMethodAnnotation($this->rClass->getMethod($method), $annotation);
-        return array_shift($res);
+        if (empty($res)) {
+            return null;
+        }
+        if (is_array($res)) {
+            return array_shift($res);
+        }
+        return $res;
     }
 
     /**
@@ -101,7 +125,12 @@ class DoctrineAnnotationReaderAdapter implements IAnnotationReader
      */
     public function getPropertyAnnotation($property, $annotation)
     {
-        return $this->annotationReader->getPropertyAnnotation($this->rClass->getProperty($property), $annotation);
+        $annotation = ltrim($annotation, '\\');
+        $res = $this->annotationReader->getPropertyAnnotation($this->rClass->getProperty($property), $annotation);
+        if (!is_array($res)) {
+            $res = array($res);
+        }
+        return $res;
     }
 
     /**
@@ -111,8 +140,15 @@ class DoctrineAnnotationReaderAdapter implements IAnnotationReader
      */
     public function getSinglePropertyAnnotation($property, $annotation)
     {
+        $annotation = ltrim($annotation, '\\');
         $res = $this->annotationReader->getPropertyAnnotation($this->rClass->getProperty($property), $annotation);
-        return array_shift($res);
+        if (empty($res)) {
+            return null;
+        }
+        if (is_array($res)) {
+            return array_shift($res);
+        }
+        return $res;
     }
 }
 

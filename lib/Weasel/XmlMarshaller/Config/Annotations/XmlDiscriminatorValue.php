@@ -25,7 +25,7 @@ class XmlDiscriminatorValue
      * @param string $value;
      * @AnnotationCreator({@Parameter(name="value", type="string", required=true)})
      */
-    public function __construct($value)
+    public function __construct($value = null)
     {
         $this->value = $value;
     }

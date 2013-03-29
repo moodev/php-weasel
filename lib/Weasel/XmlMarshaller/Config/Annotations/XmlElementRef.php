@@ -28,7 +28,7 @@ class XmlElementRef
     @Parameter(name="type", type="string", required=true),
     @Parameter(name="namespace", type="string", required=false)})
      */
-    public function __construct($name, $type, $namespace)
+    public function __construct($name = null, $type = null, $namespace = null)
     {
         $this->name = isset($name) ? $name : null;
         $this->type = isset($type) ? $type : null;

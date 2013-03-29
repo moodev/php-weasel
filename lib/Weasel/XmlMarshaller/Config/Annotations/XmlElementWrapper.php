@@ -31,7 +31,7 @@ class XmlElementWrapper
     @Parameter(name="namespace", type="string", required=false),
     @Parameter(name="required", type="bool", required=false)})
      */
-    public function __construct($name, $nillable, $namespace, $required)
+    public function __construct($name = null, $nillable = null, $namespace = null, $required = null)
     {
         $this->name = isset($name) ? $name : null;
         $this->namespace = isset($namespace) ? $namespace : null;

@@ -24,7 +24,7 @@ class XmlElementRefs
      * @param string $type
      * @AnnotationCreator({@Parameter(name="type", type="string", required=true), @Parameter(name="values", type="\Weasel\XmlMarshaller\Config\Annotations\XmlElementRef[]", required=true)})
      */
-    public function __construct($type, array $values)
+    public function __construct($type = null, array $values = array())
     {
         $this->values = $values;
         $this->type = $type;

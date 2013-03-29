@@ -20,6 +20,8 @@ class AnnotationDriver implements JsonConfigProvider, CacheAwareInterface
 
     protected $classPaths = array();
 
+    protected $annotationNamespace = '\Weasel\JsonMarshaller\Config\Annotations';
+
     /**
      * @var \Weasel\Common\Cache\Cache
      */
@@ -63,7 +65,7 @@ class AnnotationDriver implements JsonConfigProvider, CacheAwareInterface
         $rClass = new \ReflectionClass($class);
 
         // Delegate actually loading the config for the class to the ClassAnnotationDriver
-        $classDriver = new ClassAnnotationDriver($rClass, $this->annotationReaderFactory);
+        $classDriver = new ClassAnnotationDriver($rClass, $this->annotationReaderFactory, $this->annotationNamespace);
 
         return $classDriver->getConfig();
 
@@ -77,5 +79,13 @@ class AnnotationDriver implements JsonConfigProvider, CacheAwareInterface
     public function setAnnotationReaderFactory(IAnnotationReaderFactory $annotationReaderFactory)
     {
         $this->annotationReaderFactory = $annotationReaderFactory;
+    }
+
+    /**
+     * @param string $annotationNamespace
+     */
+    public function setAnnotationNamespace($annotationNamespace)
+    {
+        $this->annotationNamespace = $annotationNamespace;
     }
 }

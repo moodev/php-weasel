@@ -37,7 +37,7 @@ class JsonIgnoreProperties extends NoUndeclaredProperties
     }
 
     /**
-     * @var string[]
+     * @var array
      */
     public $names = array();
 
