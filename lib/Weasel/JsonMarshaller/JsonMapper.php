@@ -12,6 +12,7 @@ use InvalidArgumentException;
 use Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\Types\OldTypeWrapper;
 use ReflectionClass;
+use Weasel\JsonMarshaller\Exception\JsonMarshallerException;
 
 class JsonMapper
 {
@@ -475,6 +476,21 @@ class JsonMapper
         );
     }
 
+    protected function _decodeKey($value, $type)
+    {
+        if (!isset($value)) {
+            throw new JsonMarshallerException("Key values cannot be null");
+        }
+        $typeData = $this->_parseType($type);
+        switch (array_shift($typeData)) {
+            case "string":
+            case "int":
+                return $this->_decodeValue($value, $type);
+            default:
+                throw new JsonMarshallerException("Keys must be of type int or string, not " . $type);
+        }
+    }
+
     protected function _decodeValue($value, $type)
     {
         if (!isset($value)) {
@@ -498,7 +514,7 @@ class JsonMapper
                     $value = array($value);
                 }
                 foreach ($value as $key => $element) {
-                    $result[$this->_decodeValue($key, $indexType)] = $this->_decodeValue($element, $elementType);
+                    $result[$this->_decodeKey($key, $indexType)] = $this->_decodeValue($element, $elementType);
                 }
                 return $result;
                 break;
@@ -510,6 +526,27 @@ class JsonMapper
                 return $typeHandler->decodeValue($value, $this);
         }
 
+    }
+
+    protected function _encodeKey($value, $type)
+    {
+        if (!isset($value)) {
+            throw new JsonMarshallerException("Key values cannot be null");
+        }
+        $typeData = $this->_parseType($type);
+        switch (array_shift($typeData)) {
+            /** @noinspection PhpMissingBreakStatementInspection */
+            case "int":
+                if (!is_int($value) && !ctype_digit($value)) {
+                    throw new InvalidTypeException("integer", $value);
+                }
+                $value = "" . $value; // It's now a string
+            // Fall through as we really want it encoded as a string.
+            case "string":
+                return $this->_encodeValue("" . $value, "string");
+            default:
+                throw new JsonMarshallerException("Keys must be of type int or string, not " . $type);
+        }
     }
 
     /**
@@ -549,7 +586,7 @@ class JsonMapper
                 }
                 $elements = array();
                 foreach ($value as $key => $element) {
-                    $elements[] = $this->_encodeValue($key, $indexType) . ': ' . $this->_encodeValue($element, $elementType);
+                    $elements[] = $this->_encodeKey($key, $indexType) . ': ' . $this->_encodeValue($element, $elementType);
                 }
                 return '{' . implode(', ', $elements) . '}';
             default:
