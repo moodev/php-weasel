@@ -25,11 +25,6 @@ class ClassDeserialization
     public $attributes = array();
 
     /**
-     * @var \Weasel\XmlMarshaller\Config\Deserialization\ElementRefDeserialization[]
-     */
-    public $elementRefs = array();
-
-    /**
      * @var string[]
      */
     public $requiredElements = array();

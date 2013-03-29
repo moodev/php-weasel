@@ -13,4 +13,9 @@ class PropertyCreator extends Creator
      */
     public $params = array();
 
+    public function __toString()
+    {
+        return "[PropertyCreator method={$this->method} params={" . implode(", ", $this->params) . "}]";
+    }
+
 }

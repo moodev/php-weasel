@@ -6,13 +6,16 @@
  */
 namespace Weasel\JsonMarshaller\Config;
 
-use Weasel\JsonMarshaller\Config\Annotations as Annotations;
-use Weasel\Annotation\AnnotationReader;
+use Weasel\JsonMarshaller\Config\Annotations;
+use Weasel\Annotation\AnnotationConfigurator;
+use Weasel\Common\Cache\CacheAwareInterface;
+use Weasel\Common\Cache\Cache;
+use Weasel\Annotation\AnnotationConfigProvider;
 
 /**
  * A config provider that uses Annotations
  */
-class AnnotationDriver implements JsonConfigProvider
+class AnnotationDriver implements JsonConfigProvider, CacheAwareInterface
 {
 
     protected $classPaths = array();
@@ -23,15 +26,9 @@ class AnnotationDriver implements JsonConfigProvider
      */
     protected $cache = null;
 
-    public function __construct($logger = null, $annotationConfigurator = null, $cache = null)
+    public function __construct(AnnotationConfigProvider $annotationConfigurator = null)
     {
-        if (isset($annotationConfigurator)) {
-            $this->configurator = $annotationConfigurator;
-        } else {
-            // Create ourselves an annotation configurator of a sane type
-            $this->configurator = new \Weasel\Annotation\AnnotationConfigurator($logger);
-        }
-        $this->setCache($cache);
+        $this->configurator = $annotationConfigurator;
     }
 
     /**
@@ -73,8 +70,13 @@ class AnnotationDriver implements JsonConfigProvider
 
     }
 
-    public function setCache($cache)
+    public function setCache(Cache $cache)
     {
         $this->cache = $cache;
+    }
+
+    public function setConfigurator(AnnotationConfigurator $configurator)
+    {
+        $this->configurator = $configurator;
     }
 }

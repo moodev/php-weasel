@@ -6,17 +6,18 @@
  */
 namespace Weasel\Annotation;
 
-
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
 use Weasel\Common\Cache\ArrayCache;
 
 /**
  * Left over from prior to new cache system.
  * Stop using this. Use an AnnotationConfigurator, and call setCache.
- * @deprecated
+ * @deprecated Use the AnnotationConfiguration and call setCache()!
  */
-class ArrayCachingAnnotationConfigurator extends AnnotationConfigurator
+class ArrayCachingAnnotationConfigurator extends AnnotationConfigurator implements LoggerAwareInterface
 {
-    public function __construct(\Weasel\Common\Logger\Logger $logger = null,
+    public function __construct(LoggerInterface $logger = null,
                                 AnnotationReaderFactory $readerFactory = null)
     {
         parent::__construct($logger, $readerFactory);

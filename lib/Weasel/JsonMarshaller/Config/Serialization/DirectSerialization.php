@@ -14,4 +14,9 @@ class DirectSerialization extends PropertySerialization
      */
     public $property;
 
+    public function __toString()
+    {
+        return "[DirectSerialization property={$this->property} include={$this->include} type={$this->type} typeInfo={$this->typeInfo}]";
+    }
+
 }
