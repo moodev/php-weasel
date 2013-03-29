@@ -9,7 +9,7 @@ namespace Weasel\Annotation;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
-class AnnotationReaderFactory implements LoggerAwareInterface
+class AnnotationReaderFactory implements IAnnotationReaderFactory, LoggerAwareInterface
 {
 
     /**

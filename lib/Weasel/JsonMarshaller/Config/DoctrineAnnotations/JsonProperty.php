@@ -46,5 +46,15 @@ class JsonProperty extends NoUndeclaredProperties
         return $this->type;
     }
 
+    public function __construct($value)
+    {
+        if (isset($value["name"])) {
+            $this->name = $value["name"];
+        }
+        if (isset($value["type"])) {
+            $this->type = $value["type"];
+        }
+    }
+
 }
 

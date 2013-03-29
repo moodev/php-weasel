@@ -9,9 +9,8 @@ namespace Weasel\JsonMarshaller\Config;
 use Weasel\JsonMarshaller\Config\Annotations as Annotations;
 use Weasel\Annotation\AnnotationReader;
 use Psr\Log\LoggerAwareInterface;
-use Weasel\Annotation\AnnotationReaderFactory;
 use Psr\Log\LoggerInterface;
-use Weasel\Annotation\AnnotationConfigProvider;
+use Weasel\Annotation\IAnnotationReaderFactory;
 
 /**
  * Load the configuration for a given class from annotations
@@ -45,11 +44,11 @@ class ClassAnnotationDriver implements LoggerAwareInterface
 
     /**
      * @param \ReflectionClass $rClass A reflection for the class we're configuring
-     * @param \Weasel\Annotation\AnnotationConfigProvider $configurator An annotation configurator
+     * @param \Weasel\Annotation\IAnnotationReaderFactory $annotationReaderFactory A factory for annotation readers
      */
-    public function __construct(\ReflectionClass $rClass, AnnotationConfigProvider $configurator)
+    public function __construct(\ReflectionClass $rClass, IAnnotationReaderFactory $annotationReaderFactory)
     {
-        $this->annotationReaderFactory = new AnnotationReaderFactory($configurator);
+        $this->annotationReaderFactory = $annotationReaderFactory;
         $this->rClass = $rClass;
     }
 

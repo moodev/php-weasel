@@ -7,7 +7,6 @@ use Weasel\Annotation\AnnotationReaderFactory;
 use Weasel\JsonMarshaller\Config\Annotations\JsonProperty;
 use Weasel\JsonMarshaller\Config\Serialization\ClassSerialization;
 use Weasel\JsonMarshaller\Config\Serialization\GetterSerialization;
-use Weasel\JsonMarshaller\Config\Deserialization\ClassDeserialization;
 
 class ClassAnnotationDriverTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,12 +23,12 @@ class ClassAnnotationDriverTest extends \PHPUnit_Framework_TestCase
         $mockReader->shouldReceive('getSingleClassAnnotation')->withAnyArgs()->andReturnNull();
         $mockReader->shouldReceive('getSingleMethodAnnotation')->with('getStuff',
             '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty')->andReturn(
-            new JsonProperty(null, "string")
-        );
+                new JsonProperty(null, "string")
+            );
         $mockReader->shouldReceive('getSingleMethodAnnotation')->with('isGood',
             '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty')->andReturn(
-            new JsonProperty(null, "bool")
-        );
+                new JsonProperty(null, "bool")
+            );
         $mockReader->shouldReceive('getSingleMethodAnnotation')->withAnyArgs()->andReturnNull();
 
         $mockReaderFactory = m::mock('\Weasel\Annotation\AnnotationReaderFactory');
@@ -38,7 +37,7 @@ class ClassAnnotationDriverTest extends \PHPUnit_Framework_TestCase
         /**
          * @var \Weasel\Annotation\AnnotationReaderFactory $mockReaderFactory
          */
-        $driver = new TestableClassAnnotationDriver($rClass, $mockReaderFactory);
+        $driver = new ClassAnnotationDriver($rClass, $mockReaderFactory);
 
         $config = $driver->getConfig();
 
@@ -62,12 +61,12 @@ class ClassAnnotationDriverTest extends \PHPUnit_Framework_TestCase
         $mockReader->shouldReceive('getSingleClassAnnotation')->withAnyArgs()->andReturnNull();
         $mockReader->shouldReceive('getSingleMethodAnnotation')->with('getStuff',
             '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty')->andReturn(
-            new JsonProperty(null, "string")
-        );
+                new JsonProperty(null, "string")
+            );
         $mockReader->shouldReceive('getSingleMethodAnnotation')->with('isGood',
             '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty')->andReturn(
-            new JsonProperty(null, "string")
-        );
+                new JsonProperty(null, "string")
+            );
         $mockReader->shouldReceive('getSingleMethodAnnotation')->withAnyArgs()->andReturnNull();
 
         $mockReaderFactory = m::mock('\Weasel\Annotation\AnnotationReaderFactory');
@@ -76,7 +75,7 @@ class ClassAnnotationDriverTest extends \PHPUnit_Framework_TestCase
         /**
          * @var \Weasel\Annotation\AnnotationReaderFactory $mockReaderFactory
          */
-        $driver = new TestableClassAnnotationDriver($rClass, $mockReaderFactory);
+        $driver = new ClassAnnotationDriver($rClass, $mockReaderFactory);
 
         $config = $driver->getConfig();
 
@@ -88,17 +87,6 @@ class ClassAnnotationDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($eProperties, $config->serialization->properties);
 
     }
-
-}
-
-class TestableClassAnnotationDriver extends ClassAnnotationDriver
-{
-    public function __construct(\ReflectionClass $rClass, AnnotationReaderFactory $readerFactory)
-    {
-        parent::__construct($rClass, new AnnotationConfigurator());
-        $this->annotationReaderFactory = $readerFactory;
-    }
-
 
 }
 
