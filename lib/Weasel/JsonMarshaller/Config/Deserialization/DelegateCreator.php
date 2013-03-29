@@ -9,4 +9,9 @@ namespace Weasel\JsonMarshaller\Config\Deserialization;
 class DelegateCreator extends Creator
 {
 
+    public function __toString()
+    {
+        return '[DelegateCreator method=' . $this->method . ']';
+    }
+
 }

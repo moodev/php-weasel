@@ -18,4 +18,9 @@ abstract class PropertyDeserialization
      * @var \Weasel\JsonMarshaller\Config\Deserialization\TypeInfo
      */
     public $typeInfo;
+
+    /**
+     * @return string
+     */
+    abstract public function __toString();
 }

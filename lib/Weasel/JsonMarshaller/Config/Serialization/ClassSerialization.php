@@ -15,7 +15,7 @@ class ClassSerialization
     const INCLUDE_NON_NULL = 4;
 
     /**
-     * @var \Weasel\JsonMarshaller\Config\Serialization\PropertySerialization[]
+     * @var \Weasel\JsonMarshaller\Config\Serialization\PropertySerialization[] Map of names to how to serialize them
      */
     public $properties = array();
 
@@ -27,4 +27,14 @@ class ClassSerialization
     public $typeInfo;
 
     public $anyGetter = null;
+
+    public function __toString()
+    {
+        $props = array();
+        foreach ($this->properties as $key => $value) {
+            $props[] = $key . ' => ' . $value;
+        }
+        return '[ClassSerialization include=' . $this->include . ' anyGetter=' . $this->anyGetter . ' typeInfo=' . $this->typeInfo .
+            ' properties={' . implode(", ", $props) . '}';
+    }
 }

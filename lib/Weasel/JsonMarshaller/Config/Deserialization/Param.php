@@ -14,4 +14,9 @@ class Param extends PropertyDeserialization
      */
     public $name;
 
+    public function __toString()
+    {
+        return "[ParamDeserialization name={$this->name} type={$this->type} typeInfo={$this->typeInfo}]";
+    }
+
 }

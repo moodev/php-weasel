@@ -32,7 +32,7 @@ class AnnotationReaderFactory implements LoggerAwareInterface
 
     /**
      * @param \ReflectionClass $class
-     * @return \Weasel\Annotation\AnnotationReader
+     * @return \Weasel\Annotation\IAnnotationReader
      */
     public function getReaderForClass(\ReflectionClass $class)
     {
