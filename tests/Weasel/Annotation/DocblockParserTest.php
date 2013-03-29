@@ -8,6 +8,7 @@ namespace Weasel\Annotation\Tests;
 
 use Weasel\Annotation\DocblockParser;
 use Weasel\Annotation\AnnotationConfigurator;
+use Weasel\Annotation\Config\AnnotationConfig;
 
 class DocblockParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -599,18 +600,12 @@ class MockConfigurator extends AnnotationConfigurator
 
     public function __construct()
     {
-        $this->config = new \Weasel\Annotation\Config\AnnotationConfig();
+        $this->config = new AnnotationConfig();
     }
 
     public function get($type)
     {
         return $this->config->getAnnotation($type);
-    }
-
-    public function getLogger()
-    {
-        $logger = new \Weasel\Common\Logger\FileLogger();
-        $logger->setLogLevel(\Weasel\Common\Logger\Logger::LOG_LEVEL_DEBUG);
     }
 
 }

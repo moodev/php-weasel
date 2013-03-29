@@ -6,7 +6,10 @@
  */
 namespace Weasel\Annotation;
 
-class AnnotationReader
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+
+class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
 {
 
     /**
@@ -28,10 +31,13 @@ class AnnotationReader
     protected $propertyAnnotations = null;
 
     protected $parser = null;
-    protected $namespaces = array();
+    protected $namespaces;
 
     protected $otherNamespaces = array();
 
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
     protected $logger;
 
     /**
@@ -47,9 +53,15 @@ class AnnotationReader
     {
         $this->class = $class;
         $this->parser = new DocblockParser($annotations);
-        $this->logger = $annotations->getLogger();
-        $this->nsParser = new PhpParser($this->logger);
-        $this->namespaces = $this->nsParser->parseClass($class);
+        $this->nsParser = new PhpParser();
+    }
+
+    protected function _getNamespaces()
+    {
+        if (!isset($this->namespaces)) {
+            $this->namespaces = $this->nsParser->parseClass($this->class);
+        }
+        return $this->namespaces;
     }
 
     /**
@@ -65,7 +77,7 @@ class AnnotationReader
         if ($docblock === false) {
             $this->classAnnotations = array();
         } else {
-            $this->classAnnotations = $this->parser->parse($docblock, "class", $this->namespaces);
+            $this->classAnnotations = $this->parser->parse($docblock, "class", $this->_getNamespaces());
         }
         return $this->classAnnotations;
     }
@@ -123,7 +135,7 @@ class AnnotationReader
             }
             return $this->otherNamespaces[$fullName];
         }
-        return $this->namespaces;
+        return $this->_getNamespaces();
     }
 
     /**
@@ -140,8 +152,9 @@ class AnnotationReader
         $rMethod = $this->class->getMethod($method);
         $docblock = $rMethod->getDocComment();
         if ($docblock !== false) {
-            $this->methodAnnotations[$method] = $this->parser->parse($docblock, "method",
-                                                                     $this->_getDeclaredNamespaces($rMethod)
+            $this->methodAnnotations[$method] = $this->parser->parse($docblock,
+                "method",
+                $this->_getDeclaredNamespaces($rMethod)
             );
         }
         return $this->methodAnnotations[$method];
@@ -184,8 +197,9 @@ class AnnotationReader
         $rProperty = $this->class->getProperty($property);
         $docblock = $rProperty->getDocComment();
         if ($docblock !== false) {
-            $this->propertyAnnotations[$property] = $this->parser->parse($docblock, "property",
-                                                                         $this->_getDeclaredNamespaces($rProperty)
+            $this->propertyAnnotations[$property] = $this->parser->parse($docblock,
+                "property",
+                $this->_getDeclaredNamespaces($rProperty)
             );
         }
         return $this->propertyAnnotations[$property];
@@ -213,4 +227,18 @@ class AnnotationReader
         return $this->_singleAnnotation($this->getPropertyAnnotation($property, $annotation));
     }
 
+    /**
+     * Sets a logger instance on the object
+     *
+     * @param LoggerInterface $logger
+     * @return null
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+        if (isset($logger)) {
+            $this->parser->setLogger($logger);
+            $this->nsParser->setLogger($logger);
+        }
+    }
 }

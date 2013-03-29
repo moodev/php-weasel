@@ -7,9 +7,13 @@
 namespace Weasel\XmlMarshaller\Config;
 
 use Weasel\XmlMarshaller\Config\Annotations as Annotations;
-use Weasel\Annotation\AnnotationReader;
+use Psr\Log\LoggerInterface;
+use Weasel\Annotation\AnnotationConfigurator;
+use Weasel\Common\Cache\CacheAwareInterface;
+use Weasel\Common\Cache\Cache;
+use Weasel\Annotation\AnnotationConfigProvider;
 
-class AnnotationDriver implements ConfigProvider
+class AnnotationDriver implements ConfigProvider, CacheAwareInterface
 {
 
     protected $classPaths = array();
@@ -20,15 +24,14 @@ class AnnotationDriver implements ConfigProvider
      */
     protected $cache;
 
-    public function __construct($logger = null, $annotationConfigurator = null, $cache = null)
+    public function __construct(AnnotationConfigProvider $annotationConfigurator = null)
     {
-        if (isset($annotationConfigurator)) {
-            $this->configurator = $annotationConfigurator;
-        } else {
-            // Create ourselves an annotation configurator of a sane type
-            $this->configurator = new \Weasel\Annotation\AnnotationConfigurator($logger);
-        }
-        $this->setCache($cache);
+        $this->configurator = $annotationConfigurator;
+    }
+
+    public function setConfigurator(AnnotationConfigurator $annotationConfigurator)
+    {
+        $this->configurator = $annotationConfigurator;
     }
 
     /**
@@ -67,7 +70,7 @@ class AnnotationDriver implements ConfigProvider
 
     }
 
-    public function setCache($cache)
+    public function setCache(Cache $cache)
     {
         $this->cache = $cache;
     }

@@ -14,4 +14,8 @@ class DirectDeserialization extends PropertyDeserialization
      */
     public $property;
 
+    public function __toString()
+    {
+        return "[DirectDeserialization property={$this->property} type={$this->type} typeInfo={$this->typeInfo}]";
+    }
 }

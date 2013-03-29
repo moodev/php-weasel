@@ -31,4 +31,9 @@ class ClassMarshaller
      */
     public $deserialization;
 
+    public function __toString()
+    {
+        return "[ClassMarshaller serialization=" . $this->serialization . " deserialization=" . $this->deserialization . "]";
+    }
+
 }

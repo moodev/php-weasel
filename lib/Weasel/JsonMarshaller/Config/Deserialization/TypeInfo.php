@@ -48,4 +48,11 @@ class TypeInfo
      * @var bool
      */
     public $typeInfoVisible = false;
+
+    public function __toString()
+    {
+        return '[TypeInfo subTypes={' . implode(', ', $this->subTypes) . '} typeInfo=' . $this->typeInfo .
+            ' typeInfoAs=' . $this->typeInfoAs . ' typeInfoProperty=' . $this->typeInfoProperty .
+            'defaultImpl=' . $this->defaultImpl . ' typeInfoVisible=' . ($this->typeInfoVisible ? "true" : "false") . ']';
+    }
 }

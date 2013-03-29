@@ -622,7 +622,7 @@ class MockAnnotationReaderFactory extends AnnotationReaderFactory
         $this->mock = $mock;
     }
 
-    public function getReaderForClass(\ReflectionClass $class, AnnotationConfigProvider $configProvider)
+    public function getReaderForClass(\ReflectionClass $class)
     {
         return $this->mock;
     }
