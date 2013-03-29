@@ -9,7 +9,7 @@ namespace Weasel\Annotation;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
 
-class AnnotationReader implements LoggerAwareInterface
+class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
 {
 
     /**
@@ -152,7 +152,8 @@ class AnnotationReader implements LoggerAwareInterface
         $rMethod = $this->class->getMethod($method);
         $docblock = $rMethod->getDocComment();
         if ($docblock !== false) {
-            $this->methodAnnotations[$method] = $this->parser->parse($docblock, "method",
+            $this->methodAnnotations[$method] = $this->parser->parse($docblock,
+                "method",
                 $this->_getDeclaredNamespaces($rMethod)
             );
         }
@@ -196,7 +197,8 @@ class AnnotationReader implements LoggerAwareInterface
         $rProperty = $this->class->getProperty($property);
         $docblock = $rProperty->getDocComment();
         if ($docblock !== false) {
-            $this->propertyAnnotations[$property] = $this->parser->parse($docblock, "property",
+            $this->propertyAnnotations[$property] = $this->parser->parse($docblock,
+                "property",
                 $this->_getDeclaredNamespaces($rProperty)
             );
         }

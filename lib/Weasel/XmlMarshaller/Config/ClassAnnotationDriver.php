@@ -20,7 +20,7 @@ class ClassAnnotationDriver implements LoggerAwareInterface
     const _ANS = '\Weasel\XmlMarshaller\Config\Annotations\\';
 
     /**
-     * @var \Weasel\Annotation\AnnotationReader
+     * @var \Weasel\Annotation\IAnnotationReader
      */
     protected $annotationReader;
 
@@ -112,7 +112,8 @@ class ClassAnnotationDriver implements LoggerAwareInterface
         /**
          * @var \Weasel\XmlMarshaller\Config\Annotations\XmlElementWrapper $wrapperConfig
          */
-        $wrapperConfig = $this->getAnnotationReader()->getSingleMethodAnnotation($name, self::_ANS . 'XmlElementWrapper');
+        $wrapperConfig = $this->getAnnotationReader()->getSingleMethodAnnotation($name,
+            self::_ANS . 'XmlElementWrapper');
         if (isset($element) && isset($wrapperConfig)) {
             $wrapper = new Config\Deserialization\ElementWrapper();
             // TODO locate real namespace
@@ -245,11 +246,11 @@ class ClassAnnotationDriver implements LoggerAwareInterface
         $name = $method->getName();
         if ($method->isStatic()) {
 //            $this->_configureCreator($method, $namespace);
-        } elseif ($method->isConstructor()) {
+//        } elseif ($method->isConstructor()) {
 //            $this->_configureCreator($method, $namespace);
-        } elseif (strpos($name, 'get') === 0) {
+//        } elseif (substr($name, 0, 3) === 'get') {
 //            $this->_configureGetter($method, $namespace);
-        } elseif (strpos($name, 'set') === 0) {
+        } elseif (substr($name, 0, 3) === 'set') {
             $this->_configureSetter($method, $namespace);
         }
     }
@@ -265,7 +266,8 @@ class ClassAnnotationDriver implements LoggerAwareInterface
         /**
          * @var \Weasel\XmlMarshaller\Config\Annotations\XmlAttribute $attributeConfig
          */
-        $attributeConfig = $this->getAnnotationReader()->getSinglePropertyAnnotation($name, self::_ANS . 'XmlAttribute');
+        $attributeConfig = $this->getAnnotationReader()->getSinglePropertyAnnotation($name,
+            self::_ANS . 'XmlAttribute');
         if (isset($attributeConfig)) {
             $defaultName = lcfirst($name);
             $this->_configureAttributeDeserialization($attributeConfig, $directConfig, $defaultName, $namespace);
@@ -305,7 +307,8 @@ class ClassAnnotationDriver implements LoggerAwareInterface
         /**
          * @var \Weasel\XmlMarshaller\Config\Annotations\XmlElementWrapper $wrapperConfig
          */
-        $wrapperConfig = $this->getAnnotationReader()->getSinglePropertyAnnotation($name, self::_ANS . 'XmlElementWrapper');
+        $wrapperConfig = $this->getAnnotationReader()->getSinglePropertyAnnotation($name,
+            self::_ANS . 'XmlElementWrapper');
         if (isset($element) && isset($wrapperConfig)) {
             $wrapper = new Config\Deserialization\ElementWrapper();
             // TODO locate real namespace

@@ -29,7 +29,7 @@ class ClassAnnotationDriver implements LoggerAwareInterface
     protected $annotationReaderFactory;
 
     /**
-     * @var \Weasel\Annotation\AnnotationReader
+     * @var \Weasel\Annotation\IAnnotationReader
      */
     protected $annotationReader;
 
@@ -79,7 +79,17 @@ class ClassAnnotationDriver implements LoggerAwareInterface
 
         $property = $propertyConfig->getName();
         if (!isset($property)) {
-            $property = lcfirst(substr($name, 3));
+            if (substr($name, 0, 3) === 'get') {
+                $property = lcfirst(substr($name, 3));
+            } elseif (substr($name, 0, 2) === 'is') {
+                if ($propertyConfig->getType() === 'bool') {
+                    $property = lcfirst(substr($name, 2));
+                } else {
+                    $property = lcfirst($name);
+                }
+            } else {
+                $property = lcfirst($name);
+            }
         }
         /**
          * @var Annotations\JsonTypeInfo $typeInfo
@@ -115,7 +125,11 @@ class ClassAnnotationDriver implements LoggerAwareInterface
 
         $property = $propertyConfig->getName();
         if (!isset($property)) {
-            $property = lcfirst(substr($name, 3));
+            if (substr($name, 0, 3) === 'set') {
+                $property = lcfirst(substr($name, 3));
+            } else {
+                $property = lcfirst($name);
+            }
         }
 
         /**
@@ -213,9 +227,13 @@ class ClassAnnotationDriver implements LoggerAwareInterface
         )
         ) {
             $this->_configureAnySetter($method);
-        } elseif (strpos($name, 'get') === 0) {
+        } elseif ($this->getAnnotationReader()->getSingleMethodAnnotation($method->getName(),
+            self::_ANS . 'JsonProperty') && $method->getNumberOfParameters() === 0
+        ) {
             $this->_configureGetter($method);
-        } elseif (strpos($name, 'set') === 0) {
+        } elseif ($this->getAnnotationReader()->getSingleMethodAnnotation($method->getName(),
+            self::_ANS . 'JsonProperty') && $method->getNumberOfParameters() === 1
+        ) {
             $this->_configureSetter($method);
         }
     }

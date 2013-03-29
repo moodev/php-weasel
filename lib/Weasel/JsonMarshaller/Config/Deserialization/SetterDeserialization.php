@@ -14,4 +14,9 @@ class SetterDeserialization extends PropertyDeserialization
      */
     public $method;
 
+    public function __toString()
+    {
+        return "[SetterDeserialization method={$this->method} type={$this->type} typeInfo={$this->typeInfo}]";
+    }
+
 }
