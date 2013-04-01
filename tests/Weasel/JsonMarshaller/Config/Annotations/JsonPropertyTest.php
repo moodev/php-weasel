@@ -72,7 +72,7 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
              * @var \ReflectionMethod $method
              */
             $name = $method->getName();
-            if ($name === '__get' || $name === '__set') {
+            if (substr($name, 0, 2) === '__' && !($method->isStatic() || $method->isConstructor())) {
                 continue;
             }
             $found[$name] = $annotationReader->getMethodAnnotations($name);
