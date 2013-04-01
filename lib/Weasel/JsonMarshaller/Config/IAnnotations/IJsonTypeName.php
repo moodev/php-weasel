@@ -7,13 +7,13 @@
 namespace Weasel\JsonMarshaller\Config\IAnnotations;
 
 /**
- * Allows you to specify an explicit name for this implementation, for use by JsonTypeInfo
+ * Allows you to specify an explicit name for a class, for use by JsonTypeInfo
  */
 interface IJsonTypeName
 {
 
     /**
-     * @return string
+     * @return string The name.
      */
     public function getName();
 

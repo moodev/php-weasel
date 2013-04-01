@@ -6,10 +6,16 @@
  */
 namespace Weasel\Common\Annotation;
 
+/**
+ * A factory for annotation readers.
+ */
 interface IAnnotationReaderFactory
 {
 
     /**
+     * Obtain an annotation reader for the provided reflection class.
+     * This is perfectly entitled to return the same instance of IAnnotationReader no matter what class you call it
+     * with.
      * @param \ReflectionClass $class
      * @return \Weasel\Common\Annotation\IAnnotationReader
      */

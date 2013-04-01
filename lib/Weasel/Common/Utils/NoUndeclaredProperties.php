@@ -4,6 +4,8 @@ namespace Weasel\Common\Utils;
 /**
  * Anything that extends this will throw exceptions if you try to access an invalid property.
  * It'll also throw exceptions if you unset a property, since doing that is evil.
+ *
+ * This is useful since access to undeclared properties is quite likely to be a typo.
  */
 class NoUndeclaredProperties
 {

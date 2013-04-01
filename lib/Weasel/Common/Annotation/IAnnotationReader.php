@@ -6,6 +6,9 @@
  */
 namespace Weasel\Common\Annotation;
 
+/**
+ * Something that reads annotation objects from a class.
+ */
 interface IAnnotationReader
 {
 

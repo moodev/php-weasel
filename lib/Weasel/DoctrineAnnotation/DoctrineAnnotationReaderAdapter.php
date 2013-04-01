@@ -6,10 +6,12 @@
  */
 namespace Weasel\DoctrineAnnotation;
 
-
 use Doctrine\Common\Annotations\Reader;
 use Weasel\Common\Annotation\IAnnotationReader;
 
+/**
+ * An adapter to allow a Doctrine AnnotationReader to be used in place of a Weasel one.
+ */
 class DoctrineAnnotationReaderAdapter implements IAnnotationReader
 {
 

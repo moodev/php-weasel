@@ -6,16 +6,19 @@
  */
 namespace Weasel\JsonMarshaller\Config\IAnnotations;
 
+/**
+ * Configure the ignoring of unknown JSON elements for a class.
+ */
 interface IJsonIgnoreProperties
 {
 
     /**
-     * @return bool
+     * @return bool True if we should silently ignore all unknowns, false if not.
      */
     public function getIgnoreUnknown();
 
     /**
-     * @return string[]
+     * @return string[] List of JSON properties we should silently ignore.
      */
     public function getNames();
 

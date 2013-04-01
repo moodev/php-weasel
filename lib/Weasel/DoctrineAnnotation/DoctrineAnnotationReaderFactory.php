@@ -12,6 +12,9 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Weasel\Common\Annotation\IAnnotationReaderFactory;
 use Doctrine\Common\Annotations\CachedReader;
 
+/**
+ * An AnnotationReaderFactory that provides Doctrine powered readers.
+ */
 class DoctrineAnnotationReaderFactory implements IAnnotationReaderFactory
 {
 

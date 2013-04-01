@@ -6,6 +6,9 @@
  */
 namespace Weasel\Common\Cache;
 
+/**
+ * A really boring interface for accessing caches.
+ */
 abstract class Cache
 {
 

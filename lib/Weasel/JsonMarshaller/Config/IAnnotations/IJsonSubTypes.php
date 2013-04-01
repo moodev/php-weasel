@@ -7,13 +7,13 @@
 namespace Weasel\JsonMarshaller\Config\IAnnotations;
 
 /**
- * The list of subtypes of this base class
+ * The list of subtypes of this base class.
  */
 interface IJsonSubTypes
 {
 
     /**
-     * @return JsonSubTypes\IType[]
+     * @return JsonSubTypes\IType[] The list of sub-types
      */
     public function getValue();
 

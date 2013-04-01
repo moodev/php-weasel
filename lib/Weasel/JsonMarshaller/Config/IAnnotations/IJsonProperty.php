@@ -16,12 +16,14 @@ interface IJsonProperty
 {
 
     /**
-     * @return string
+     * @return string Name to use for the JSON field (optional.) For a property the default is lcfirst($propertyName)
+     *                For a method any leading "get" or "set" will be stripped, and a leading "is" stripped if the
+     *                type's a bool and the method is thought to be a getter (it has 1 param.)
      */
     public function getName();
 
     /**
-     * @return string
+     * @return string The Weasel type for the field.
      */
     public function getType();
 
