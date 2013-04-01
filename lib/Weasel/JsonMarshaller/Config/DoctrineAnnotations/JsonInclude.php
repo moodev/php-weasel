@@ -8,18 +8,14 @@ namespace Weasel\JsonMarshaller\Config\DoctrineAnnotations;
 
 use Weasel\Common\Utils\NoUndeclaredProperties;
 use Doctrine\Common\Annotations\Annotation;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonInclude;
 
 /**
  * @Annotation
  * @Target({"CLASS", "METHOD", "PROPERTY"})
  */
-class JsonInclude extends NoUndeclaredProperties
+class JsonInclude extends NoUndeclaredProperties implements IJsonInclude
 {
-
-    const INCLUDE_ALWAYS = 1;
-    const INCLUDE_NON_DEFAULT = 2;
-    const INCLUDE_NON_EMPTY = 3;
-    const INCLUDE_NON_NULL = 4;
 
     /**
      * @var integer

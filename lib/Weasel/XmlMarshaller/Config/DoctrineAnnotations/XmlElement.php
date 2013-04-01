@@ -8,12 +8,13 @@ namespace Weasel\XmlMarshaller\Config\DoctrineAnnotations;
 
 use Doctrine\Common\Annotations\Annotation;
 use Weasel\XmlMarshaller\Config\IAnnotations\IXmlElement;
+use Weasel\Common\Utils\NoUndeclaredProperties;
 
 /**
  * @Annotation
  * @Target({"PROPERTY", "METHOD"})
  */
-class XmlElement implements IXmlElement
+class XmlElement extends NoUndeclaredProperties implements IXmlElement
 {
 
     /**

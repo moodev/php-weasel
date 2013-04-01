@@ -8,12 +8,13 @@ namespace Weasel\JsonMarshaller\Config\DoctrineAnnotations;
 
 use Weasel\Common\Utils\NoUndeclaredProperties;
 use Doctrine\Common\Annotations\Annotation;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonAnySetter;
 
 /**
  * @Annotation
  * @Target("METHOD")
  */
-class JsonAnySetter extends NoUndeclaredProperties
+class JsonAnySetter extends NoUndeclaredProperties implements IJsonAnySetter
 {
 
 

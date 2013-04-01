@@ -9,6 +9,8 @@ namespace Weasel\JsonMarshaller\Config\Annotations;
 use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
+use Weasel\Common\Utils\NoUndeclaredProperties;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonProperty;
 
 /**
  * Sets a property up to be serialized/deserialized explicitly.
@@ -17,7 +19,7 @@ use Weasel\Annotation\Config\Annotations\Parameter;
  * Because PHP is not strongly typed we can only make best guesses about types if you do not provide type info!
  * @Annotation(on={"property", "method", "\Weasel\JsonMarshaller\Config\Annotations\JsonCreator"})
  */
-class JsonProperty
+class JsonProperty extends NoUndeclaredProperties implements IJsonProperty
 {
 
     protected $name;

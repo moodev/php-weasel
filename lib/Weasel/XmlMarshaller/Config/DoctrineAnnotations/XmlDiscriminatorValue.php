@@ -8,12 +8,13 @@ namespace Weasel\XmlMarshaller\Config\DoctrineAnnotations;
 
 use Doctrine\Common\Annotations\Annotation;
 use Weasel\XmlMarshaller\Config\IAnnotations\IXmlDiscriminatorValue;
+use Weasel\Common\Utils\NoUndeclaredProperties;
 
 /**
  * @Annotation
  * @Target({"CLASS"})
  */
-class XmlDiscriminatorValue implements IXmlDiscriminatorValue
+class XmlDiscriminatorValue extends NoUndeclaredProperties implements IXmlDiscriminatorValue
 {
 
     /**

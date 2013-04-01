@@ -10,11 +10,12 @@ use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
 use Weasel\XmlMarshaller\Config\IAnnotations\IXmlDiscriminatorValue;
+use Weasel\Common\Utils\NoUndeclaredProperties;
 
 /**
  * @Annotation(on={"class"})
  */
-class XmlDiscriminatorValue implements IXmlDiscriminatorValue
+class XmlDiscriminatorValue extends NoUndeclaredProperties implements IXmlDiscriminatorValue
 {
 
     /**

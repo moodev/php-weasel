@@ -10,12 +10,13 @@ use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
 use Weasel\XmlMarshaller\Config\IAnnotations\IXmlSeeAlso;
+use Weasel\Common\Utils\NoUndeclaredProperties;
 
 /**
  * The list of subtypes of this base class
  * @Annotation(on={"class"})
  */
-class XmlSeeAlso implements IXmlSeeAlso
+class XmlSeeAlso extends NoUndeclaredProperties implements IXmlSeeAlso
 {
 
     protected $value;

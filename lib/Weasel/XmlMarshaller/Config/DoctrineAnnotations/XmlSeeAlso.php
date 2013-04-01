@@ -8,13 +8,14 @@ namespace Weasel\XmlMarshaller\Config\DoctrineAnnotations;
 
 use Doctrine\Common\Annotations\Annotation;
 use Weasel\XmlMarshaller\Config\IAnnotations\IXmlSeeAlso;
+use Weasel\Common\Utils\NoUndeclaredProperties;
 
 /**
  * The list of subtypes of this base class
  * @Annotation
  * @Target({"CLASS"})
  */
-class XmlSeeAlso implements IXmlSeeAlso
+class XmlSeeAlso extends NoUndeclaredProperties implements IXmlSeeAlso
 {
 
     /**

@@ -45,7 +45,8 @@ class TypeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(array("value" => array(),
                 "name" => array()
-            ), $found
+            ),
+            $found
         );
 
     }
@@ -66,6 +67,9 @@ class TypeTest extends \PHPUnit_Framework_TestCase
              * @var \ReflectionMethod $method
              */
             $name = $method->getName();
+            if ($name === '__get' || $name === '__set') {
+                continue;
+            }
             $found[$name] = $annotationReader->getMethodAnnotations($name);
         }
 

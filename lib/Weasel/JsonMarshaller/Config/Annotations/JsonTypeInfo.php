@@ -10,11 +10,13 @@ use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
 use Weasel\Annotation\Config\Annotations\Enum;
+use Weasel\Common\Utils\NoUndeclaredProperties;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonTypeInfo;
 
 /**
  * @Annotation(on={"class", "method", "property"})
  */
-class JsonTypeInfo
+class JsonTypeInfo extends NoUndeclaredProperties implements IJsonTypeInfo
 {
 
     /**
@@ -22,11 +24,11 @@ class JsonTypeInfo
      * @Enum("Id")
      */
     public static $enumId = array(
-        "CLASS" => 1,
-        "CUSTOM" => 2,
-        "MINIMAL_CLASS" => 3,
-        "NAME" => 4,
-        "NONE" => 5
+        "CLASS" => self::ID_CLASS,
+        "CUSTOM" => self::ID_CUSTOM,
+        "MINIMAL_CLASS" => self::ID_MINIMAL_CLASS,
+        "NAME" => self::ID_NAME,
+        "NONE" => self::ID_NONE,
     );
 
     /**
@@ -34,10 +36,10 @@ class JsonTypeInfo
      * @Enum("As")
      */
     public static $enumAs = array(
-        "PROPERTY" => 1,
-        "WRAPPER_ARRAY" => 2,
-        "WRAPPER_OBJECT" => 3,
-        "EXTERNAL_PROPERTY" => 4
+        "PROPERTY" => self::AS_PROPERTY,
+        "WRAPPER_ARRAY" => self::AS_WRAPPER_ARRAY,
+        "WRAPPER_OBJECT" => self::AS_WRAPPER_OBJECT,
+        "EXTERNAL_PROPERTY" => self::AS_EXTERNAL_PROPERTY,
     );
 
     /**

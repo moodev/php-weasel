@@ -9,6 +9,8 @@ namespace Weasel\JsonMarshaller\Config\Annotations;
 use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
+use Weasel\Common\Utils\NoUndeclaredProperties;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonIgnoreProperties;
 
 /**
  * Provides a list of properties not to consider when serializing/deserializing.
@@ -17,7 +19,7 @@ use Weasel\Annotation\Config\Annotations\Parameter;
  *
  * @Annotation(on="class")
  */
-class JsonIgnoreProperties
+class JsonIgnoreProperties extends NoUndeclaredProperties implements IJsonIgnoreProperties
 {
 
     /**

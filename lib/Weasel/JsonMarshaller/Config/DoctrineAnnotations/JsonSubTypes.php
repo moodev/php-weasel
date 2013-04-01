@@ -8,13 +8,14 @@ namespace Weasel\JsonMarshaller\Config\DoctrineAnnotations;
 
 use Weasel\Common\Utils\NoUndeclaredProperties;
 use Doctrine\Common\Annotations\Annotation;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonSubTypes;
 
 /**
  * The list of subtypes of this base class
  * @Annotation
  * @Target({"CLASS", "METHOD", "PROPERTY"})
  */
-class JsonSubTypes
+class JsonSubTypes extends NoUndeclaredProperties implements IJsonSubTypes
 {
 
     /**

@@ -57,7 +57,8 @@ class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
                 "property" => array(),
                 "visible" => array(),
                 "defaultImpl" => array()
-            ), $found
+            ),
+            $found
         );
 
     }
@@ -78,6 +79,9 @@ class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
              * @var \ReflectionMethod $method
              */
             $name = $method->getName();
+            if ($name === '__get' || $name === '__set') {
+                continue;
+            }
             $found[$name] = $annotationReader->getMethodAnnotations($name);
         }
 

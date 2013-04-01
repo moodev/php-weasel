@@ -8,6 +8,7 @@ namespace Weasel\JsonMarshaller\Config\DoctrineAnnotations;
 
 use Weasel\Common\Utils\NoUndeclaredProperties;
 use Doctrine\Common\Annotations\Annotation;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonIgnoreProperties;
 
 /**
  * Provides a list of properties not to consider when serializing/deserializing.
@@ -17,7 +18,7 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target("CLASS")
  */
-class JsonIgnoreProperties extends NoUndeclaredProperties
+class JsonIgnoreProperties extends NoUndeclaredProperties implements IJsonIgnoreProperties
 {
 
     /**

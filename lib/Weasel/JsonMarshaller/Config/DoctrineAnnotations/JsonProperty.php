@@ -7,6 +7,7 @@
 namespace Weasel\JsonMarshaller\Config\DoctrineAnnotations;
 
 use Weasel\Common\Utils\NoUndeclaredProperties;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonProperty;
 
 /**
  * Sets a property up to be serialized/deserialized explicitly.
@@ -17,7 +18,7 @@ use Weasel\Common\Utils\NoUndeclaredProperties;
  * @Annotation
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
-class JsonProperty extends NoUndeclaredProperties
+class JsonProperty extends NoUndeclaredProperties implements IJsonProperty
 {
 
     /**

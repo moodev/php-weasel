@@ -8,13 +8,14 @@ namespace Weasel\JsonMarshaller\Config\DoctrineAnnotations;
 
 use Weasel\Common\Utils\NoUndeclaredProperties;
 use Doctrine\Common\Annotations\Annotation;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonTypeName;
 
 /**
  * Allows you to specify an explicit name for this implementation, for use by JsonTypeInfo
  * @Annotation
  * @Target("CLASS")
  */
-class JsonTypeName extends NoUndeclaredProperties
+class JsonTypeName extends NoUndeclaredProperties implements IJsonTypeName
 {
 
     /**

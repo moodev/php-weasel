@@ -8,13 +8,14 @@ namespace Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonSubTypes;
 
 use Doctrine\Common\Annotations\Annotation;
 use Weasel\Common\Utils\NoUndeclaredProperties;
+use Weasel\JsonMarshaller\Config\IAnnotations\JsonSubTypes\IType;
 
 /**
  * A subtype
  * @Annotation
  * @Target("ANNOTATION")
  */
-class Type extends NoUndeclaredProperties
+class Type extends NoUndeclaredProperties implements IType
 {
 
     /**

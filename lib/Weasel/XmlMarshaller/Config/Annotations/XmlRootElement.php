@@ -10,11 +10,12 @@ use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
 use Weasel\XmlMarshaller\Config\IAnnotations\IXmlRootElement;
+use Weasel\Common\Utils\NoUndeclaredProperties;
 
 /**
  * @Annotation(on={"class"})
  */
-class XmlRootElement implements IXmlRootElement
+class XmlRootElement extends NoUndeclaredProperties implements IXmlRootElement
 {
 
     protected $name;

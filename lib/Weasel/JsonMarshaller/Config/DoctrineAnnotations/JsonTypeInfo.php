@@ -8,24 +8,14 @@ namespace Weasel\JsonMarshaller\Config\DoctrineAnnotations;
 
 use Weasel\Common\Utils\NoUndeclaredProperties;
 use Doctrine\Common\Annotations\Annotation;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonTypeInfo;
 
 /**
  * @Annotation
  * @Target({"CLASS", "METHOD", "PROPERTY"})
  */
-class JsonTypeInfo extends NoUndeclaredProperties
+class JsonTypeInfo extends NoUndeclaredProperties implements IJsonTypeInfo
 {
-
-    const ID_CLASS = 1;
-    const ID_CUSTOM = 2;
-    const ID_MINIMAL_CLASS = 3;
-    const ID_NAME = 4;
-    const NONE = 5;
-
-    const AS_PROPERTY = 1;
-    const AS_WRAPPER_ARRAY = 2;
-    const AS_WRAPPER_OBJECT = 3;
-    const AS_EXTERNAL_PROPERTY = 4;
 
     /**
      * @var int

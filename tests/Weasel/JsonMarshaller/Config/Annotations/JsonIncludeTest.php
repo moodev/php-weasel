@@ -51,7 +51,8 @@ class JsonIncludeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(array("enumInclude" => array('\Weasel\Annotation\Config\Annotations\Enum' => array($expectedEnumInclude)),
                 "value" => array()
-            ), $found
+            ),
+            $found
         );
 
     }
@@ -72,6 +73,9 @@ class JsonIncludeTest extends \PHPUnit_Framework_TestCase
              * @var \ReflectionMethod $method
              */
             $name = $method->getName();
+            if ($name === '__get' || $name === '__set') {
+                continue;
+            }
             $found[$name] = $annotationReader->getMethodAnnotations($name);
         }
 
