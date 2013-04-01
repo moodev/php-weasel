@@ -7,10 +7,14 @@ use Weasel\Common\Cache\Cache;
 use Weasel\Common\Cache\ArrayCache;
 use Weasel\Annotation\AnnotationConfigurator;
 use Weasel\JsonMarshaller\Config\AnnotationDriver as JsonAnnotationDriver;
+use Weasel\XmlMarshaller\Config\AnnotationDriver as XmlAnnotationDriver;
 use Weasel\JsonMarshaller\JsonMapper;
 use Weasel\Common\Cache\CacheAwareInterface;
-use Weasel\Annotation\DoctrineAnnotationReaderFactory;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Weasel\XmlMarshaller\XmlMapper;
+use Weasel\DoctrineAnnotation\DoctrineAnnotationReaderFactory;
+use Doctrine\Common\Annotations\CachedReader;
+use Weasel\DoctrineAnnotation\WeaselCacheAdapter;
 
 class WeaselDoctrineAnnotationDrivenFactory implements LoggerAwareInterface, WeaselFactory, CacheAwareInterface
 {
@@ -36,6 +40,11 @@ class WeaselDoctrineAnnotationDrivenFactory implements LoggerAwareInterface, Wea
     private $_annotationReaderFactory = null;
 
     /**
+     * @var XmlMapper
+     */
+    private $_xmlMapper = null;
+
+    /**
      * @var AnnotationReader
      */
     public $annotationReader = null;
@@ -52,6 +61,9 @@ class WeaselDoctrineAnnotationDrivenFactory implements LoggerAwareInterface, Wea
     {
         if (!isset($this->annotationReader)) {
             $reader = new AnnotationReader();
+            if (isset($this->_cache)) {
+                $reader = new CachedReader($reader, new WeaselCacheAdapter($this->_cache));
+            }
             $this->_autowire($reader);
             $this->annotationReader = $reader;
         }
@@ -125,17 +137,17 @@ class WeaselDoctrineAnnotationDrivenFactory implements LoggerAwareInterface, Wea
         $this->_cache = $cache;
     }
 
-    protected $_oldFactory = null;
-
     /**
      * @return XmlMapper
      */
     public function getXmlMapperInstance()
     {
-        if (!isset($this->_oldFactory)) {
-            $this->_oldFactory = new WeaselDefaultAnnotationDrivenFactory();
-            $this->_autowire($this->_oldFactory);
+        if (!isset($this->_xmlMapper)) {
+            $driver = new XmlAnnotationDriver($this->getAnnotationReaderFactoryInstance());
+            $driver->setAnnotationNamespace('\Weasel\XmlMarshaller\Config\DoctrineAnnotations');
+            $this->_autowire($driver);
+            $this->_xmlMapper = new XmlMapper($driver);
         }
-        return $this->_oldFactory->getXmlMapperInstance();
+        return $this->_xmlMapper;
     }
 }

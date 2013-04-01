@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2012, Moo Print Ltd.
  * @license ISC
  */
-namespace Weasel\Annotation;
+namespace Weasel\Common\Annotation;
 
 interface IAnnotationReader
 {

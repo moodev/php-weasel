@@ -83,8 +83,7 @@ class WeaselDefaultAnnotationDrivenFactory implements LoggerAwareInterface, Weas
     public function getXmlMapperInstance()
     {
         if (!isset($this->_xmlMapper)) {
-            $driver = new XmlAnnotationDriver();
-            $driver->setConfigurator($this->getAnnotationConfigProviderInstance());
+            $driver = new XmlAnnotationDriver($this->getAnnotationReaderFactoryInstance());
             $this->_autowire($driver);
             $this->_xmlMapper = new XmlMapper($driver);
         }

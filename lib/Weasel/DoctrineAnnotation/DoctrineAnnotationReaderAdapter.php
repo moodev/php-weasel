@@ -4,10 +4,11 @@
  * @copyright Copyright (c) 2012, Moo Print Ltd.
  * @license ISC
  */
-namespace Weasel\Annotation;
+namespace Weasel\DoctrineAnnotation;
 
 
 use Doctrine\Common\Annotations\Reader;
+use Weasel\Common\Annotation\IAnnotationReader;
 
 class DoctrineAnnotationReaderAdapter implements IAnnotationReader
 {

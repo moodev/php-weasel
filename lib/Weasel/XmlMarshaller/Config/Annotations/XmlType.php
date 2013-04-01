@@ -9,11 +9,12 @@ namespace Weasel\XmlMarshaller\Config\Annotations;
 use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
+use Weasel\XmlMarshaller\Config\IAnnotations\IXmlType;
 
 /**
  * @Annotation(on={"property", "method", "class"})
  */
-class XmlType
+class XmlType implements IXmlType
 {
 
     /**

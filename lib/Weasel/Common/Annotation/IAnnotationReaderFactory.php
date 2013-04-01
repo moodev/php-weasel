@@ -4,14 +4,14 @@
  * @copyright Copyright (c) 2012, Moo Print Ltd.
  * @license ISC
  */
-namespace Weasel\Annotation;
+namespace Weasel\Common\Annotation;
 
 interface IAnnotationReaderFactory
 {
 
     /**
      * @param \ReflectionClass $class
-     * @return \Weasel\Annotation\IAnnotationReader
+     * @return \Weasel\Common\Annotation\IAnnotationReader
      */
     public function getReaderForClass(\ReflectionClass $class);
 

@@ -9,11 +9,12 @@ namespace Weasel\XmlMarshaller\Config\Annotations;
 use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
+use Weasel\XmlMarshaller\Config\IAnnotations\IXmlElementRefs;
 
 /**
  * @Annotation(on={"property", "method"})
  */
-class XmlElementRefs
+class XmlElementRefs implements IXmlElementRefs
 {
 
     protected $values;

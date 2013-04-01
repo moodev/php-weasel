@@ -9,11 +9,12 @@ namespace Weasel\XmlMarshaller\Config\Annotations;
 use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
+use Weasel\XmlMarshaller\Config\IAnnotations\IXmlRootElement;
 
 /**
  * @Annotation(on={"class"})
  */
-class XmlRootElement
+class XmlRootElement implements IXmlRootElement
 {
 
     protected $name;

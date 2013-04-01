@@ -4,11 +4,13 @@
  * @copyright Copyright (c) 2012, Moo Print Ltd.
  * @license ISC
  */
-namespace Weasel\Annotation;
+namespace Weasel\DoctrineAnnotation;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Weasel\Common\Annotation\IAnnotationReaderFactory;
+use Doctrine\Common\Annotations\CachedReader;
 
 class DoctrineAnnotationReaderFactory implements IAnnotationReaderFactory
 {
@@ -29,7 +31,7 @@ class DoctrineAnnotationReaderFactory implements IAnnotationReaderFactory
 
     /**
      * @param \ReflectionClass $class
-     * @return \Weasel\Annotation\IAnnotationReader
+     * @return \Weasel\Common\Annotation\IAnnotationReader
      */
     public function getReaderForClass(\ReflectionClass $class)
     {

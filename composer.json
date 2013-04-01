@@ -11,7 +11,8 @@
     },
     "require-dev": {
         "mockery/mockery": "dev-master",
-        "doctrine/annotations": "dev-master"
+        "doctrine/annotations": "dev-master",
+        "doctrine/cache": "dev-master"
     },
     "suggest": {
         "monolog/monolog": "A logging framework that implements PSR 3",

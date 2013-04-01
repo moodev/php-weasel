@@ -40,4 +40,11 @@ class ArrayCache extends Cache
         $this->cache[$key] = $value;
     }
 
+    public function delete($key, $namespace = null)
+    {
+        $key = $this->_getRealKeyName($key, $namespace);
+        if (array_key_exists($key, $this->cache)) {
+            unset($this->cache[$key]);
+        }
+    }
 }

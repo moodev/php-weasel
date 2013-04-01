@@ -9,7 +9,7 @@ namespace Weasel\JsonMarshaller\Config;
 use Weasel\JsonMarshaller\Config\Annotations as Annotations;
 use Psr\Log\LoggerInterface;
 use Weasel\Common\Cache\ArrayCache;
-use Weasel\Annotation\IAnnotationReaderFactory;
+use Weasel\Common\Annotation\IAnnotationReaderFactory;
 
 /**
  * A config provider that uses Annotations

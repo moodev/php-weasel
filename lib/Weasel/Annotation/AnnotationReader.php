@@ -8,6 +8,7 @@ namespace Weasel\Annotation;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
+use Weasel\Common\Annotation\IAnnotationReader;
 
 class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
 {

@@ -10,7 +10,7 @@ use Weasel\JsonMarshaller\Config\Annotations;
 use Weasel\Annotation\AnnotationConfigurator;
 use Weasel\Common\Cache\CacheAwareInterface;
 use Weasel\Common\Cache\Cache;
-use Weasel\Annotation\IAnnotationReaderFactory;
+use Weasel\Common\Annotation\IAnnotationReaderFactory;
 
 /**
  * A config provider that uses Annotations
@@ -26,6 +26,11 @@ class AnnotationDriver implements JsonConfigProvider, CacheAwareInterface
      * @var \Weasel\Common\Cache\Cache
      */
     protected $cache = null;
+
+    /**
+     * @var \Weasel\Common\Annotation\IAnnotationReaderFactory
+     */
+    public $annotationReaderFactory;
 
     public function __construct(IAnnotationReaderFactory $annotationReaderFactory)
     {

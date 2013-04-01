@@ -9,12 +9,13 @@ namespace Weasel\XmlMarshaller\Config\Annotations;
 use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
+use Weasel\XmlMarshaller\Config\IAnnotations\IXmlSeeAlso;
 
 /**
  * The list of subtypes of this base class
  * @Annotation(on={"class"})
  */
-class XmlSeeAlso
+class XmlSeeAlso implements IXmlSeeAlso
 {
 
     protected $value;
