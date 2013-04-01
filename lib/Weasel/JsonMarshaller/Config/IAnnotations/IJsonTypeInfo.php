@@ -19,11 +19,11 @@ interface IJsonTypeInfo
     /*
      * These constants define what to use as the identifier of a subclass
      */
-    const ID_CLASS = 1; // Use the fully qualified class name (default.)
+    const ID_CLASS = 1; // Use the fully qualified class name.
     const ID_CUSTOM = 2; // Use a custom method to obtain the name.
-    const ID_MINIMAL_CLASS = 3; // Use the class name (not including namespace.)
+    const ID_MINIMAL_CLASS = 3; // Use the class name not including namespace.
     const ID_NAME = 4; // Use a "name" configured by @JsonSubTypes (on the parent) or @JsonTypeName (on the child)
-    const ID_NONE = 5; // Don't store anything. This will not permit deserialization as a subclass.
+    const ID_NONE = 5; // Don't store anything. This will not permit deserialization as a subclass (default.)
 
     /*
      * And these constants set where to store the identifier.
@@ -39,7 +39,9 @@ interface IJsonTypeInfo
     public function getInclude();
 
     /**
-     * @return string If we're storing as property or ext property, what name should we use? (default "@type")
+     * @return string If we're storing as property or ext property, what name should we use?
+     *                Default for ID_*CLASS is "@class"
+     *                Default for ID_NAME is "@name"
      */
     public function getProperty();
 
