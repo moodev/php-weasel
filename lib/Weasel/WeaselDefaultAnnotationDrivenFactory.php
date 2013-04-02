@@ -11,6 +11,7 @@ use Weasel\JsonMarshaller\Config\AnnotationDriver as JsonAnnotationDriver;
 use Weasel\JsonMarshaller\JsonMapper;
 use Weasel\XmlMarshaller\XmlMapper;
 use Weasel\Common\Cache\CacheAwareInterface;
+use Weasel\Annotation\AnnotationReaderFactory;
 
 class WeaselDefaultAnnotationDrivenFactory implements LoggerAwareInterface, WeaselFactory, CacheAwareInterface
 {
@@ -36,6 +37,11 @@ class WeaselDefaultAnnotationDrivenFactory implements LoggerAwareInterface, Weas
     private $_jsonMapper = null;
 
     /**
+     * @var AnnotationReaderFactory
+     */
+    private $_annotationReaderFactory = null;
+
+    /**
      * @var XmlMapper
      */
     private $_xmlMapper = null;
@@ -58,22 +64,39 @@ class WeaselDefaultAnnotationDrivenFactory implements LoggerAwareInterface, Weas
         return $this->_configurator;
     }
 
+    /**
+     * @return Annotation\AnnotationReaderFactory
+     */
+    public function getAnnotationReaderFactoryInstance()
+    {
+        if (!isset($this->_annotationReaderFactory)) {
+            $factory = new AnnotationReaderFactory($this->getAnnotationConfigProviderInstance());
+            $this->_autowire($factory);
+            $this->_annotationReaderFactory = $factory;
+        }
+        return $this->_annotationReaderFactory;
+    }
+
+    /**
+     * @return XmlMarshaller\XmlMapper
+     */
     public function getXmlMapperInstance()
     {
         if (!isset($this->_xmlMapper)) {
-            $driver = new XmlAnnotationDriver();
-            $driver->setConfigurator($this->getAnnotationConfigProviderInstance());
+            $driver = new XmlAnnotationDriver($this->getAnnotationReaderFactoryInstance());
             $this->_autowire($driver);
             $this->_xmlMapper = new XmlMapper($driver);
         }
         return $this->_xmlMapper;
     }
 
+    /**
+     * @return JsonMarshaller\JsonMapper
+     */
     public function getJsonMapperInstance()
     {
         if (!isset($this->_jsonMapper)) {
-            $driver = new JsonAnnotationDriver();
-            $driver->setConfigurator($this->getAnnotationConfigProviderInstance());
+            $driver = new JsonAnnotationDriver($this->getAnnotationReaderFactoryInstance());
             $this->_autowire($driver);
             $this->_jsonMapper = new JsonMapper($driver);
         }

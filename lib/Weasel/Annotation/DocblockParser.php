@@ -23,13 +23,13 @@ class DocblockParser implements LoggerAwareInterface
     protected $logger;
 
     static $silentlyDiscard = array(
-        "param",
-        "author",
-        "copyright",
-        "var",
-        "return",
-        "package",
-        "throws"
+        "param" => true,
+        "author" => true,
+        "copyright" => true,
+        "var" => true,
+        "return" => true,
+        "package" => true,
+        "throws" => true,
     );
 
     public function parse($docBlock, $location, $namespaces)
@@ -177,10 +177,10 @@ class DocblockParser implements LoggerAwareInterface
     protected function _expectNext(DocblockLexer $lexer, $types, $skipWS = false)
     {
         if (!is_array($types)) {
-            $types = array($types);
+            $types = array($types => $types);
         }
         $next = $lexer->next($skipWS);
-        if (!$next || !in_array($next['type'], $types, true)) {
+        if (!$next || !isset($types[$next['type']])) {
             throw new \Exception('Parse error, expected one of ' . implode(',', $types) . ' but got ' . ($next ?
                 $next['type'] : 'EOF'));
         }
@@ -245,14 +245,14 @@ class DocblockParser implements LoggerAwareInterface
         $meta = $this->_getAnnotation($identifier, $namespaces);
         if (!$meta) {
             if ($this->logger) {
-                if (!in_array($identifier, self::$silentlyDiscard)) {
+                if (!isset(self::$silentlyDiscard[$identifier])) {
                     $this->logger->debug("Skipping unknown annotation: $identifier");
                 }
             }
             return null;
         }
 
-        if ($meta->getOn() && !in_array($location, $meta->getOn())) {
+        if ($meta->getOn() && !$meta->permittedOn($location)) {
             throw new \Exception(
                 "Found annotation in wrong location, got $location but expected one of " . implode(", ",
                     $meta->getOn()
@@ -261,7 +261,7 @@ class DocblockParser implements LoggerAwareInterface
 
         if ($lexer->peek() === DocblockLexer::T_OPEN_PAREN) {
             // There are params to read
-            $this->_expectNext($lexer, array(DocblockLexer::T_OPEN_PAREN));
+            $this->_expectNext($lexer, DocblockLexer::T_OPEN_PAREN);
 
             $anonParams = array();
             $namedParams = array();
@@ -380,45 +380,58 @@ class DocblockParser implements LoggerAwareInterface
     protected function _collapseAndCheckType($param, $type)
     {
         list($paramType, $paramValue) = $param;
-        $matches = array();
-        if (!preg_match('/^(.*)\\[(int|integer|string|bool|boolean|float|)\\]$/i', $type, $matches)) {
-            switch ($type) {
-                case "bool":
-                case "boolean":
-                    if ($paramType === "bool" || $paramType === "boolean") {
-                        return (bool)$paramValue;
-                    }
-                    break;
-                case "int":
-                case "integer":
-                    if ($paramType === "integer" || $paramType === "int") {
-                        return (int)$paramValue;
-                    }
-                    break;
-            }
-            if ($paramType === $type) {
-                switch ($type) {
-                    case "string":
-                        return (string)$paramValue;
-                    case "float":
-                        return (float)$paramValue;
-                    default:
-                        if (!is_object($paramValue)) {
-                            throw new \Exception("Expected object");
-                        }
-                        if (!$paramValue instanceof $type) {
-                            throw new \Exception("Expected object of type $type");
-                        }
-                        return $paramValue;
+        switch ($type) {
+            case "bool":
+            case "boolean":
+                if ($paramType === "bool" || $paramType === "boolean") {
+                    return (bool)$paramValue;
                 }
+                break;
+            case "int":
+            case "integer":
+                if ($paramType === "integer" || $paramType === "int") {
+                    return (int)$paramValue;
+                }
+                break;
+            case "string":
+                if ($paramType === $type) {
+                    return (string)$paramValue;
+                }
+                break;
+            case "float":
+                if ($paramType === $type) {
+                    return (float)$paramValue;
+                }
+                break;
+            default:
+
+        }
+        if ($paramType === $type) {
+            if (!is_object($paramValue)) {
+                throw new \Exception("Expected object");
             }
+            if (!$paramValue instanceof $type) {
+                throw new \Exception("Expected object of type $type");
+            }
+            return $paramValue;
+        }
+
+        // Assume type strings are well formed: look for the last [ to see if it's an array or map.
+        // Note that this might be an array of arrays, and we're after the outermost type, so we're after the last [!
+        $pos = strrpos($type, '[');
+        if ($pos === false) {
+            // Erm, right, it's not good then.
             throw new \Exception("Type mismatch, expected $type but got $paramType");
         }
 
-        $elementType = $matches[1];
+        // Extract the base type, and whatever's between the [...] as the index type.
+        // Potentially the type string is actually badly formed:
+        // e.g. this code will accept string[int! as being an array of string with index int.
+        // Bah. I'll ignore that case for now. This bit of code gets called a lot, I'd rather not add another substr.
+        $elementType = substr($type, 0, $pos);
 
-        // TODO: Not currently supported.
-        $index = $matches[2];
+        // Not currently supported
+        // $indexType = substr($type, $pos+1, -1);
 
         $result = array();
         if (!is_array($paramValue)) {

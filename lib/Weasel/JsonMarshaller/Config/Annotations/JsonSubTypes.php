@@ -9,12 +9,14 @@ namespace Weasel\JsonMarshaller\Config\Annotations;
 use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
+use Weasel\Common\Utils\NoUndeclaredProperties;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonSubTypes;
 
 /**
  * The list of subtypes of this base class
  * @Annotation(on={"class", "method", "property"})
  */
-class JsonSubTypes
+class JsonSubTypes extends NoUndeclaredProperties implements IJsonSubTypes
 {
 
     /**

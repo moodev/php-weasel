@@ -10,10 +10,13 @@
         "psr/log": "~1.0"
     },
     "require-dev": {
-        "mockery/mockery": "dev-master"
+        "mockery/mockery": "dev-master",
+        "doctrine/annotations": "dev-master",
+        "doctrine/cache": "dev-master"
     },
     "suggest": {
-        "monolog/monolog": "A logging framework that implements PSR 3"
+        "monolog/monolog": "A logging framework that implements PSR 3",
+        "doctrine/annotations": "Enables configuration using Doctrine's annotation library rather than Weasel's"
     },
     "autoload": {
         "psr-0": {

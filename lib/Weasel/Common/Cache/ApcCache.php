@@ -43,4 +43,11 @@ class ApcCache extends Cache
         }
     }
 
+    public function delete($key, $namespace = null)
+    {
+        $key = $this->_getRealKeyName($key, $namespace);
+        if (!apc_delete($key)) {
+            throw new Exception\BackingFailure($key, "apc_store returned false");
+        }
+    }
 }

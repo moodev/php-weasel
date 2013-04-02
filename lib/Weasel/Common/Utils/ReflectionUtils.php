@@ -6,12 +6,16 @@
  */
 namespace Weasel\Common\Utils;
 
+/**
+ * Utility class to do stuff involving reflection.
+ */
 class ReflectionUtils
 {
 
     /**
      * Call a static method with some args.
      * We avoid reflection for up to 4 args.
+     * Allegedly this is faster than using ReflectionMethod (really?)
      * @param string $class
      * @param string $method
      * @param array $args
@@ -39,6 +43,7 @@ class ReflectionUtils
     /**
      * Instantiate a class with some constructor args.
      * We avoid reflection for up to 4 args.
+     * Allegedly this is faster than using ReflectionClass (really?)
      * @param string $class
      * @param array $args
      * @return mixed

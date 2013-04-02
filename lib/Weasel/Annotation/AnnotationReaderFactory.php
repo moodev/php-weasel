@@ -8,8 +8,9 @@ namespace Weasel\Annotation;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Weasel\Common\Annotation\IAnnotationReaderFactory;
 
-class AnnotationReaderFactory implements LoggerAwareInterface
+class AnnotationReaderFactory implements IAnnotationReaderFactory, LoggerAwareInterface
 {
 
     /**
@@ -32,7 +33,7 @@ class AnnotationReaderFactory implements LoggerAwareInterface
 
     /**
      * @param \ReflectionClass $class
-     * @return \Weasel\Annotation\IAnnotationReader
+     * @return \Weasel\Common\Annotation\IAnnotationReader
      */
     public function getReaderForClass(\ReflectionClass $class)
     {

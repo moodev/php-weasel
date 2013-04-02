@@ -268,14 +268,16 @@ class JsonMapper
                     if (!isset($classId)) {
                         break;
                     }
-                    return '[' . $this->_encodeValue($classId, 'string') . ', ' . $this->_objectToJson($properties) . ']';
+                    return '[' . $this->_encodeValue($classId,
+                        'string') . ', ' . $this->_objectToJson($properties) . ']';
                     break;
                 case Config\Serialization\TypeInfo::TI_AS_WRAPPER_OBJECT:
                     // Very similar yo the wrapper array case, but this time it's a map from the classId to the object.
                     if (!isset($classId)) {
                         break;
                     }
-                    return '{' . $this->_encodeValue($classId, 'string') . ': ' . $this->_objectToJson($properties) . '}';
+                    return '{' . $this->_encodeValue($classId,
+                        'string') . ': ' . $this->_objectToJson($properties) . '}';
                     break;
                 default:
                     throw new \Exception("Unsupported type info storage at class level");
@@ -453,23 +455,31 @@ class JsonMapper
 
     protected function _parseType($type)
     {
+        if (isset($this->typeHandlers[$type])) {
+            // Assumption: if there's a type handler for this type string, then it's the right thing to use.
+            return array($type, $this->typeHandlers[$type]);
+        }
 
-        $matches = array();
-        if (!preg_match('/^(.*)\\[([^\\]]*)\\]$/i', $type, $matches)) {
-            if (isset($this->typeHandlers[$type])) {
-                return array($type,
-                    $this->typeHandlers[$type]
-                );
-            }
+        // Assume type strings are well formed: look for the last [ to see if it's an array or map.
+        // Note that this might be an array of arrays, and we're after the outermost type, so we're after the last [!
+        $pos = strrpos($type, '[');
+        if ($pos === false) {
+            // If there wasn't a [ then this must be an object.
             return array("complex");
         }
 
-        $elementType = $matches[1];
+        // Extract the base type, and whatever's between the [...] as the index type.
+        // Potentially the type string is actually badly formed:
+        // e.g. this code will accept string[int! as being an array of string with index int.
+        // Bah. I'll ignore that case for now. This bit of code gets called a lot, I'd rather not add another substr.
+        $elementType = substr($type, 0, $pos);
+        $indexType = substr($type, $pos + 1, -1);
 
-        $indexType = $matches[2];
-        if (empty($indexType)) {
+        if ($indexType === "") {
+            // The [...] were empty. It's an array.
             return array("array", $elementType);
         }
+        // Must be a map then.
         return array("map",
             $indexType,
             $elementType
@@ -586,7 +596,8 @@ class JsonMapper
                 }
                 $elements = array();
                 foreach ($value as $key => $element) {
-                    $elements[] = $this->_encodeKey($key, $indexType) . ': ' . $this->_encodeValue($element, $elementType);
+                    $elements[] = $this->_encodeKey($key, $indexType) . ': ' . $this->_encodeValue($element,
+                        $elementType);
                 }
                 return '{' . implode(', ', $elements) . '}';
             default:

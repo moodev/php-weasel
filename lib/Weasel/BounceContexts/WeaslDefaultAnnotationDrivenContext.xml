@@ -12,6 +12,11 @@
         <property name="logger" ref="weaselLogger"/>
     </bean>
 
+    <bean name="annotationReaderFactory" class="\Weasel\Annotation\AnnotationReaderFactory">
+        <constructor-arg ref="annotationConfigProvider"/>
+        <property name="logger" ref="weaselLogger"/>
+    </bean>
+
     <bean name="xmlMapper" class="\Weasel\XmlMarshaller\XmlMapper">
         <constructor-arg>
             <bean class="\Weasel\XmlMarshaller\Config\AnnotationDriver">
@@ -24,7 +29,7 @@
     <bean name="jsonMapper" class="\Weasel\JsonMarshaller\JsonMapper">
         <constructor-arg>
             <bean class="\Weasel\JsonMarshaller\Config\AnnotationDriver">
-                <property name="configurator" ref="annotationConfigProvider"/>
+                <constructor-arg ref="annotationReaderFactory"/>
                 <property name="cache" ref="weaselCache"/>
             </bean>
         </constructor-arg>

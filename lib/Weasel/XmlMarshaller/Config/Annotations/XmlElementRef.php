@@ -9,11 +9,13 @@ namespace Weasel\XmlMarshaller\Config\Annotations;
 use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
+use Weasel\XmlMarshaller\Config\IAnnotations\IXmlElementRef;
+use Weasel\Common\Utils\NoUndeclaredProperties;
 
 /**
  * @Annotation(on={"property", "method", "\Weasel\XmlMarshaller\Config\Annotations\XmlElementRefs"})
  */
-class XmlElementRef
+class XmlElementRef extends NoUndeclaredProperties implements IXmlElementRef
 {
 
     protected $name;
@@ -28,7 +30,7 @@ class XmlElementRef
     @Parameter(name="type", type="string", required=true),
     @Parameter(name="namespace", type="string", required=false)})
      */
-    public function __construct($name, $type, $namespace)
+    public function __construct($name = null, $type = null, $namespace = null)
     {
         $this->name = isset($name) ? $name : null;
         $this->type = isset($type) ? $type : null;

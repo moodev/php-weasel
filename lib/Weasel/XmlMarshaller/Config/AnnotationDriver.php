@@ -7,31 +7,31 @@
 namespace Weasel\XmlMarshaller\Config;
 
 use Weasel\XmlMarshaller\Config\Annotations as Annotations;
-use Psr\Log\LoggerInterface;
 use Weasel\Annotation\AnnotationConfigurator;
 use Weasel\Common\Cache\CacheAwareInterface;
 use Weasel\Common\Cache\Cache;
-use Weasel\Annotation\AnnotationConfigProvider;
+use Weasel\Common\Annotation\IAnnotationReaderFactory;
 
 class AnnotationDriver implements ConfigProvider, CacheAwareInterface
 {
 
     protected $classPaths = array();
-    protected $configurator;
+
+    protected $annotationNamespace = '\Weasel\XmlMarshaller\Config\Annotations';
+
+    /**
+     * @var \Weasel\Common\Annotation\IAnnotationReaderFactory
+     */
+    public $annotationReaderFactory;
 
     /**
      * @var \Weasel\Common\Cache\Cache
      */
     protected $cache;
 
-    public function __construct(AnnotationConfigProvider $annotationConfigurator = null)
+    public function __construct(IAnnotationReaderFactory $annotationReaderFactory)
     {
-        $this->configurator = $annotationConfigurator;
-    }
-
-    public function setConfigurator(AnnotationConfigurator $annotationConfigurator)
-    {
-        $this->configurator = $annotationConfigurator;
+        $this->annotationReaderFactory = $annotationReaderFactory;
     }
 
     /**
@@ -64,7 +64,7 @@ class AnnotationDriver implements ConfigProvider, CacheAwareInterface
     {
         $rClass = new \ReflectionClass($class);
 
-        $classDriver = new ClassAnnotationDriver($rClass, $this->configurator);
+        $classDriver = new ClassAnnotationDriver($rClass, $this->annotationReaderFactory, $this->annotationNamespace);
 
         return $classDriver->getConfig();
 
@@ -73,5 +73,21 @@ class AnnotationDriver implements ConfigProvider, CacheAwareInterface
     public function setCache(Cache $cache)
     {
         $this->cache = $cache;
+    }
+
+    /**
+     * @param \Weasel\Common\Annotation\IAnnotationReaderFactory $annotationReaderFactory
+     */
+    public function setAnnotationReaderFactory(IAnnotationReaderFactory $annotationReaderFactory)
+    {
+        $this->annotationReaderFactory = $annotationReaderFactory;
+    }
+
+    /**
+     * @param string $annotationNamespace
+     */
+    public function setAnnotationNamespace($annotationNamespace)
+    {
+        $this->annotationNamespace = $annotationNamespace;
     }
 }

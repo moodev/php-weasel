@@ -6,6 +6,11 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
+use Weasel\Annotation\AnnotationReader;
+use Weasel\Annotation\AnnotationConfigurator;
+use Weasel\Annotation\Config\Annotations\AnnotationCreator;
+use Weasel\Annotation\Config\Annotations\Parameter;
+
 class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -16,7 +21,7 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
     {
 
         $annotationReader =
-            new \Weasel\Annotation\AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator'), new \Weasel\Annotation\AnnotationConfigurator());
+            new AnnotationReader(new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator'), new AnnotationConfigurator());
 
         $expected = array(
             '\Weasel\Annotation\Config\Annotations\Annotation' => array(new \Weasel\Annotation\Config\Annotations\Annotation(array("method"), 1)),
@@ -34,7 +39,7 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator');
         $annotationReader =
-            new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
+            new AnnotationReader($rClass, new AnnotationConfigurator());
 
 
         $found = array();
@@ -55,7 +60,7 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
 
         $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonCreator');
         $annotationReader =
-            new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
+            new AnnotationReader($rClass, new AnnotationConfigurator());
 
         $found = array();
         foreach ($rClass->getMethods() as $method) {
@@ -63,14 +68,17 @@ class JsonCreatorTest extends \PHPUnit_Framework_TestCase
              * @var \ReflectionMethod $method
              */
             $name = $method->getName();
+            if (substr($name, 0, 2) === '__' && !($method->isStatic() || $method->isConstructor())) {
+                continue;
+            }
             $found[$name] = $annotationReader->getMethodAnnotations($name);
         }
 
         $expected = array("__construct" =>
         array('\Weasel\Annotation\Config\Annotations\AnnotationCreator' => array(
-            new \Weasel\Annotation\Config\Annotations\AnnotationCreator(
+            new AnnotationCreator(
                 array(
-                    new \Weasel\Annotation\Config\Annotations\Parameter("params", '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty[]', false),
+                    new Parameter("params", '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty[]', false),
                 )
             )
         )
