@@ -9,11 +9,13 @@ namespace Weasel\JsonMarshaller\Config\Annotations;
 use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
+use Weasel\Common\Utils\NoUndeclaredProperties;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonCreator;
 
 /**
  * @Annotation(on="method", max=1)
  */
-class JsonCreator
+class JsonCreator extends NoUndeclaredProperties implements IJsonCreator
 {
 
     /**

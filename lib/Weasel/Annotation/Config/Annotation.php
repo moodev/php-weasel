@@ -19,6 +19,8 @@ class Annotation
      */
     private $on;
 
+    private $onFlipped;
+
     /**
      * @var int
      */
@@ -54,6 +56,7 @@ class Annotation
         $this->class = $class;
         $this->on = $on;
         $this->max = $max;
+        $this->onFlipped = array_flip($on);
     }
 
     /**
@@ -94,6 +97,11 @@ class Annotation
     public function getOn()
     {
         return $this->on;
+    }
+
+    public function permittedOn($location)
+    {
+        return isset($this->onFlipped[$location]);
     }
 
     /**

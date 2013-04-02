@@ -45,7 +45,8 @@ class JsonIgnorePropertiesTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(array("names" => array(),
                 "ignoreUnknown" => array()
-            ), $found
+            ),
+            $found
         );
 
     }
@@ -66,6 +67,9 @@ class JsonIgnorePropertiesTest extends \PHPUnit_Framework_TestCase
              * @var \ReflectionMethod $method
              */
             $name = $method->getName();
+            if (substr($name, 0, 2) === '__' && !($method->isStatic() || $method->isConstructor())) {
+                continue;
+            }
             $found[$name] = $annotationReader->getMethodAnnotations($name);
         }
 

@@ -9,12 +9,14 @@ namespace Weasel\JsonMarshaller\Config\Annotations;
 use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
+use Weasel\Common\Utils\NoUndeclaredProperties;
+use Weasel\JsonMarshaller\Config\IAnnotations\IJsonTypeName;
 
 /**
  * Allows you to specify an explicit name for this implementation, for use by JsonTypeInfo
  * @Annotation(on={"class"})
  */
-class JsonTypeName
+class JsonTypeName extends NoUndeclaredProperties implements IJsonTypeName
 {
 
     protected $name;

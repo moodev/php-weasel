@@ -9,6 +9,7 @@ namespace Weasel\JsonMarshaller\Config;
 use Weasel\JsonMarshaller\Config\Annotations as Annotations;
 use Psr\Log\LoggerInterface;
 use Weasel\Common\Cache\ArrayCache;
+use Weasel\Common\Annotation\IAnnotationReaderFactory;
 
 /**
  * A config provider that uses Annotations
@@ -17,9 +18,9 @@ use Weasel\Common\Cache\ArrayCache;
 class ArrayCachingAnnotationDriver extends AnnotationDriver
 {
 
-    public function __construct(LoggerInterface $logger = null, $annotationConfigurator = null)
+    public function __construct(LoggerInterface $logger = null, IAnnotationReaderFactory $annotationReaderFactory = null)
     {
-        parent::__construct($logger, $annotationConfigurator);
+        parent::__construct($logger, $annotationReaderFactory);
         $this->setCache(new ArrayCache());
     }
 

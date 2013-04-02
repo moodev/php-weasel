@@ -9,11 +9,13 @@ namespace Weasel\XmlMarshaller\Config\Annotations;
 use Weasel\Annotation\Config\Annotations\Annotation;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
+use Weasel\XmlMarshaller\Config\IAnnotations\IXmlElement;
+use Weasel\Common\Utils\NoUndeclaredProperties;
 
 /**
  * @Annotation(on={"property", "method"})
  */
-class XmlElement
+class XmlElement extends NoUndeclaredProperties implements IXmlElement
 {
 
     protected $name;
@@ -34,7 +36,7 @@ class XmlElement
     @Parameter(name="namespace", type="string", required=false),
     @Parameter(name="required", type="bool", required=false)})
      */
-    public function __construct($name, $type, $nillable, $namespace, $required)
+    public function __construct($name = null, $type = null, $nillable = null, $namespace = null, $required = null)
     {
         $this->name = isset($name) ? $name : null;
         $this->type = isset($type) ? $type : "string";

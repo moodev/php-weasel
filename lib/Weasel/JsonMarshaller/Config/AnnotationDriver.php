@@ -10,7 +10,7 @@ use Weasel\JsonMarshaller\Config\Annotations;
 use Weasel\Annotation\AnnotationConfigurator;
 use Weasel\Common\Cache\CacheAwareInterface;
 use Weasel\Common\Cache\Cache;
-use Weasel\Annotation\AnnotationConfigProvider;
+use Weasel\Common\Annotation\IAnnotationReaderFactory;
 
 /**
  * A config provider that uses Annotations
@@ -19,16 +19,22 @@ class AnnotationDriver implements JsonConfigProvider, CacheAwareInterface
 {
 
     protected $classPaths = array();
-    protected $configurator;
+
+    protected $annotationNamespace = '\Weasel\JsonMarshaller\Config\Annotations';
 
     /**
      * @var \Weasel\Common\Cache\Cache
      */
     protected $cache = null;
 
-    public function __construct(AnnotationConfigProvider $annotationConfigurator = null)
+    /**
+     * @var \Weasel\Common\Annotation\IAnnotationReaderFactory
+     */
+    public $annotationReaderFactory;
+
+    public function __construct(IAnnotationReaderFactory $annotationReaderFactory)
     {
-        $this->configurator = $annotationConfigurator;
+        $this->annotationReaderFactory = $annotationReaderFactory;
     }
 
     /**
@@ -64,7 +70,7 @@ class AnnotationDriver implements JsonConfigProvider, CacheAwareInterface
         $rClass = new \ReflectionClass($class);
 
         // Delegate actually loading the config for the class to the ClassAnnotationDriver
-        $classDriver = new ClassAnnotationDriver($rClass, $this->configurator);
+        $classDriver = new ClassAnnotationDriver($rClass, $this->annotationReaderFactory, $this->annotationNamespace);
 
         return $classDriver->getConfig();
 
@@ -75,8 +81,16 @@ class AnnotationDriver implements JsonConfigProvider, CacheAwareInterface
         $this->cache = $cache;
     }
 
-    public function setConfigurator(AnnotationConfigurator $configurator)
+    public function setAnnotationReaderFactory(IAnnotationReaderFactory $annotationReaderFactory)
     {
-        $this->configurator = $configurator;
+        $this->annotationReaderFactory = $annotationReaderFactory;
+    }
+
+    /**
+     * @param string $annotationNamespace
+     */
+    public function setAnnotationNamespace($annotationNamespace)
+    {
+        $this->annotationNamespace = $annotationNamespace;
     }
 }

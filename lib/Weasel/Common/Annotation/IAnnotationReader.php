@@ -4,8 +4,11 @@
  * @copyright Copyright (c) 2012, Moo Print Ltd.
  * @license ISC
  */
-namespace Weasel\Annotation;
+namespace Weasel\Common\Annotation;
 
+/**
+ * Something that reads annotation objects from a class.
+ */
 interface IAnnotationReader
 {
 
@@ -16,7 +19,7 @@ interface IAnnotationReader
 
     /**
      * @param string $annotation
-     * @return null|object[]
+     * @return mixed[]
      */
     public function getClassAnnotation($annotation);
 
@@ -35,14 +38,14 @@ interface IAnnotationReader
     /**
      * @param string $method
      * @param string $annotation
-     * @return null|object[]
+     * @return mixed[]
      */
     public function getMethodAnnotation($method, $annotation);
 
     /**
      * @param string $method
      * @param string $annotation
-     * @return null|object
+     * @return mixed
      */
     public function getSingleMethodAnnotation($method, $annotation);
 
@@ -55,14 +58,14 @@ interface IAnnotationReader
     /**
      * @param string $property
      * @param string $annotation
-     * @return null|object[]
+     * @return mixed[]
      */
     public function getPropertyAnnotation($property, $annotation);
 
     /**
      * @param string $property
      * @param string $annotation
-     * @return null|object
+     * @return mixed
      */
     public function getSinglePropertyAnnotation($property, $annotation);
 

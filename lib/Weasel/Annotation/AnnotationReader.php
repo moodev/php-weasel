@@ -8,6 +8,7 @@ namespace Weasel\Annotation;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
+use Weasel\Common\Annotation\IAnnotationReader;
 
 class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
 {
@@ -84,7 +85,7 @@ class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
 
     /**
      * @param string $annotation
-     * @return null|object[]
+     * @return mixed[]
      */
     public function getClassAnnotation($annotation)
     {
@@ -93,8 +94,8 @@ class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
     }
 
     /**
-     * @param object[] $annotations
-     * @return object|null
+     * @param mixed[] $annotations
+     * @return mixed
      * @throws \Exception
      */
     protected function _singleAnnotation($annotations)
@@ -110,7 +111,7 @@ class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
 
     /**
      * @param string $annotation
-     * @return object
+     * @return mixed
      */
     public function getSingleClassAnnotation($annotation)
     {
@@ -164,7 +165,7 @@ class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
     /**
      * @param string $method
      * @param string $annotation
-     * @return null|object[]
+     * @return mixed[]
      */
     public function getMethodAnnotation($method, $annotation)
     {
@@ -176,7 +177,7 @@ class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
     /**
      * @param string $method
      * @param string $annotation
-     * @return null|object
+     * @return mixed
      */
     public function getSingleMethodAnnotation($method, $annotation)
     {
@@ -209,7 +210,7 @@ class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
     /**
      * @param string $property
      * @param string $annotation
-     * @return null|object[]
+     * @return mixed[]
      */
     public function getPropertyAnnotation($property, $annotation)
     {
@@ -220,7 +221,7 @@ class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
     /**
      * @param string $property
      * @param string $annotation
-     * @return null|object
+     * @return mixed
      */
     public function getSinglePropertyAnnotation($property, $annotation)
     {
@@ -228,7 +229,7 @@ class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
     }
 
     /**
-     * Sets a logger instance on the object
+     * Sets a logger instance on the mixed
      *
      * @param LoggerInterface $logger
      * @return null

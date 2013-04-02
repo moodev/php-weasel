@@ -309,6 +309,15 @@ class XmlMapper
         );
     }
 
+    private static $_knownSimpleTypes = array(
+        "int" => "int",
+        "integer" => "integer",
+        "bool" => "bool",
+        "boolean" => "boolean",
+        "float" => "float",
+        "string" => "string"
+    );
+
     /**
      * @param \XMLReader $xml
      * @param string $type
@@ -318,54 +327,48 @@ class XmlMapper
      */
     protected function _readElementAsType($xml, $type, $root = false)
     {
-        $matches = array();
-        $ret = null;
-        if (!preg_match('/^(.*)\\[(int|integer|string|bool|boolean|float|)\\]$/i', $type, $matches)) {
-            switch ($type) {
-                case "bool":
-                case "boolean":
-                case "int":
-                case "integer":
-                case "float":
-                case "string":
-                    $ret = $this->_decodeSimpleValue($xml->readInnerXml(), $type);
-                    if (!$xml->isEmptyElement) {
-                        $open = 1;
-                        while ($open > 0) {
-                            if (!$xml->read()) {
-                                throw new \Exception("XML Read failure parsing simple value");
-                            }
-                            if ($xml->nodeType == \XMLReader::ELEMENT && !$xml->isEmptyElement) {
-                                $open++;
-                            } elseif ($xml->nodeType == \XMLReader::END_ELEMENT) {
-                                $open--;
-                            }
-                        }
+        if (isset(self::$_knownSimpleTypes[$type])) {
+            $ret = $this->_decodeSimpleValue($xml->readInnerXml(), $type);
+            if (!$xml->isEmptyElement) {
+                $open = 1;
+                while ($open > 0) {
+                    if (!$xml->read()) {
+                        throw new \Exception("XML Read failure parsing simple value");
                     }
-                    break;
-                default:
-                    // Object! (hopefully)
-                    $ret = $this->_readObject($xml, $type, $root);
+                    if ($xml->nodeType == \XMLReader::ELEMENT && !$xml->isEmptyElement) {
+                        $open++;
+                    } elseif ($xml->nodeType == \XMLReader::END_ELEMENT) {
+                        $open--;
+                    }
+                }
             }
-        } else {
-            // It's an array
-            $elementType = $matches[1];
-
-            $indexType = $matches[2];
-
-            // We return an array of the element(s) we've read.
-            // This will be merged if necessary by whoever we return it to.
-
-            if (empty($indexType)) {
-                // It's an array element, not a map.
-                $ret = array($this->_readElementAsType($xml, $elementType));
-            } else {
-                $ret = $this->_readMap($xml, $indexType, $elementType);
-            }
-
+            return $ret;
         }
 
-        return $ret;
+        // Assume type strings are well formed: look for the last [ to see if it's an array or map.
+        // Note that this might be an array of arrays, and we're after the outermost type, so we're after the last [!
+        $pos = strrpos($type, '[');
+        if ($pos === false) {
+            // If there wasn't a [ then this must be an object.
+            return $this->_readObject($xml, $type, $root);
+        }
+
+        // Extract the base type, and whatever's between the [...] as the index type.
+        // Potentially the type string is actually badly formed:
+        // e.g. this code will accept string[int! as being an array of string with index int.
+        // Bah. I'll ignore that case for now. This bit of code gets called a lot, I'd rather not add another substr.
+        $elementType = substr($type, 0, $pos);
+        $indexType = substr($type, $pos + 1, -1);
+
+        // We return an array of the element(s) we've read.
+        // This will be merged if necessary by whoever we return it to.
+        if ($indexType === "") {
+            // It's an array element, not a map.
+            return array($this->_readElementAsType($xml, $elementType));
+        } else {
+            return $this->_readMap($xml, $indexType, $elementType);
+        }
+
     }
 
     protected function _readMap(\XMLReader $xml, $indexType, $elementType)

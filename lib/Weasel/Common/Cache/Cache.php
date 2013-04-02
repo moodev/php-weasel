@@ -6,6 +6,9 @@
  */
 namespace Weasel\Common\Cache;
 
+/**
+ * A really boring interface for accessing caches.
+ */
 abstract class Cache
 {
 
@@ -28,6 +31,19 @@ abstract class Cache
      * @return
      */
     public abstract function set($key, $value, $namespace = null);
+
+    /**
+     * Delete something from the cache.
+     * To preserve keep old implementations working this base class implements the method to lob an error.
+     * This MUST be implemented for the DoctrineAnnotation cache adapter to work.
+     * @param string $key Key to delete
+     * @param string $namespace
+     * @throws \RuntimeException
+     */
+    public function delete($key, $namespace = null)
+    {
+        throw new \RuntimeException("Unsupported for this cache implementation");
+    }
 
     /**
      * @param string $prefix
