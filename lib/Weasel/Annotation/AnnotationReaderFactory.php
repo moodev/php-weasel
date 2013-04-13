@@ -10,6 +10,11 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Weasel\Common\Annotation\IAnnotationReaderFactory;
 
+/**
+ * Class AnnotationReaderFactory
+ * @package Weasel\Annotation
+ * @deprecated Use the DoctrineAnnotation driven reader.
+ */
 class AnnotationReaderFactory implements IAnnotationReaderFactory, LoggerAwareInterface
 {
 
