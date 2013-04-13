@@ -16,6 +16,12 @@ use Weasel\DoctrineAnnotation\DoctrineAnnotationReaderFactory;
 use Doctrine\Common\Annotations\CachedReader;
 use Weasel\DoctrineAnnotation\WeaselCacheAdapter;
 
+/**
+ * Class WeaselDoctrineAnnotationDrivenFactory
+ * @package Weasel
+ *
+ * A factory which can produce JsonMappers and XmlMappers configured using the Doctrine\Common\Annotation library.
+ */
 class WeaselDoctrineAnnotationDrivenFactory implements LoggerAwareInterface, WeaselFactory, CacheAwareInterface
 {
 
@@ -122,7 +128,8 @@ class WeaselDoctrineAnnotationDrivenFactory implements LoggerAwareInterface, Wea
     }
 
     /**
-     * Sets a logger instance on the object
+     * Sets a logger instance on the object.
+     * This logger will be passed into any LoggerAware instances created by this class.
      *
      * @param LoggerInterface $logger
      * @return null
@@ -132,6 +139,11 @@ class WeaselDoctrineAnnotationDrivenFactory implements LoggerAwareInterface, Wea
         $this->_logger = $logger;
     }
 
+    /**
+     * Sets a cache instance on the object.
+     * This cache will be passed into any CacheAware instances created by this class.
+     * @param Cache $cache
+     */
     public function setCache(Cache $cache)
     {
         $this->_cache = $cache;

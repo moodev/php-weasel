@@ -9,6 +9,7 @@ namespace Weasel;
 /**
  * @param string $name Class to load
  * @return void
+ * @deprecated Install the package using composer, and use the composer autoloader!
  */
 function autoLoad($name)
 {

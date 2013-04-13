@@ -13,6 +13,14 @@ use Weasel\XmlMarshaller\XmlMapper;
 use Weasel\Common\Cache\CacheAwareInterface;
 use Weasel\Annotation\AnnotationReaderFactory;
 
+/**
+ * Class WeaselDefaultAnnotationDrivenFactory
+ * @package Weasel
+ * @deprecated Doctrine driven annotations are the future. Use WeaselDoctrineAnnotationDrivenFactory.
+ *
+ * A factory which can produce JsonMappers and XmlMappers configured using the Weasel\Annotation library.
+ * This is considered deprecated in favour of WeaselDoctrineAnnotationDrivenFactory.
+ */
 class WeaselDefaultAnnotationDrivenFactory implements LoggerAwareInterface, WeaselFactory, CacheAwareInterface
 {
 
