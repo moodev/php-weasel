@@ -58,7 +58,7 @@ class JsonMapper
      */
     public function readString($string, $type)
     {
-        if ($string === "null") {
+        if ($string === "null" || $string === "") {
             return null;
         }
         $decoded = json_decode($string, true);

@@ -54,6 +54,11 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $result = $mapper->readString(json_encode(null),
             $mtc
         );
+        $this->assertEquals(null, $result);
+
+        $result = $mapper->readString("",
+            $mtc
+        );
 
         $this->assertEquals(null, $result);
     }
