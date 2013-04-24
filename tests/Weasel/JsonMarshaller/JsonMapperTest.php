@@ -40,6 +40,27 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \Weasel\JsonMarshaller\JsonMapper
      */
+    public function testReadStringNull()
+    {
+        $configProvider = new MockedConfigProvider();
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, "blah", "string");
+        $configProvider->fakeConfig[$mtc] = $config;
+
+        $mapper = new JsonMapper($configProvider);
+
+        $result = $mapper->readString(json_encode(null),
+            $mtc
+        );
+
+        $this->assertEquals(null, $result);
+    }
+
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testReadStringPrimitive()
     {
         $configProvider = new MockedConfigProvider();

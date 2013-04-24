@@ -58,6 +58,9 @@ class JsonMapper
      */
     public function readString($string, $type)
     {
+        if ($string === "null") {
+            return null;
+        }
         $decoded = json_decode($string, true);
         if ($decoded === null) {
             throw new InvalidArgumentException("Unable to decode JSON: $string");
