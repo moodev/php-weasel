@@ -1,5 +1,7 @@
 PHP Weasel
 ==========
+[![Build Status](https://travis-ci.org/moodev/php-weasel.png)](https://travis-ci.org/moodev/php-weasel)
+
 Weasel is an object marshalling library for PHP supporting JSON and XML. Marshalling is, by default, configured using
 "annotations", driven by the Doctrine\Common\Annotation library.
 
