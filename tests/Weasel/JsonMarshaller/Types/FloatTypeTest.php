@@ -16,7 +16,7 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(2, '2'),
-            array(1.2123123123123, '1.2123123123123'),
+            array(1.2123123123, '1.2123123123'),
             array(3, '3'),
             array(1e8, '100000000'),
             array("123", '123'),
