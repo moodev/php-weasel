@@ -12,6 +12,8 @@ use Weasel\Common\Annotation\IAnnotationReader;
 
 /**
  * Class AnnotationReader
+ * WARNING: This docblock comment MUST exist, and MUST NOT contain anything that might be misinterpreted as a useful
+ * "annotation." This is a result of our workaround for PHP bug 55156.
  * @package Weasel\Annotation
  * @deprecated Use the DoctrineAnnotation driven reader.
  */
@@ -80,6 +82,7 @@ class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
         }
 
         $docblock = $this->class->getDocComment();
+
         if ($docblock === false) {
             $this->classAnnotations = array();
         } else {
