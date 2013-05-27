@@ -80,6 +80,7 @@ class AnnotationReader implements LoggerAwareInterface, IAnnotationReader
         }
 
         $docblock = $this->class->getDocComment();
+
         if ($docblock === false) {
             $this->classAnnotations = array();
         } else {

@@ -39,6 +39,14 @@ class PhpParser implements LoggerAwareInterface
         $data = $this->_readPrologue($class);
 
         $tokens = token_get_all('<?php ' . $data);
+
+        // LAME HACK!
+        // This fixes issue #41 : by calling token_get_all() on a faked up empty docblock comment we ensure that the
+        // doc_comment Zend compiler global contains something "harmless." Without doing this the compiler global may
+        // contain a docblock comment from $data, and that might be picked up by the Zend compiler when the next file
+        // to be included gets compiled. That would be really, really bad.
+        token_get_all("<?php\n/**\n *\n */\n");
+
         $namespaces = array();
         $curNamespace = '\\';
         while ($token = array_shift($tokens)) {
