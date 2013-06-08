@@ -16,31 +16,29 @@ $readerProvider = $factory->getAnnotationReaderFactoryInstance();
 $jsonProvider = new \Weasel\JsonMarshaller\Config\AnnotationDriver($readerProvider);
 $jsonProvider->setAnnotationNamespace('\Weasel\JsonMarshaller\Config\DoctrineAnnotations');
 
-$jsonConfig = array();
-$xmlConfig = array();
+$config = array();
 
-addConfig('\Weasel\JsonMarshaller\Config\ClassMarshaller', $jsonConfig, $jsonProvider);
+addConfig('\Weasel\JsonMarshaller\Config\ClassMarshaller', $config, $jsonProvider);
 buildSubConfig(__DIR__ . '/../lib/Weasel/JsonMarshaller/Config/Deserialization',
     '\Weasel\JsonMarshaller\Config\Deserialization',
-    $jsonConfig,
+    $config,
     $jsonProvider);
 buildSubConfig(__DIR__ . '/../lib/Weasel/JsonMarshaller/Config/Serialization',
     '\Weasel\JsonMarshaller\Config\Serialization',
-    $jsonConfig,
+    $config,
     $jsonProvider);
 
-addConfig('\Weasel\XmlMarshaller\Config\ClassMarshaller', $xmlConfig, $jsonProvider);
+addConfig('\Weasel\XmlMarshaller\Config\ClassMarshaller', $config, $jsonProvider);
 buildSubConfig(__DIR__ . '/../lib/Weasel/XmlMarshaller/Config/Deserialization',
     '\Weasel\XmlMarshaller\Config\Deserialization',
-    $xmlConfig,
+    $config,
     $jsonProvider);
 buildSubConfig(__DIR__ . '/../lib/Weasel/XmlMarshaller/Config/Serialization',
     '\Weasel\XmlMarshaller\Config\Serialization',
-    $xmlConfig,
+    $config,
     $jsonProvider);
 
-file_put_contents(__DIR__ . '/../lib/Weasel/JsonMarshaller/Config/json_marshaller.cnf', serialize($jsonConfig));
-file_put_contents(__DIR__ . '/../lib/Weasel/XmlMarshaller/Config/xml_marshaller.cnf', serialize($xmlConfig));
+file_put_contents(__DIR__ . '/../lib/Weasel/JsonMarshaller/Config/bootstrap.cnf', serialize($config));
 
 exit(0);
 

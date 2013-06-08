@@ -9,14 +9,22 @@ namespace Weasel\JsonMarshaller\Config;
 
 use Weasel\JsonMarshaller\Config\Serialization\ClassSerialization;
 
-class JsonBootstrapConfigProvider extends PropertyConfigProvider implements JsonConfigProvider
+class SerializedConfigProvider implements JsonConfigProvider
 {
 
     private static $_bootstrapConfig = null;
 
+    private $configFile = null;
+
+    public function __construct($filename)
+    {
+        $this->configFile = $filename;
+    }
+
     private function _buildBootstrapConfig()
     {
-        self::$_bootstrapConfig = unserialize(file_get_contents(__DIR__ . '/json_marshaller.cnf'));
+        $file = $this->configFile;
+        self::$_bootstrapConfig[$file] = unserialize(file_get_contents($file));
     }
 
     /**
@@ -26,13 +34,12 @@ class JsonBootstrapConfigProvider extends PropertyConfigProvider implements Json
      */
     public function getConfig($class)
     {
-        if (!isset(self::$_bootstrapConfig)) {
+        $class = ltrim($class, '\\');
+        $file = $this->configFile;
+        if (!isset(self::$_bootstrapConfig[$file])) {
             $this->_buildBootstrapConfig();
         }
-        if ($this->config == array()) {
-            $this->config = self::$_bootstrapConfig;
-        }
-
-        return parent::getConfig($class);
+        return isset(self::$_bootstrapConfig[$file][$class]) ? self::$_bootstrapConfig[$file][$class] : null;
     }
+
 }

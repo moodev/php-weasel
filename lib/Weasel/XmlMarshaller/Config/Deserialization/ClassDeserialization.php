@@ -12,7 +12,7 @@ class ClassDeserialization
 
     /**
      * @var \Weasel\XmlMarshaller\Config\Deserialization\ElementDeserialization[]
-     * @JsonProperty(type="\Weasel\XmlMarshaller\Config\Deserialization\ElementDeserialization[string]")
+     * @JsonProperty(type="\Weasel\XmlMarshaller\Config\Deserialization\ElementDeserialization[]")
      */
     public $elements = array();
 

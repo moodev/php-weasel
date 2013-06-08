@@ -6,9 +6,9 @@ use Psr\Log\LoggerInterface;
 use Weasel\Common\Cache\Cache;
 use Weasel\Common\Cache\ArrayCache;
 use Weasel\Annotation\AnnotationConfigurator;
-use Weasel\JsonMarshaller\Config\JsonBootstrapConfigProvider;
 use Weasel\JsonMarshaller\Config\JsonConfigProvider;
 use Weasel\JsonMarshaller\Config\PropertyConfigProvider as JsonPropertyConfigProvider;
+use Weasel\JsonMarshaller\Config\SerializedConfigProvider;
 use Weasel\XmlMarshaller\Config\ConfigProvider;
 use Weasel\XmlMarshaller\Config\PropertyConfigProvider as XmlPropertyConfigProvider;
 use Weasel\JsonMarshaller\JsonMapper;
@@ -65,7 +65,7 @@ class WeaselJsonConfigDrivenFactory implements LoggerAwareInterface, WeaselFacto
 
     private function _getJsonConfigMapper()
     {
-        return new JsonMapper(new JsonBootstrapConfigProvider());
+        return new JsonMapper(new SerializedConfigProvider(__DIR__ . '/JsonMarshaller/Config/bootstrap.cnf'));
     }
 
     /**

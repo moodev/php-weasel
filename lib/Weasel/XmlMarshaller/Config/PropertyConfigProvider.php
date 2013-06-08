@@ -36,6 +36,7 @@ class PropertyConfigProvider implements ConfigProvider
      */
     public function getConfig($class)
     {
+        $class = ltrim($class, '\\');
         if (isset($this->config[$class])) {
             return $this->config[$class];
         }
