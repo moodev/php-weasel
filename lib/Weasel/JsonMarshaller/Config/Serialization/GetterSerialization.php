@@ -18,7 +18,7 @@ class GetterSerialization extends PropertySerialization
 
     /**
      * @var string
-     * @JsonProperty(type="method")
+     * @JsonProperty(type="string")
      */
     public $method;
 
