@@ -5,6 +5,7 @@
  * @license ISC
  */
 namespace Weasel\XmlMarshaller\Config\Serialization;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
 
 class TypeInfo
 {
@@ -21,21 +22,25 @@ class TypeInfo
 
     /**
      * @var string[]
+     * @JsonProperty(type="string[]")
      */
     public $subTypes;
 
     /**
      * @var int
+     * @JsonProperty(type="int")
      */
     public $typeInfo = self::TI_USE_NONE;
 
     /**
      * @var int
+     * @JsonProperty(type="int")
      */
     public $typeInfoAs = self::TI_AS_PROPERTY;
 
     /**
      * @var string
+     * @JsonProperty(type="string")
      */
     public $typeInfoProperty;
 

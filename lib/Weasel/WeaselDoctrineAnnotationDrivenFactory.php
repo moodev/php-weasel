@@ -55,6 +55,9 @@ class WeaselDoctrineAnnotationDrivenFactory implements LoggerAwareInterface, Wea
      */
     public $annotationReader = null;
 
+    private $_jsonDriver = null;
+    private $_xmlDriver = null;
+
     public function __construct()
     {
         $this->setCache(new ArrayCache());
@@ -90,15 +93,26 @@ class WeaselDoctrineAnnotationDrivenFactory implements LoggerAwareInterface, Wea
     }
 
     /**
+     * @return JsonAnnotationDriver
+     */
+    public function getJsonDriverInstance()
+    {
+        if (!isset($this->_jsonDriver)) {
+            $driver = new JsonAnnotationDriver($this->getAnnotationReaderFactoryInstance());
+            $driver->setAnnotationNamespace('\Weasel\JsonMarshaller\Config\DoctrineAnnotations');
+            $this->_autowire($driver);
+            $this->_jsonDriver = $driver;
+        }
+        return $this->_jsonDriver;
+    }
+
+    /**
      * @return JsonMarshaller\JsonMapper
      */
     public function getJsonMapperInstance()
     {
         if (!isset($this->_jsonMapper)) {
-            $driver = new JsonAnnotationDriver($this->getAnnotationReaderFactoryInstance());
-            $driver->setAnnotationNamespace('\Weasel\JsonMarshaller\Config\DoctrineAnnotations');
-            $this->_autowire($driver);
-            $this->_jsonMapper = new JsonMapper($driver);
+            $this->_jsonMapper = new JsonMapper($this->getJsonDriverInstance());
         }
         return $this->_jsonMapper;
     }
@@ -150,15 +164,26 @@ class WeaselDoctrineAnnotationDrivenFactory implements LoggerAwareInterface, Wea
     }
 
     /**
+     * @return XmlAnnotationDriver
+     */
+    public function getXmlDriverInstance()
+    {
+        if (!isset($this->_xmlDriver)) {
+            $driver = new XmlAnnotationDriver($this->getAnnotationReaderFactoryInstance());
+            $driver->setAnnotationNamespace('\Weasel\XmlMarshaller\Config\DoctrineAnnotations');
+            $this->_autowire($driver);
+            $this->_xmlDriver = $driver;
+        }
+        return $this->_xmlDriver;
+    }
+
+    /**
      * @return XmlMapper
      */
     public function getXmlMapperInstance()
     {
         if (!isset($this->_xmlMapper)) {
-            $driver = new XmlAnnotationDriver($this->getAnnotationReaderFactoryInstance());
-            $driver->setAnnotationNamespace('\Weasel\XmlMarshaller\Config\DoctrineAnnotations');
-            $this->_autowire($driver);
-            $this->_xmlMapper = new XmlMapper($driver);
+            $this->_xmlMapper = new XmlMapper($this->getXmlDriverInstance());
         }
         return $this->_xmlMapper;
     }
