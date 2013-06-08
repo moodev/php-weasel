@@ -30,7 +30,7 @@ class ClassMarshaller
 
     /**
      * @var \Weasel\JsonMarshaller\Config\Deserialization\ClassDeserialization
-     * @JsonProperty(type="\Weasel\JsonMarshaller\Config\Serialization\ClassDeserialization")
+     * @JsonProperty(type="\Weasel\JsonMarshaller\Config\Deserialization\ClassDeserialization")
      */
     public $deserialization;
 
