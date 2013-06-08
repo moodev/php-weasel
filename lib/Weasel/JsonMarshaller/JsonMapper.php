@@ -387,6 +387,9 @@ class JsonMapper
         }
         $classconfig = $this->configProvider->getConfig($class);
 
+        if ($classconfig == null) {
+            throw new InvalidArgumentException("No config found to decode $class");
+        }
         $deconfig = $classconfig->deserialization;
 
         if ($deconfig->creator) {
@@ -600,7 +603,7 @@ class JsonMapper
                 $elements = array();
                 foreach ($value as $key => $element) {
                     $elements[] = $this->_encodeKey($key, $indexType) . ': ' . $this->_encodeValue($element,
-                        $elementType);
+                            $elementType);
                 }
                 return '{' . implode(', ', $elements) . '}';
             default:

@@ -5,6 +5,7 @@
  * @license ISC
  */
 namespace Weasel\XmlMarshaller\Config\Serialization;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
 
 class ClassSerialization
 {
@@ -16,13 +17,19 @@ class ClassSerialization
 
     /**
      * @var \Weasel\XmlMarshaller\Config\Serialization\PropertySerialization[]
+     * @JsonProperty(type="\Weasel\XmlMarshaller\Config\Serialization\PropertySerialization[string]")
      */
     public $properties = array();
 
+    /**
+     * @var int
+     * @JsonProperty(type="int")
+     */
     public $include = self::INCLUDE_ALWAYS;
 
     /**
      * @var \Weasel\XmlMarshaller\Config\Serialization\TypeInfo
+     * @JsonProperty(type="\Weasel\XmlMarshaller\Config\Serialization\TypeInfo")
      */
     public $typeInfo;
 }

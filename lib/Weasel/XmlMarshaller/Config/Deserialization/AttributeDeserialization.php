@@ -6,11 +6,14 @@
  */
 namespace Weasel\XmlMarshaller\Config\Deserialization;
 
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
+
 class AttributeDeserialization
 {
 
     /**
      * @var \Weasel\XmlMarshaller\Config\Deserialization\PropertyDeserialization
+     * @JsonProperty(type="\Weasel\XmlMarshaller\Config\Deserialization\PropertyDeserialization")
      */
     public $property;
 

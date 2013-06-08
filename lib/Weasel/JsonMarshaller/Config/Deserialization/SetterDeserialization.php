@@ -5,12 +5,20 @@
  * @license ISC
  */
 namespace Weasel\JsonMarshaller\Config\Deserialization;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonTypeName;
 
+/**
+ * Class SetterDeserialization
+ * @package Weasel\JsonMarshaller\Config\Deserialization
+ * @JsonTypeName("setter")
+ */
 class SetterDeserialization extends PropertyDeserialization
 {
 
     /**
      * @var string
+     * @JsonProperty(type="string")
      */
     public $method;
 

@@ -6,39 +6,51 @@
  */
 namespace Weasel\JsonMarshaller\Config\Deserialization;
 
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
+
 class ClassDeserialization
 {
 
     /**
      * @var \Weasel\JsonMarshaller\Config\Deserialization\PropertyDeserialization[]
+     * @JsonProperty(type="\Weasel\JsonMarshaller\Config\Deserialization\PropertyDeserialization[string]")
      */
     public $properties = array();
 
     /**
      * @var \Weasel\JsonMarshaller\Config\Deserialization\Creator
+     * @JsonProperty(type="\Weasel\JsonMarshaller\Config\Deserialization\Creator")
      */
     public $creator = null;
 
     /**
      * @var bool
+     * @JsonProperty(type="bool")
      */
     public $ignoreUnknown;
 
     /**
      * @var string[]
+     * @JsonProperty(type="string[]")
      */
     public $ignoreProperties;
 
     /**
      * @var string
+     * @JsonProperty(type="string")
      */
     public $name;
 
     /**
      * @var \Weasel\JsonMarshaller\Config\Deserialization\TypeInfo
+     * @JsonProperty(type="\Weasel\JsonMarshaller\Config\Deserialization\TypeInfo")
      */
     public $typeInfo;
 
+    /**
+     * @var string
+     * @JsonProperty(type="string")
+     */
     public $anySetter = null;
 
 
@@ -61,7 +73,7 @@ class ClassDeserialization
         }
         return '[ClassDeserialization name=' . $this->name . ' ignoreProperties={' . implode(', ',
             $this->ignoreProperties) . '} anySetter=' . $this->anySetter .
-            ' ignoreUnknown=' . ($this->ignoreUnknown ? "true" : "false") . ' typeInfo=' . $this->typeInfo . ' creator=' . $this->creator .
-            ' properties={' . implode(", ", $props) . '}';
+        ' ignoreUnknown=' . ($this->ignoreUnknown ? "true" : "false") . ' typeInfo=' . $this->typeInfo . ' creator=' . $this->creator .
+        ' properties={' . implode(", ", $props) . '}';
     }
 }
