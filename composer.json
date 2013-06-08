@@ -10,7 +10,7 @@
         "psr/log": "~1.0",
         "doctrine/annotations": "~1.1",
         "doctrine/cache": "~1.0",
-        "symfony/Console": "dev-master"
+        "symfony/Console": ">=2.3"
     },
     "require-dev": {
         "mockery/mockery": "dev-master"
