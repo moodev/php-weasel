@@ -6,14 +6,14 @@
  */
 namespace Weasel\XmlMarshaller\Config\Serialization;
 use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
-use Weasel\JsonMarshaller\Config\Annotations\JsonTypeInfo;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonTypeInfo;
 use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonSubTypes;
 
 /**
  * Class PropertySerialization
  * @package Weasel\XmlMarshaller\Config\Serialization
  * @JsonSubTypes({
- * @JsonSubTypes\Type("\Weasel\XmlMarshaller\Config\Serialization\SetterSerialization"),
+ * @JsonSubTypes\Type("\Weasel\XmlMarshaller\Config\Serialization\GetterSerialization"),
  * @JsonSubTypes\Type("\Weasel\XmlMarshaller\Config\Serialization\DirectSerialization"),
  * })
  * @JsonTypeInfo(use=JsonTypeInfo::ID_NAME, include=JsonTypeInfo::AS_PROPERTY, property="how")

@@ -6,7 +6,7 @@
  */
 namespace Weasel\XmlMarshaller\Config\Deserialization;
 use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
-use Weasel\JsonMarshaller\Config\Annotations\JsonTypeInfo;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonTypeInfo;
 use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonSubTypes;
 
 /**
