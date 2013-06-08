@@ -10,8 +10,10 @@ foreach (array(__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoloa
 
 use Symfony\Component\Console\Application;
 use Weasel\Command\BuildJsonMapperJsonConfigCommand;
+use Weasel\Command\BuildXmlMapperJsonConfigCommand;
 
 $application = new Application('buildJsonConfig');
 $application->add(new BuildJsonMapperJsonConfigCommand());
+$application->add(new BuildXmlMapperJsonConfigCommand());
 $application->run();
 

@@ -5,15 +5,15 @@
  * @license ISC
  */
 
-namespace Weasel\JsonMarshaller\Config;
+namespace Weasel\XmlMarshaller\Config;
 
 /**
  * Class PropertyConfigProvider
  * A really boring config provider which works off a public property containing a config object structure.
  * This might be suitable for building a configuration from some DI framework or something.
- * @package Weasel\JsonMarshaller\Config
+ * @package Weasel\XmlMarshaller\Config
  */
-class PropertyConfigProvider implements JsonConfigProvider
+class PropertyConfigProvider implements ConfigProvider
 {
 
     /**
@@ -32,11 +32,10 @@ class PropertyConfigProvider implements JsonConfigProvider
     /**
      * Obtain the config for a named class
      * @param string $class The class to get the config for
-     * @return \Weasel\JsonMarshaller\Config\ClassMarshaller The config, or null if not found
+     * @return \Weasel\XmlMarshaller\Config\ClassMarshaller The config, or null if not found
      */
     public function getConfig($class)
     {
-        $class = ltrim($class, '\\');
         if (isset($this->config[$class])) {
             return $this->config[$class];
         }

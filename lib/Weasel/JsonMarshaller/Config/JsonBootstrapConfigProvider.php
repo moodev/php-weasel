@@ -12,11 +12,11 @@ use Weasel\JsonMarshaller\Config\Serialization\ClassSerialization;
 class JsonBootstrapConfigProvider extends PropertyConfigProvider implements JsonConfigProvider
 {
 
-    private static $_bootstrapConfig = array();
+    private static $_bootstrapConfig = null;
 
     private function _buildBootstrapConfig()
     {
-        return unserialize(file_get_contents(__DIR__ . '/json_marshaller.cnf'));
+        self::$_bootstrapConfig = unserialize(file_get_contents(__DIR__ . '/json_marshaller.cnf'));
     }
 
     /**
@@ -29,7 +29,7 @@ class JsonBootstrapConfigProvider extends PropertyConfigProvider implements Json
         if (!isset(self::$_bootstrapConfig)) {
             $this->_buildBootstrapConfig();
         }
-        if (!isset($this->config)) {
+        if ($this->config == array()) {
             $this->config = self::$_bootstrapConfig;
         }
 

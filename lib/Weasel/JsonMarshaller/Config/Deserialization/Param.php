@@ -11,7 +11,7 @@ use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonTypeName;
 /**
  * Class Param
  * @package Weasel\JsonMarshaller\Config\Deserialization
- * @JsonTypeName("direct")
+ * @JsonTypeName("param")
  */
 class Param extends PropertyDeserialization
 {

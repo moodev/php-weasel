@@ -46,7 +46,7 @@ exit(0);
 
 function addConfig($class, &$config, \Weasel\JsonMarshaller\Config\AnnotationDriver $provider)
 {
-    $config[$class] = $provider->getConfig($class);
+    $config[ltrim($class, '\\')] = $provider->getConfig($class);
 }
 
 function buildSubConfig($dir, $bns, &$config, $provider)
