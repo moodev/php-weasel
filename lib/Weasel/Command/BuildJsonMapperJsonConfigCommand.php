@@ -94,7 +94,7 @@ class BuildJsonMapperJsonConfigCommand extends Command
         }
         $this->setupDriver($input->getOption("builtinannot"));
         $config = $this->generateConfigs($in);
-        $json = $this->mapper->writeString($config, '\Weasel\JsonMarshaller\Config\ClassMarshaller[]');
+        $json = $this->mapper->writeString($config, '\Weasel\JsonMarshaller\Config\ClassMarshaller[string]');
         if ($out = $input->getArgument("out")) {
             file_put_contents($out, $json);
         } else {
