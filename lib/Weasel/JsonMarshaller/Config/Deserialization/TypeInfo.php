@@ -5,6 +5,7 @@
  * @license ISC
  */
 namespace Weasel\JsonMarshaller\Config\Deserialization;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
 
 class TypeInfo
 {
@@ -21,38 +22,44 @@ class TypeInfo
 
     /**
      * @var string[]
+     * @JsonProperty(type="string[string]")
      */
     public $subTypes;
 
     /**
      * @var int
+     * @JsonProperty(type="int")
      */
     public $typeInfo = self::TI_USE_NONE;
 
     /**
      * @var int
+     * @JsonProperty(type="int")
      */
     public $typeInfoAs = self::TI_AS_PROPERTY;
 
     /**
      * @var string
+     * @JsonProperty(type="string")
      */
     public $defaultImpl;
 
     /**
      * @var string
+     * @JsonProperty(type="string")
      */
     public $typeInfoProperty;
 
     /**
      * @var bool
+     * @JsonProperty(type="bool")
      */
     public $typeInfoVisible = false;
 
     public function __toString()
     {
         return '[TypeInfo subTypes={' . implode(', ', $this->subTypes) . '} typeInfo=' . $this->typeInfo .
-            ' typeInfoAs=' . $this->typeInfoAs . ' typeInfoProperty=' . $this->typeInfoProperty .
-            'defaultImpl=' . $this->defaultImpl . ' typeInfoVisible=' . ($this->typeInfoVisible ? "true" : "false") . ']';
+        ' typeInfoAs=' . $this->typeInfoAs . ' typeInfoProperty=' . $this->typeInfoProperty .
+        'defaultImpl=' . $this->defaultImpl . ' typeInfoVisible=' . ($this->typeInfoVisible ? "true" : "false") . ']';
     }
 }

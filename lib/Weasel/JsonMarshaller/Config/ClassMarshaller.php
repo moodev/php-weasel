@@ -11,6 +11,7 @@ namespace Weasel\JsonMarshaller\Config;
  */
 use Weasel\JsonMarshaller\Config\Serialization\ClassSerialization;
 use Weasel\JsonMarshaller\Config\Deserialization\ClassDeserialization;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
 
 class ClassMarshaller
 {
@@ -23,11 +24,13 @@ class ClassMarshaller
 
     /**
      * @var \Weasel\JsonMarshaller\Config\Serialization\ClassSerialization
+     * @JsonProperty(type="\Weasel\JsonMarshaller\Config\Serialization\ClassSerialization")
      */
     public $serialization;
 
     /**
      * @var \Weasel\JsonMarshaller\Config\Deserialization\ClassDeserialization
+     * @JsonProperty(type="\Weasel\JsonMarshaller\Config\Serialization\ClassDeserialization")
      */
     public $deserialization;
 

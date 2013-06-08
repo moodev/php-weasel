@@ -5,12 +5,20 @@
  * @license ISC
  */
 namespace Weasel\JsonMarshaller\Config\Serialization;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonTypeName;
 
+/**
+ * Class DirectSerialization
+ * @package Weasel\JsonMarshaller\Config\Serialization
+ * @JsonTypeName("direct")
+ */
 class DirectSerialization extends PropertySerialization
 {
 
     /**
      * @var string
+     * @JsonProperty(type="string")
      */
     public $property;
 
