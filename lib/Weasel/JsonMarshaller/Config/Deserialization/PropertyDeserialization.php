@@ -16,7 +16,7 @@ use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonTypeInfo;
  * @JsonSubTypes\Type("\Weasel\JsonMarshaller\Config\Deserialization\Param"),
  * @JsonSubTypes\Type("\Weasel\JsonMarshaller\Config\Deserialization\SetterDeserialization"),
  * })
- * @JsonTypeInfo(use=JsonTypeInfo::ID_NAME, include=JsonTypeInfo::AS_PROPERTY, property="method")
+ * @JsonTypeInfo(use=JsonTypeInfo::ID_NAME, include=JsonTypeInfo::AS_PROPERTY, property="how")
  */
 abstract class PropertyDeserialization
 {

@@ -16,7 +16,7 @@ use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonTypeInfo;
  * @JsonSubTypes\Type("\Weasel\JsonMarshaller\Config\Serialization\DirectSerialization"),
  * @JsonSubTypes\Type("\Weasel\JsonMarshaller\Config\Serialization\GetterSerialization"),
  * })
- * @JsonTypeInfo(use=JsonTypeInfo::ID_NAME, include=JsonTypeInfo::AS_PROPERTY, property="method")
+ * @JsonTypeInfo(use=JsonTypeInfo::ID_NAME, include=JsonTypeInfo::AS_PROPERTY, property="how")
  */
 abstract class PropertySerialization
 {
