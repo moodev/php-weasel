@@ -246,13 +246,10 @@ class ClassAnnotationDriver implements LoggerAwareInterface
                 $this->_configureAnySetter($method, $config);
                 break;
             case ($config = $fGetConfig('JsonProperty')):
-                switch ($method->getNumberOfParameters()) {
-                    case 0:
-                        $this->_configureGetter($method, $config);
-                        break;
-                    case 1:
-                        $this->_configureSetter($method, $config);
-                        break;
+                if ($method->getNumberOfRequiredParameters() == 0) {
+                    $this->_configureGetter($method, $config);
+                } elseif ($method->getNumberOfRequiredParameters() == 1) {
+                    $this->_configureSetter($method, $config);
                 }
                 break;
         }
