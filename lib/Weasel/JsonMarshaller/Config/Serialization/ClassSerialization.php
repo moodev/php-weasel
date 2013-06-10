@@ -5,6 +5,7 @@
  * @license ISC
  */
 namespace Weasel\JsonMarshaller\Config\Serialization;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
 
 class ClassSerialization
 {
@@ -16,16 +17,26 @@ class ClassSerialization
 
     /**
      * @var \Weasel\JsonMarshaller\Config\Serialization\PropertySerialization[] Map of names to how to serialize them
+     * @JsonProperty(type="\Weasel\JsonMarshaller\Config\Serialization\PropertySerialization[string]")
      */
     public $properties = array();
 
+    /**
+     * @var int
+     * @JsonProperty(type="int")
+     */
     public $include = self::INCLUDE_ALWAYS;
 
     /**
      * @var \Weasel\JsonMarshaller\Config\Serialization\TypeInfo
+     * @JsonProperty(type="\Weasel\JsonMarshaller\Config\Serialization\TypeInfo")
      */
     public $typeInfo;
 
+    /**
+     * @var string
+     * @JsonProperty(type="string")
+     */
     public $anyGetter = null;
 
     public function __toString()
@@ -35,6 +46,6 @@ class ClassSerialization
             $props[] = $key . ' => ' . $value;
         }
         return '[ClassSerialization include=' . $this->include . ' anyGetter=' . $this->anyGetter . ' typeInfo=' . $this->typeInfo .
-            ' properties={' . implode(", ", $props) . '}';
+        ' properties={' . implode(", ", $props) . '}';
     }
 }

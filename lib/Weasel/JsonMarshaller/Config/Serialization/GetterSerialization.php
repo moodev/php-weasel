@@ -5,12 +5,20 @@
  * @license ISC
  */
 namespace Weasel\JsonMarshaller\Config\Serialization;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
+use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonTypeName;
 
+/**
+ * Class GetterSerialization
+ * @package Weasel\JsonMarshaller\Config\Serialization
+ * @JsonTypeName("getter")
+ */
 class GetterSerialization extends PropertySerialization
 {
 
     /**
      * @var string
+     * @JsonProperty(type="string")
      */
     public $method;
 

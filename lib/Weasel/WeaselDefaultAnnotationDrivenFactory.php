@@ -86,16 +86,40 @@ class WeaselDefaultAnnotationDrivenFactory implements LoggerAwareInterface, Weas
     }
 
     /**
+     * @return XmlAnnotationDriver
+     */
+    public function getXmlDriverInstance()
+    {
+        if (!isset($this->_xmlDriver)) {
+            $driver = new XmlAnnotationDriver($this->getAnnotationReaderFactoryInstance());
+            $this->_autowire($driver);
+            $this->_xmlDriver = $driver;
+        }
+        return $this->_xmlDriver;
+    }
+
+    /**
      * @return XmlMarshaller\XmlMapper
      */
     public function getXmlMapperInstance()
     {
         if (!isset($this->_xmlMapper)) {
-            $driver = new XmlAnnotationDriver($this->getAnnotationReaderFactoryInstance());
-            $this->_autowire($driver);
-            $this->_xmlMapper = new XmlMapper($driver);
+            $this->_xmlMapper = new XmlMapper($this->getXmlDriverInstance());
         }
         return $this->_xmlMapper;
+    }
+
+    /**
+     * @return JsonAnnotationDriver
+     */
+    public function getJsonDriverInstance()
+    {
+        if (!isset($this->_jsonDriver)) {
+            $driver = new JsonAnnotationDriver($this->getAnnotationReaderFactoryInstance());
+            $this->_autowire($driver);
+            $this->_jsonDriver = $driver;
+        }
+        return $this->_jsonDriver;
     }
 
     /**
@@ -104,9 +128,7 @@ class WeaselDefaultAnnotationDrivenFactory implements LoggerAwareInterface, Weas
     public function getJsonMapperInstance()
     {
         if (!isset($this->_jsonMapper)) {
-            $driver = new JsonAnnotationDriver($this->getAnnotationReaderFactoryInstance());
-            $this->_autowire($driver);
-            $this->_jsonMapper = new JsonMapper($driver);
+            $this->_jsonMapper = new JsonMapper($this->getJsonDriverInstance());
         }
         return $this->_jsonMapper;
     }

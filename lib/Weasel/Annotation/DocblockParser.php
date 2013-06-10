@@ -46,14 +46,25 @@ class DocblockParser implements LoggerAwareInterface
     {
 
         if ($name[0] !== '\\') {
-            $exploded = explode('\\', $name, 2);
+            $exploded = explode('\\', $name);
+            $alias = "";
+            $name = null;
+            $part = null;
+            do {
+                if ($part !== null) {
+                    $alias .= '\\' . $part;
+                }
+                $baseNamespace = implode('\\', $exploded);
+                if (isset($namespaces[$baseNamespace])) {
+                    $name = '\\' . $namespaces[$baseNamespace] . ($alias !== '' ? ($alias) : '');
+                    break;
+                }
+            } while ($part = array_pop($exploded));
 
-            if (!isset($namespaces[$exploded[0]])) {
+            if ($name === null) {
                 return null;
             }
-            $namespace = $namespaces[$exploded[0]];
 
-            $name = '\\' . $namespace . (isset($exploded[1]) ? '\\' . $exploded[1] : '');
         }
 
         return $this->annotations->get($name);
