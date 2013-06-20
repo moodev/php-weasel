@@ -68,45 +68,39 @@ class StringTypeTest extends \PHPUnit_Framework_TestCase
 
     public function provideBrokenDataForEncode()
     {
-        return array_map(function ($a) {
-                return array($a);
-            },
-            array(
-                1.2,
-                7,
-                false,
-                true,
-                null
-            )
+        return array(
+            array(1.2, "1.2"),
+            array(7, "7"),
+            array(false, ""),
+            array(true, "1"),
+            array(null, "")
         );
     }
 
     /**
      * @dataProvider provideBrokenDataForEncode
      * @covers \Weasel\JsonMarshaller\Types\StringType
-     * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
-    public function testNotAStringEncode($value)
+    public function testNotAStringEncode($value, $expected)
     {
         $handler = new StringType();
-        $handler->encodeValue($value,
+        $result = $handler->encodeValue($value,
             $this->_mapper
         );
-        $this->fail("Should not get here");
+        $this->assertSame('"' . $expected . '"', $result);
     }
 
     /**
      * @dataProvider provideBrokenDataForEncode
      * @covers \Weasel\JsonMarshaller\Types\StringType
-     * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
-    public function testNotAStringDecode($value)
+    public function testNotAStringDecode($value, $expected)
     {
         $handler = new StringType();
-        $handler->decodeValue($value,
+        $result = $handler->decodeValue($value,
             $this->_mapper
         );
-        $this->fail("Should not get here");
+        $this->assertSame($expected, $result);
     }
 
 }

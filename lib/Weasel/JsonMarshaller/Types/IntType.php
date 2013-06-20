@@ -13,10 +13,14 @@ class IntType implements JsonType
 
     protected function checkAndCastValue($value)
     {
-        if (!is_int($value) && !ctype_digit($value)) {
+        if (!is_numeric($value)) {
             throw new InvalidTypeException("integer", $value);
         }
-        return (int)$value;
+        $intval = (int)($value);
+        if ($intval != $value) {
+            throw new InvalidTypeException("integer", $value);
+        }
+        return $intval;
     }
 
     public function decodeValue($value, JsonMapper $mapper)

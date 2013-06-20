@@ -18,6 +18,7 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
             array(2, '2'),
             array(3, '3'),
             array("123", '123'),
+            array("-5", '-5')
         );
     }
 

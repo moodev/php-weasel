@@ -13,9 +13,6 @@ class StringType implements JsonType
 
     protected function checkAndCastValue($value)
     {
-        if (!is_string($value)) {
-            throw new InvalidTypeException("string", $value);
-        }
         return (string)$value;
     }
 
