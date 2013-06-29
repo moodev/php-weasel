@@ -33,7 +33,7 @@ class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\OldTypeWrapper
+     * @covers       \Weasel\JsonMarshaller\Types\OldTypeWrapper
      */
     public function testEncodeInt($value, $expected)
     {
@@ -65,7 +65,7 @@ class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideDataForDecode
-     * @covers \Weasel\JsonMarshaller\Types\OldTypeWrapper
+     * @covers       \Weasel\JsonMarshaller\Types\OldTypeWrapper
      */
     public function testDecodeInt($value)
     {
@@ -73,7 +73,8 @@ class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->decodeValue($value,
-                $this->_mapper
+                $this->_mapper,
+                true
             );
 
         $this->assertInternalType("int", $encoded);
@@ -96,7 +97,7 @@ class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\OldTypeWrapper
+     * @covers       \Weasel\JsonMarshaller\Types\OldTypeWrapper
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
     public function testNotAIntEncode($value)
@@ -110,14 +111,15 @@ class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\OldTypeWrapper
+     * @covers       \Weasel\JsonMarshaller\Types\OldTypeWrapper
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
     public function testNotAIntDecode($value)
     {
         $handler = new OldTypeWrapper(new OldIntType());
         $handler->decodeValue($value,
-            $this->_mapper
+            $this->_mapper,
+            true
         );
         $this->fail("Should not get here");
     }

@@ -23,11 +23,11 @@ class ClassAnnotationDriverTest extends \PHPUnit_Framework_TestCase
         $mockReader->shouldReceive('getSingleClassAnnotation')->withAnyArgs()->andReturnNull();
         $mockReader->shouldReceive('getSingleMethodAnnotation')->with('getStuff',
             '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty')->andReturn(
-                new JsonProperty(null, "string")
+                new JsonProperty(null, "string", null)
             );
         $mockReader->shouldReceive('getSingleMethodAnnotation')->with('isGood',
             '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty')->andReturn(
-                new JsonProperty(null, "bool")
+                new JsonProperty(null, "bool", null)
             );
         $mockReader->shouldReceive('getSingleMethodAnnotation')->withAnyArgs()->andReturnNull();
 
@@ -61,11 +61,11 @@ class ClassAnnotationDriverTest extends \PHPUnit_Framework_TestCase
         $mockReader->shouldReceive('getSingleClassAnnotation')->withAnyArgs()->andReturnNull();
         $mockReader->shouldReceive('getSingleMethodAnnotation')->with('getStuff',
             '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty')->andReturn(
-                new JsonProperty(null, "string")
+                new JsonProperty(null, "string", null)
             );
         $mockReader->shouldReceive('getSingleMethodAnnotation')->with('isGood',
             '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty')->andReturn(
-                new JsonProperty(null, "string")
+                new JsonProperty(null, "string", null)
             );
         $mockReader->shouldReceive('getSingleMethodAnnotation')->withAnyArgs()->andReturnNull();
 

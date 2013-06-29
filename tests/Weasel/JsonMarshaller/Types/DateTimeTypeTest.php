@@ -32,7 +32,7 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\DateTimeType
+     * @covers       \Weasel\JsonMarshaller\Types\DateTimeType
      */
     public function testEncodeDateTime($value, $expected)
     {
@@ -60,7 +60,7 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideDataForDecode
-     * @covers \Weasel\JsonMarshaller\Types\DateTimeType
+     * @covers       \Weasel\JsonMarshaller\Types\DateTimeType
      * @param string $value
      * @param \DateTime $expected
      * @return void
@@ -71,7 +71,8 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->decodeValue($value,
-                $this->_mapper
+                $this->_mapper,
+                true
             );
 
         $this->assertInstanceOf('\DateTime', $encoded);
@@ -93,7 +94,7 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\DateTimeType
+     * @covers       \Weasel\JsonMarshaller\Types\DateTimeType
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
     public function testNotADateTimeEncode($value)
@@ -121,14 +122,15 @@ class DateTimeTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForDecode
-     * @covers \Weasel\JsonMarshaller\Types\DateTimeType
+     * @covers       \Weasel\JsonMarshaller\Types\DateTimeType
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
     public function testNotADateTimeDecode($value)
     {
         $handler = new DateTimeType();
         $handler->decodeValue($value,
-            $this->_mapper
+            $this->_mapper,
+            true
         );
         $this->fail("Should not get here");
     }

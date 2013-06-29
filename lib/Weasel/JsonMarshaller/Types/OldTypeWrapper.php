@@ -17,7 +17,7 @@ class OldTypeWrapper implements JsonType
         $this->_oldType = $oldType;
     }
 
-    public function decodeValue($value, JsonMapper $mapper)
+    public function decodeValue($value, JsonMapper $mapper, $strict)
     {
         return $this->_oldType->decodeValue($value, $mapper);
     }

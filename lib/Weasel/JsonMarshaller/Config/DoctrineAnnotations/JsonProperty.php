@@ -32,6 +32,11 @@ class JsonProperty extends NoUndeclaredProperties implements IJsonProperty
     public $type;
 
     /**
+     * @var bool
+     */
+    public $strict;
+
+    /**
      * @return string
      */
     public function getName()
@@ -55,6 +60,17 @@ class JsonProperty extends NoUndeclaredProperties implements IJsonProperty
         if (isset($value["type"])) {
             $this->type = $value["type"];
         }
+        if (isset($value["strict"])) {
+            $this->strict = $value["strict"];
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function getStrict()
+    {
+        return $this->strict;
     }
 
 }

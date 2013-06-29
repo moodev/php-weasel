@@ -11,7 +11,7 @@ use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 class BoolType implements JsonType
 {
 
-    public function decodeValue($value, JsonMapper $mapper)
+    public function decodeValue($value, JsonMapper $mapper, $strict)
     {
         if (is_bool($value)) {
             return (bool)$value;
