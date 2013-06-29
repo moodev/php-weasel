@@ -24,16 +24,19 @@ class JsonProperty extends NoUndeclaredProperties implements IJsonProperty
 
     protected $name;
     protected $type;
+    protected $strict;
 
     /**
      * @param string $name
      * @param string $type
-     * @AnnotationCreator({@Parameter(name="name", type="string", required=false), @Parameter(name="type", type="string", required=false)})
+     * @param bool $strict
+     * @AnnotationCreator({@Parameter(name="name", type="string", required=false), @Parameter(name="type", type="string", required=false), @Parameter(name="strict", type="bool", required=false)})
      */
-    public function __construct($name, $type)
+    public function __construct($name, $type, $strict)
     {
         $this->name = isset($name) ? $name : null;
         $this->type = isset($type) ? $type : "string";
+        $this->strict = isset($strict) ? $strict : true;
     }
 
     public function getName()
@@ -44,6 +47,11 @@ class JsonProperty extends NoUndeclaredProperties implements IJsonProperty
     public function getType()
     {
         return $this->type;
+    }
+
+    public function getStrict()
+    {
+        return $this->strict;
     }
 
 }

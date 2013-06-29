@@ -15,13 +15,13 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
     public function provideDataForEncode()
     {
         return array(
-            array(2, '2'),
-            array(1.2123123123, '1.2123123123'),
-            array(3, '3'),
-            array(1e8, '100000000'),
-            array("123", '123'),
-            array("0xaa", '170'),
-            array("1e8", '100000000'),
+            array(2, '2', true),
+            array(1.2123123123, '1.2123123123', true),
+            array(3, '3', true),
+            array(1e8, '100000000', true),
+            array("123", '123', false),
+            array("0xaa", '170', false),
+            array("1e8", '100000000', false),
         );
     }
 
@@ -36,7 +36,7 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\FloatType
+     * @covers       \Weasel\JsonMarshaller\Types\FloatType
      */
     public function testEncodeFloat($value, $expected)
     {
@@ -55,19 +55,36 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\FloatType
+     * @covers       \Weasel\JsonMarshaller\Types\FloatType
      */
-    public function testDecodeFloat($value)
+    public function testDecodeFloat($value, $unused, $strict)
     {
         $handler = new FloatType();
 
         $encoded =
             $handler->decodeValue($value,
-                $this->_mapper
+                $this->_mapper,
+                false
             );
 
         $this->assertInternalType("float", $encoded);
         $this->assertEquals($value, $encoded);
+
+        try {
+            $handler->decodeValue($value,
+                $this->_mapper,
+                true
+            );
+            if (!$strict) {
+                $this->fail("This should not have parsed with strict mode on");
+            }
+            $this->assertInternalType("float", $encoded);
+            $this->assertEquals($value, $encoded);
+        } catch (InvalidTypeException $e) {
+            if ($strict) {
+                $this->fail("This should have parsed with strict mode on");
+            }
+        }
     }
 
     public function provideBrokenDataForEncode()
@@ -85,7 +102,7 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\FloatType
+     * @covers       \Weasel\JsonMarshaller\Types\FloatType
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
     public function testNotAFloatEncode($value)
@@ -99,14 +116,15 @@ class FloatTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\FloatType
+     * @covers       \Weasel\JsonMarshaller\Types\FloatType
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
     public function testNotAFloatDecode($value)
     {
         $handler = new FloatType();
         $handler->decodeValue($value,
-            $this->_mapper
+            $this->_mapper,
+            true
         );
         $this->fail("Should not get here");
     }

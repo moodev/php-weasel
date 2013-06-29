@@ -35,6 +35,12 @@ abstract class PropertyDeserialization
     public $typeInfo;
 
     /**
+     * @var bool Should type checking be strict?
+     * @JsonProperty(type="bool")
+     */
+    public $strict = true;
+
+    /**
      * @return string
      */
     abstract public function __toString();

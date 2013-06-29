@@ -20,7 +20,7 @@ class DateTimeType implements JsonType
         $this->dateTimeFormat = $dateTimeFormat;
     }
 
-    public function decodeValue($value, JsonMapper $mapper)
+    public function decodeValue($value, JsonMapper $mapper, $strict)
     {
         if (!is_string($value)) {
             throw new InvalidTypeException('date string', $value);

@@ -14,9 +14,10 @@ interface JsonType
      * Deserialize something to its PHP type.
      * @param mixed $value
      * @param \Weasel\JsonMarshaller\JsonMapper $mapper
+     * @param bool $strict Apply strict checking of input values.
      * @return mixed
      */
-    public function decodeValue($value, JsonMapper $mapper);
+    public function decodeValue($value, JsonMapper $mapper, $strict);
 
     /**
      * Serialize a PHP value to Json.

@@ -32,7 +32,7 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\IntType
+     * @covers       \Weasel\JsonMarshaller\Types\IntType
      */
     public function testEncodeInt($value, $expected)
     {
@@ -51,32 +51,45 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
 
     public function provideDataForDecode()
     {
-        return array_map(function ($a) {
-                return array($a);
-            },
-            array(
-                2,
-                3,
-                "123",
-            )
+        return array(
+            array(2, true),
+            array(3, true),
+            array("123", false),
         );
     }
 
     /**
      * @dataProvider provideDataForDecode
-     * @covers \Weasel\JsonMarshaller\Types\IntType
+     * @covers       \Weasel\JsonMarshaller\Types\IntType
      */
-    public function testDecodeInt($value)
+    public function testDecodeInt($value, $strict)
     {
         $handler = new IntType();
 
         $encoded =
             $handler->decodeValue($value,
-                $this->_mapper
+                $this->_mapper,
+                false
             );
 
         $this->assertInternalType("int", $encoded);
         $this->assertEquals($value, $encoded);
+
+        try {
+            $handler->decodeValue($value,
+                $this->_mapper,
+                true
+            );
+            if (!$strict) {
+                $this->fail("This should not have parsed with strict mode on");
+            }
+            $this->assertInternalType("int", $encoded);
+            $this->assertEquals($value, $encoded);
+        } catch (InvalidTypeException $e) {
+            if ($strict) {
+                $this->fail("This should have parsed with strict mode on");
+            }
+        }
     }
 
     public function provideBrokenDataForEncode()
@@ -95,7 +108,7 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\IntType
+     * @covers       \Weasel\JsonMarshaller\Types\IntType
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
     public function testNotAIntEncode($value)
@@ -109,14 +122,15 @@ class IntTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\IntType
+     * @covers       \Weasel\JsonMarshaller\Types\IntType
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
     public function testNotAIntDecode($value)
     {
         $handler = new IntType();
         $handler->decodeValue($value,
-            $this->_mapper
+            $this->_mapper,
+            true
         );
         $this->fail("Should not get here");
     }

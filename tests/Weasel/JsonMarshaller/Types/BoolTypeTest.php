@@ -33,7 +33,7 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\BoolType
+     * @covers       \Weasel\JsonMarshaller\Types\BoolType
      */
     public function testEncodeBool($value, $expected)
     {
@@ -76,7 +76,7 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideDataForDecode
-     * @covers \Weasel\JsonMarshaller\Types\BoolType
+     * @covers       \Weasel\JsonMarshaller\Types\BoolType
      */
     public function testDecodeBool($value, $expected)
     {
@@ -84,7 +84,8 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
 
         $encoded =
             $handler->decodeValue($value,
-                $this->_mapper
+                $this->_mapper,
+                true
             );
 
         $this->assertInternalType("bool", $encoded);
@@ -108,7 +109,7 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\BoolType
+     * @covers       \Weasel\JsonMarshaller\Types\BoolType
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
     public function testNotABoolEncode($value)
@@ -122,14 +123,15 @@ class BoolTypeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideBrokenDataForEncode
-     * @covers \Weasel\JsonMarshaller\Types\BoolType
+     * @covers       \Weasel\JsonMarshaller\Types\BoolType
      * @expectedException \Weasel\JsonMarshaller\Exception\InvalidTypeException
      */
     public function testNotABoolDecode($value)
     {
         $handler = new BoolType();
         $handler->decodeValue($value,
-            $this->_mapper
+            $this->_mapper,
+            true
         );
         $this->fail("Should not get here");
     }
