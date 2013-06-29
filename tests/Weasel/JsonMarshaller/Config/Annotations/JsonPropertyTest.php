@@ -49,7 +49,8 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals(array("name" => array(),
-                "type" => array()
+                "type" => array(),
+                "strict" => array()
             ),
             $found
         );
@@ -84,12 +85,14 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
                 array(
                     new \Weasel\Annotation\Config\Annotations\Parameter("name", 'string', false),
                     new \Weasel\Annotation\Config\Annotations\Parameter("type", 'string', false),
+                    new \Weasel\Annotation\Config\Annotations\Parameter("strict", 'bool', false),
                 )
             )
         )
         ),
             'getName' => array(),
             'getType' => array(),
+            'getStrict' => array(),
         );
 
         $this->assertEquals($expected, $found);
@@ -101,8 +104,9 @@ class JsonPropertyTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreate()
     {
-        $test = new JsonProperty("foo", "bar");
+        $test = new JsonProperty("foo", "bar", true);
         $this->assertEquals("foo", $test->getName());
         $this->assertEquals("bar", $test->getType());
+        $this->assertEquals(true, $test->getStrict());
     }
 }

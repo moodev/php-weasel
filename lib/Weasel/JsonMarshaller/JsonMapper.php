@@ -53,10 +53,11 @@ class JsonMapper
      * Given a string of JSON, decode it into an instance of the named $class.
      * @param string $string JSON string containing an object
      * @param string $type Type to deserialize to.
+     * @param bool $strict Use strict type checking. If false will not check any types. If true can be overridden on a property by property basis.
      * @throws \InvalidArgumentException
      * @return mixed A populated instance of $class
      */
-    public function readString($string, $type)
+    public function readString($string, $type, $strict = true)
     {
         if ($string === "null" || $string === "") {
             return null;
@@ -65,7 +66,7 @@ class JsonMapper
         if ($decoded === null) {
             throw new InvalidArgumentException("Unable to decode JSON: $string");
         }
-        return $this->_decodeValue($decoded, $type);
+        return $this->_decodeValue($decoded, $type, $strict);
     }
 
     /**
@@ -303,13 +304,14 @@ class JsonMapper
 
     protected function _instantiateClassFromPropertyCreator($array,
                                                             $class,
-                                                            Config\Deserialization\PropertyCreator $creator)
+                                                            Config\Deserialization\PropertyCreator $creator,
+                                                            $strict)
     {
         $args = array();
         foreach ($creator->params as $param) {
             $val = null;
             if (isset($array[$param->name])) {
-                $val = $this->_decodeValue($array[$param->name], $param->type);
+                $val = $this->_decodeValue($array[$param->name], $param->type, $param->strict && $strict);
             }
             $args[] = $val;
         }
@@ -322,7 +324,7 @@ class JsonMapper
     }
 
 
-    protected function _decodeClass($array, $class)
+    protected function _decodeClass($array, $class, $strict)
     {
         $classconfig = $this->configProvider->getConfig($class);
         if (!isset($classconfig)) {
@@ -400,7 +402,7 @@ class JsonMapper
                 /**
                  * @var Config\Deserialization\PropertyCreator $creator
                  */
-                $object = $this->_instantiateClassFromPropertyCreator($array, $class, $creator);
+                $object = $this->_instantiateClassFromPropertyCreator($array, $class, $creator, $strict);
                 foreach ($creator->params as $param) {
                     $canIgnoreProperties[$param->name] = true;
                 }
@@ -420,7 +422,7 @@ class JsonMapper
                 $propConfig = $deconfig->properties[$key];
 
                 try {
-                    $decodedValue = $this->_decodeValue($value, $propConfig->type);
+                    $decodedValue = $this->_decodeValue($value, $propConfig->type, $propConfig->strict && $strict);
                 } catch (\Exception $e) {
                     throw new \Exception("Failed to decode property $key on $class", 0, $e);
                 }
@@ -499,15 +501,16 @@ class JsonMapper
         }
         $typeData = $this->_parseType($type);
         switch (array_shift($typeData)) {
-            case "string":
-            case "int":
-                return $this->_decodeValue($value, $type);
-            default:
+            case "complex":
+            case "array":
                 throw new JsonMarshallerException("Keys must be of type int or string, not " . $type);
+            default:
+                // Keys are always strings, however we will allow other types, and disable strict type checking.
+                return $this->_decodeValue($value, $type, false);
         }
     }
 
-    protected function _decodeValue($value, $type)
+    protected function _decodeValue($value, $type, $strict)
     {
         if (!isset($value)) {
             return null;
@@ -518,7 +521,7 @@ class JsonMapper
                 if (!is_array($value)) {
                     throw new InvalidTypeException($type, $value);
                 }
-                return $this->_decodeClass($value, $type);
+                return $this->_decodeClass($value, $type, $strict);
                 break;
             /** @noinspection PhpMissingBreakStatementInspection */
             case "array":
@@ -530,7 +533,7 @@ class JsonMapper
                     $value = array($value);
                 }
                 foreach ($value as $key => $element) {
-                    $result[$this->_decodeKey($key, $indexType)] = $this->_decodeValue($element, $elementType);
+                    $result[$this->_decodeKey($key, $indexType)] = $this->_decodeValue($element, $elementType, $strict);
                 }
                 return $result;
                 break;
@@ -539,7 +542,7 @@ class JsonMapper
                  * @var $typeHandler Types\JsonType
                  */
                 list ($typeHandler) = $typeData;
-                return $typeHandler->decodeValue($value, $this);
+                return $typeHandler->decodeValue($value, $this, $strict);
         }
 
     }
@@ -552,16 +555,11 @@ class JsonMapper
         $typeData = $this->_parseType($type);
         switch (array_shift($typeData)) {
             /** @noinspection PhpMissingBreakStatementInspection */
-            case "int":
-                if (!is_int($value) && !ctype_digit($value)) {
-                    throw new InvalidTypeException("integer", $value);
-                }
-                $value = "" . $value; // It's now a string
-            // Fall through as we really want it encoded as a string.
-            case "string":
-                return $this->_encodeValue("" . $value, "string");
-            default:
+            case "complex":
+            case "array":
                 throw new JsonMarshallerException("Keys must be of type int or string, not " . $type);
+            default:
+                return $this->_encodeValue($value, "string");
         }
     }
 

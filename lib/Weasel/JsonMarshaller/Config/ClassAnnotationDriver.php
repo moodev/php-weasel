@@ -171,6 +171,7 @@ class ClassAnnotationDriver implements LoggerAwareInterface
         $setterConfig->method = $name;
         $setterConfig->type = $propertyConfig->getType();
         $setterConfig->typeInfo = $this->_getDeserializationTypeInfo($typeInfo, $subTypes);
+        $setterConfig->strict = $propertyConfig->getStrict();
 
         $this->config->deserialization->properties[$property] = $setterConfig;
     }
@@ -213,6 +214,7 @@ class ClassAnnotationDriver implements LoggerAwareInterface
                 $param = new Deserialization\Param();
                 $param->name = $paramConfig->getName();
                 $param->type = $paramConfig->getType();
+                $param->strict = $paramConfig->getStrict();
                 if (!isset($param->name)) {
                     if (!isset($paramNames[$i])) {
                         throw new \Exception("Unable to establish name of param $i of $name");

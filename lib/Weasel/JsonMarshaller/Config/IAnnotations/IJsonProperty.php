@@ -27,5 +27,10 @@ interface IJsonProperty
      */
     public function getType();
 
+    /**
+     * @return bool Should strict type checking be used?
+     */
+    public function getStrict();
+
 }
 

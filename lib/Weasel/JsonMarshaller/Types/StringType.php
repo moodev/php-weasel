@@ -13,14 +13,14 @@ class StringType implements JsonType
 
     protected function checkAndCastValue($value)
     {
-        if (!is_string($value)) {
-            throw new InvalidTypeException("string", $value);
-        }
-        return (string)$value;
+        return (string)("" . $value);
     }
 
-    public function decodeValue($value, JsonMapper $mapper)
+    public function decodeValue($value, JsonMapper $mapper, $strict)
     {
+        if ($strict && !is_string($value)) {
+            throw new InvalidTypeException("string", $value);
+        }
         return $this->checkAndCastValue($value);
     }
 

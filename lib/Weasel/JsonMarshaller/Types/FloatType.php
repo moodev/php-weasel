@@ -19,8 +19,13 @@ class FloatType implements JsonType
         return (float)($value + 0);
     }
 
-    public function decodeValue($value, JsonMapper $mapper)
+    public function decodeValue($value, JsonMapper $mapper, $strict)
     {
+        if ($strict) {
+            if (!is_int($value) && !is_double($value)) {
+                throw new InvalidTypeException("float", $value);
+            }
+        }
         return $this->checkAndCast($value);
     }
 
