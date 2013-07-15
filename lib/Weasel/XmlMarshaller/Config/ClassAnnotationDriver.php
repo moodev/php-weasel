@@ -379,7 +379,8 @@ class ClassAnnotationDriver implements LoggerAwareInterface
         }
 
         $name = $this->rClass->getName();
-        $name = array_pop(explode('\\', $name));
+        $parts = explode('\\', $name);
+        $name = end($parts);
         // TODO default namespace
         $namespace = null;
 
