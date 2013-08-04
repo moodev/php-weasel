@@ -58,9 +58,16 @@ class WeaselDoctrineAnnotationDrivenFactory implements LoggerAwareInterface, Wea
     private $_jsonDriver = null;
     private $_xmlDriver = null;
 
-    public function __construct()
+
+    /**
+     * @var bool Should the type checkers be strict?
+     */
+    private $_strict = true;
+
+    public function __construct($strict = true)
     {
         $this->setCache(new ArrayCache());
+        $this->_strict = $strict;
     }
 
     /**
@@ -112,7 +119,7 @@ class WeaselDoctrineAnnotationDrivenFactory implements LoggerAwareInterface, Wea
     public function getJsonMapperInstance()
     {
         if (!isset($this->_jsonMapper)) {
-            $this->_jsonMapper = new JsonMapper($this->getJsonDriverInstance());
+            $this->_jsonMapper = new JsonMapper($this->getJsonDriverInstance(), $this->_strict);
         }
         return $this->_jsonMapper;
     }

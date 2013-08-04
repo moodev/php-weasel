@@ -40,6 +40,31 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers \Weasel\JsonMarshaller\JsonMapper
      */
+    public function testChangeStrictDefault()
+    {
+        $configProvider = new MockedConfigProvider();
+        $mtc = 'Weasel\JsonMarshaller\MockTestClass';
+
+        $config = new Config\ClassMarshaller();
+        $this->addPropConfig($config, "blah", "string");
+        $configProvider->fakeConfig[$mtc] = $config;
+
+        $mapper = new JsonMapper($configProvider, false);
+
+        $result = $mapper->readString(json_encode(array(
+                    "blah" => 1.0
+                )
+            ),
+            $mtc
+        );
+
+        $this->assertInstanceOf($mtc, $result);
+        $this->assertEquals(new MockTestClass("1"), $result);
+    }
+
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     */
     public function testReadStringNull()
     {
         $configProvider = new MockedConfigProvider();
@@ -174,7 +199,8 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertInternalType("array", $result);
-        $this->assertEquals(array(new MockTestClass("foo"), new MockTestClass("bar"), new MockTestClass("baz")), $result);
+        $this->assertEquals(array(new MockTestClass("foo"), new MockTestClass("bar"), new MockTestClass("baz")),
+            $result);
     }
 
     /**
@@ -355,7 +381,8 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertInternalType("array", $result);
-        $this->assertEquals(array(new MockTestClass("foo"), new MockTestClass("bar"), new MockTestClass("baz")), $result);
+        $this->assertEquals(array(new MockTestClass("foo"), new MockTestClass("bar"), new MockTestClass("baz")),
+            $result);
     }
 
     /**

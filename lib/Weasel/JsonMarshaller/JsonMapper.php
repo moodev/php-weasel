@@ -28,13 +28,20 @@ class JsonMapper
     protected $typeHandlers = array();
 
     /**
+     * @var bool Should we use strict mode unless told otherwise.
+     */
+    protected $strict = true;
+
+    /**
      * Setup a JsonMapper from a config provider
      * @param Config\JsonConfigProvider $configProvider
+     * @param bool $strict Default for strict mode.
      */
-    public function __construct(JsonConfigProvider $configProvider)
+    public function __construct(JsonConfigProvider $configProvider, $strict = true)
     {
         $this->configProvider = $configProvider;
         $this->_registerBuiltInTypes();
+        $this->strict = $strict;
     }
 
     /**
@@ -53,11 +60,11 @@ class JsonMapper
      * Given a string of JSON, decode it into an instance of the named $class.
      * @param string $string JSON string containing an object
      * @param string $type Type to deserialize to.
-     * @param bool $strict Use strict type checking. If false will not check any types. If true can be overridden on a property by property basis.
+     * @param bool $strict Use strict type checking. If false will not check any types. If true can be overridden on a property by property basis. If null use the default.
      * @throws \InvalidArgumentException
      * @return mixed A populated instance of $class
      */
-    public function readString($string, $type, $strict = true)
+    public function readString($string, $type, $strict = null)
     {
         if ($string === "null" || $string === "") {
             return null;
@@ -66,6 +73,9 @@ class JsonMapper
         if ($decoded === null) {
             throw new InvalidArgumentException("Unable to decode JSON: $string");
         }
+        if ($strict === null) {
+            $strict = $this->strict;
+        }
         return $this->_decodeValue($decoded, $type, $strict);
     }
 
@@ -73,12 +83,13 @@ class JsonMapper
      * Given a string containing a JSON array decode it into an array of the named $class.
      * @param string $string JSON string containing an array
      * @param string $class Full namespaced name of the class this JSON array contains
+     * @param bool $strict Use strict type checking. If false will not check any types. If true can be overridden on a property by property basis. If null use the default.
      * @return array Array of populated $class instances
      * @deprecated Use readString with an array type.
      */
-    public function readArray($string, $class)
+    public function readArray($string, $class, $strict = null)
     {
-        return $this->readString($string, $class . '[]');
+        return $this->readString($string, $class . '[]', $strict);
     }
 
     protected function _guessType($data)
