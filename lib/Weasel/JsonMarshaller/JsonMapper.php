@@ -13,6 +13,7 @@ use Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\Types\OldTypeWrapper;
 use Weasel\JsonMarshaller\Exception\JsonMarshallerException;
 use Weasel\JsonMarshaller\Config\JsonConfigProvider;
+use Weasel\JsonMarshaller\Utils\TypeParser;
 
 class JsonMapper
 {
@@ -76,7 +77,7 @@ class JsonMapper
         if ($strict === null) {
             $strict = $this->strict;
         }
-        return $this->_decodeValue($decoded, $type, $strict);
+        return $this->_decodeValue($decoded, TypeParser::parseType($type, true), $strict);
     }
 
     /**
@@ -128,7 +129,7 @@ class JsonMapper
         if (!isset($type)) {
             $type = $this->_guessType($data);
         }
-        return $this->_encodeValue($data, $type);
+        return $this->_encodeValue($data, TypeParser::parseType($type, true));
     }
 
     /**
@@ -276,7 +277,7 @@ class JsonMapper
                         break;
                     }
                     $property = $typeInfo->typeInfoProperty;
-                    $properties[$property] = $this->_encodeValue($classId, "string");
+                    $properties[$property] = $this->_encodeValue($classId, array(TypeParser::TYPE_SCALAR, "string"));
                     break;
                 case Config\Serialization\TypeInfo::TI_AS_WRAPPER_ARRAY:
                     // We're actually going to encase this encoded object in an array containing the classId.
@@ -284,7 +285,7 @@ class JsonMapper
                         break;
                     }
                     return '[' . $this->_encodeValue($classId,
-                        'string') . ', ' . $this->_objectToJson($properties) . ']';
+                        array(TypeParser::TYPE_SCALAR, 'string')) . ', ' . $this->_objectToJson($properties) . ']';
                     break;
                 case Config\Serialization\TypeInfo::TI_AS_WRAPPER_OBJECT:
                     // Very similar yo the wrapper array case, but this time it's a map from the classId to the object.
@@ -292,7 +293,7 @@ class JsonMapper
                         break;
                     }
                     return '{' . $this->_encodeValue($classId,
-                        'string') . ': ' . $this->_objectToJson($properties) . '}';
+                        array(TypeParser::TYPE_SCALAR, 'string')) . ': ' . $this->_objectToJson($properties) . '}';
                     break;
                 default:
                     throw new \Exception("Unsupported type info storage at class level");
@@ -307,7 +308,7 @@ class JsonMapper
     {
         $elements = array();
         foreach ($properties as $key => $property) {
-            $elements[] = $this->_encodeValue($key, 'string') . ': ' . $property;
+            $elements[] = $this->_encodeValue($key, array(TypeParser::TYPE_SCALAR, 'string')) . ': ' . $property;
         }
         return '{' . implode(', ', $elements) . '}';
     }
@@ -472,37 +473,24 @@ class JsonMapper
 
     }
 
-    protected function _parseType($type)
-    {
-        if (isset($this->typeHandlers[$type])) {
-            // Assumption: if there's a type handler for this type string, then it's the right thing to use.
-            return array($type, $this->typeHandlers[$type]);
+    protected function _parseType($type) {
+        if (!is_array($type)) {
+            if (defined('E_USER_DEPRECATED')) {
+                // TODO: need to handle serialized configs before we can properly deprecate this.
+//                trigger_error("Use of unexpanded types is deprecated", E_USER_DEPRECATED);
+            }
+            // This is the really slow path.
+            $type = TypeParser::parseType($type, false);
         }
-
-        // Assume type strings are well formed: look for the last [ to see if it's an array or map.
-        // Note that this might be an array of arrays, and we're after the outermost type, so we're after the last [!
-        $pos = strrpos($type, '[');
-        if ($pos === false) {
-            // If there wasn't a [ then this must be an object.
-            return array("complex");
+        if ($type[0] == TypeParser::TYPE_SCALAR) {
+            if (isset($this->typeHandlers[$type[1]])) {
+                // Assumption: if there's a type handler for this type string, then it's the right thing to use.
+                return array(TypeParser::TYPE_SCALAR, $type[1], $this->typeHandlers[$type[1]]);
+            } else {
+                return array(TypeParser::TYPE_OBJECT, $type[1]);
+            }
         }
-
-        // Extract the base type, and whatever's between the [...] as the index type.
-        // Potentially the type string is actually badly formed:
-        // e.g. this code will accept string[int! as being an array of string with index int.
-        // Bah. I'll ignore that case for now. This bit of code gets called a lot, I'd rather not add another substr.
-        $elementType = substr($type, 0, $pos);
-        $indexType = substr($type, $pos + 1, -1);
-
-        if ($indexType === "") {
-            // The [...] were empty. It's an array.
-            return array("array", $elementType);
-        }
-        // Must be a map then.
-        return array("map",
-            $indexType,
-            $elementType
-        );
+        return $type;
     }
 
     protected function _decodeKey($value, $type)
@@ -511,13 +499,12 @@ class JsonMapper
             throw new JsonMarshallerException("Key values cannot be null");
         }
         $typeData = $this->_parseType($type);
-        switch (array_shift($typeData)) {
-            case "complex":
-            case "array":
-                throw new JsonMarshallerException("Keys must be of type int or string, not " . $type);
-            default:
+        switch ($typeData[0]) {
+            case TypeParser::TYPE_SCALAR:
                 // Keys are always strings, however we will allow other types, and disable strict type checking.
-                return $this->_decodeValue($value, $type, false);
+                return $this->_decodeValue($value, $typeData, false);
+            default:
+                throw new JsonMarshallerException("Keys must be of type int or string, not " . $type);
         }
     }
 
@@ -528,16 +515,15 @@ class JsonMapper
         }
         $typeData = $this->_parseType($type);
         switch (array_shift($typeData)) {
-            case "complex":
+            case TypeParser::TYPE_OBJECT:
                 if (!is_array($value)) {
-                    throw new InvalidTypeException($type, $value);
+                    throw new InvalidTypeException($typeData[0], $value);
                 }
-                return $this->_decodeClass($value, $type, $strict);
+                return $this->_decodeClass($value, $typeData[0], $strict);
                 break;
             /** @noinspection PhpMissingBreakStatementInspection */
-            case "array":
-                array_unshift($typeData, 'int');
-            case "map":
+            case TypeParser::TYPE_LIST:
+            case TypeParser::TYPE_MAP:
                 list ($indexType, $elementType) = $typeData;
                 $result = array();
                 if (!is_array($value)) {
@@ -552,7 +538,7 @@ class JsonMapper
                 /**
                  * @var $typeHandler Types\JsonType
                  */
-                list ($typeHandler) = $typeData;
+                list ($typeName, $typeHandler) = $typeData;
                 return $typeHandler->decodeValue($value, $this, $strict);
         }
 
@@ -566,11 +552,10 @@ class JsonMapper
         $typeData = $this->_parseType($type);
         switch (array_shift($typeData)) {
             /** @noinspection PhpMissingBreakStatementInspection */
-            case "complex":
-            case "array":
-                throw new JsonMarshallerException("Keys must be of type int or string, not " . $type);
+            case TypeParser::TYPE_SCALAR:
+                return $this->_encodeValue($value, array(TypeParser::TYPE_SCALAR, "string"));
             default:
-                return $this->_encodeValue($value, "string");
+                throw new JsonMarshallerException("Keys must be of type int or string, not " . $type);
         }
     }
 
@@ -588,14 +573,14 @@ class JsonMapper
         }
         $typeData = $this->_parseType($type);
         switch (array_shift($typeData)) {
-            case "complex":
+            case TypeParser::TYPE_OBJECT:
                 if (!is_object($value)) {
-                    throw new InvalidTypeException($type, $value);
+                    throw new InvalidTypeException($typeData[0], $value);
                 }
-                return $this->_encodeObject($value, $typeInfo, $type);
+                return $this->_encodeObject($value, $typeInfo, $typeData[0]);
                 break;
-            case "array":
-                list ($elementType) = $typeData;
+            case TypeParser::TYPE_LIST:
+                list ($indexType, $elementType) = $typeData;
                 if (!is_array($value)) {
                     $value = array($value);
                 }
@@ -604,7 +589,7 @@ class JsonMapper
                     $elements[] = $this->_encodeValue($element, $elementType);
                 }
                 return '[' . implode(', ', $elements) . ']';
-            case "map":
+            case TypeParser::TYPE_MAP:
                 list ($indexType, $elementType) = $typeData;
                 if (!is_array($value)) {
                     $value = array($value);
@@ -619,7 +604,7 @@ class JsonMapper
                 /**
                  * @var $typeHandler Types\JsonType
                  */
-                list ($typeHandler) = $typeData;
+                list ($typeName, $typeHandler) = $typeData;
                 return $typeHandler->encodeValue($value, $this);
 
         }

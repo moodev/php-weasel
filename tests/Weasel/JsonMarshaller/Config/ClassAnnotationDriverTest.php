@@ -42,8 +42,8 @@ class ClassAnnotationDriverTest extends \PHPUnit_Framework_TestCase
         $config = $driver->getConfig();
 
         $eProperties = array(
-            "stuff" => new GetterSerialization("getStuff", "string", 1),
-            "good" => new GetterSerialization("isGood", "bool", 1),
+            "stuff" => new GetterSerialization("getStuff", array("scalar", "string"), 1),
+            "good" => new GetterSerialization("isGood", array("scalar", "bool"), 1),
         );
 
         $this->assertEquals($eProperties, $config->serialization->properties);
@@ -65,7 +65,7 @@ class ClassAnnotationDriverTest extends \PHPUnit_Framework_TestCase
             );
         $mockReader->shouldReceive('getSingleMethodAnnotation')->with('isGood',
             '\Weasel\JsonMarshaller\Config\Annotations\JsonProperty')->andReturn(
-                new JsonProperty(null, "string", null)
+                new JsonProperty(null, "string[]", null)
             );
         $mockReader->shouldReceive('getSingleMethodAnnotation')->withAnyArgs()->andReturnNull();
 
@@ -80,8 +80,8 @@ class ClassAnnotationDriverTest extends \PHPUnit_Framework_TestCase
         $config = $driver->getConfig();
 
         $eProperties = array(
-            "stuff" => new GetterSerialization("getStuff", "string", 1),
-            "isGood" => new GetterSerialization("isGood", "string", 1),
+            "stuff" => new GetterSerialization("getStuff", array("scalar", "string"), 1),
+            "isGood" => new GetterSerialization("isGood", array("array", array("scalar", "int"), array("scalar", "string")), 1),
         );
 
         $this->assertEquals($eProperties, $config->serialization->properties);
