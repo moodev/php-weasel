@@ -1,12 +1,11 @@
 <?php
 namespace Weasel\JsonMarshaller\Utils;
 
-class TypeParser {
+use Weasel\JsonMarshaller\Config\Type\ListType;
+use Weasel\JsonMarshaller\Config\Type\MapType;
+use Weasel\JsonMarshaller\Config\Type\ScalarType;
 
-    const TYPE_SCALAR = "scalar";
-    const TYPE_LIST = "array";
-    const TYPE_MAP = "map";
-    const TYPE_OBJECT = "object";
+class TypeParser {
 
     public static function parseType($type, $recurse = false)
     {
@@ -15,10 +14,10 @@ class TypeParser {
         $pos = strrpos($type, '[');
         if ($pos === false) {
             // If there wasn't a [ then it's not an array of any sort.
-            return array(self::TYPE_SCALAR, $type); // Kinda a lie, it could be an object, but meh.
+            return new ScalarType($type); // Could also be an "object", but we just don't know right now.
         }
 
-        // Extract the base type, and whatever's between the [...] as the index type.
+        // Extract the base type, and whatever is between the [...] as the index type.
         // Potentially the type string is actually badly formed:
         // e.g. this code will accept string[int! as being an array of string with index int.
         // Bah. I'll ignore that case for now. This bit of code gets called a lot, I'd rather not add another substr.
@@ -31,13 +30,9 @@ class TypeParser {
         }
         if ($indexType === "") {
             // The [...] were empty. It's an array.
-            return array(self::TYPE_LIST, array(self::TYPE_SCALAR, "int"), $elementType);
+            return new ListType($elementType);
         }
-        // Must be a map then.
-        return array(self::TYPE_MAP,
-            array(self::TYPE_SCALAR, $indexType),
-            $elementType
-        );
+        return new MapType(new ScalarType($indexType), $elementType);
     }
 
 } 
