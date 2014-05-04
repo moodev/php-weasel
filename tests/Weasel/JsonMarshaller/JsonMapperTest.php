@@ -7,7 +7,6 @@
 namespace Weasel\JsonMarshaller;
 
 use Weasel\JsonMarshaller\Config\JsonConfigProvider;
-use Weasel\JsonMarshaller\Utils\TypeParser;
 
 class JsonMapperTest extends \PHPUnit_Framework_TestCase
 {
@@ -441,8 +440,6 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
 
     protected function addPropConfig(Config\ClassMarshaller $config, $name, $type)
     {
-        $type = TypeParser::parseType($type, true);
-
         $prop = new Config\Serialization\DirectSerialization();
         $prop->type = $type;
         $prop->property = $name;
@@ -516,7 +513,7 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
 
         $expected = array(
             "blah" =>
-            array($mtcc => array("hi" => "dog"))
+                array($mtcc => array("hi" => "dog"))
         );
         $result = $mapper->writeArray($object);
         $this->assertInternalType("array", $result);
