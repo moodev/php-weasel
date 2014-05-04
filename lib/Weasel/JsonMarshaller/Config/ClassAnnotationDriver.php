@@ -16,7 +16,6 @@ use Weasel\JsonMarshaller\Config\IAnnotations\IJsonProperty;
 use Weasel\JsonMarshaller\Config\IAnnotations\IJsonAnyGetter;
 use Weasel\JsonMarshaller\Config\IAnnotations\IJsonAnySetter;
 use Weasel\JsonMarshaller\Config\IAnnotations\IJsonTypeInfo;
-use Weasel\JsonMarshaller\Utils\TypeParser;
 
 /**
  * Load the configuration for a given class from annotations
@@ -138,7 +137,7 @@ class ClassAnnotationDriver implements LoggerAwareInterface
             throw new \Exception("Serialization for property of name $property has already been configured.");
         }
         $getterConfig->method = $name;
-        $getterConfig->type = TypeParser::parseType($propertyConfig->getType(), true);
+        $getterConfig->type = $propertyConfig->getType();
 
         $this->config->serialization->properties[$property] = $getterConfig;
     }
@@ -170,7 +169,7 @@ class ClassAnnotationDriver implements LoggerAwareInterface
         }
         $setterConfig = new Deserialization\SetterDeserialization();
         $setterConfig->method = $name;
-        $setterConfig->type = TypeParser::parseType($propertyConfig->getType(), true);
+        $setterConfig->type = $propertyConfig->getType();
         $setterConfig->typeInfo = $this->_getDeserializationTypeInfo($typeInfo, $subTypes);
         $setterConfig->strict = $propertyConfig->getStrict();
 
@@ -214,7 +213,7 @@ class ClassAnnotationDriver implements LoggerAwareInterface
             foreach ($creatorConfig->getParams() as $paramConfig) {
                 $param = new Deserialization\Param();
                 $param->name = $paramConfig->getName();
-                $param->type = TypeParser::parseType($paramConfig->getType(), true);
+                $param->type = $paramConfig->getType();
                 $param->strict = $paramConfig->getStrict();
                 if (!isset($param->name)) {
                     if (!isset($paramNames[$i])) {
@@ -285,7 +284,7 @@ class ClassAnnotationDriver implements LoggerAwareInterface
         if (!isset($this->config->deserialization->properties[$propertyName])) {
             $setterConfig = new Deserialization\DirectDeserialization();
             $setterConfig->property = $name;
-            $setterConfig->type = TypeParser::parseType($propertyConfig->getType(), true);
+            $setterConfig->type = $propertyConfig->getType();
             $setterConfig->typeInfo = $this->_getDeserializationTypeInfo($typeInfo, $subTypes);
 
             $this->config->deserialization->properties[$propertyName] = $setterConfig;
@@ -295,7 +294,7 @@ class ClassAnnotationDriver implements LoggerAwareInterface
         if (!isset($this->config->serialization->properties[$propertyName])) {
             $getterConfig = new Serialization\DirectSerialization();
             $getterConfig->property = $name;
-            $getterConfig->type = TypeParser::parseType($propertyConfig->getType(), true);
+            $getterConfig->type = $propertyConfig->getType();
 
             /**
              * @var Annotations\JsonInclude $includer
