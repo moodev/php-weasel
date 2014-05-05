@@ -26,13 +26,14 @@ class GetterSerialization extends PropertySerialization
     {
         $this->method = $method;
         $this->include = $include;
-        $this->type = $type;
         $this->typeInfo = $typeInfo;
+        $this->how = "getter";
+        $this->setType($type);
     }
 
     public function __toString()
     {
-        return "[GetterSerialization method={$this->method} include={$this->include} type={$this->type} typeInfo={$this->typeInfo}]";
+        return "[GetterSerialization method={$this->method} include={$this->include} type={$this->realType} typeInfo={$this->typeInfo}]";
     }
 
 

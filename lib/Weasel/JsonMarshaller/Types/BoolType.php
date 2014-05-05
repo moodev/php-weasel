@@ -14,7 +14,7 @@ class BoolType implements JsonType
     public function decodeValue($value, JsonMapper $mapper, $strict)
     {
         if (is_bool($value)) {
-            return (bool)$value;
+            return $value;
         }
         if ($value === "true" || $value === 1) {
             return true;
@@ -30,7 +30,7 @@ class BoolType implements JsonType
         if (!is_bool($value)) {
             throw new InvalidTypeException("boolean", $value);
         }
-        return json_encode((bool)$value);
+        return ((bool)$value) ? "true" : "false";
     }
 
 }
