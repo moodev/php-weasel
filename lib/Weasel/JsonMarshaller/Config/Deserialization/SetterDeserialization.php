@@ -5,6 +5,7 @@
  * @license ISC
  */
 namespace Weasel\JsonMarshaller\Config\Deserialization;
+
 use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
 use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonTypeName;
 
@@ -22,9 +23,14 @@ class SetterDeserialization extends PropertyDeserialization
      */
     public $method;
 
+    function __construct()
+    {
+        $this->how = "setter";
+    }
+
     public function __toString()
     {
-        return "[SetterDeserialization method={$this->method} type={$this->type} typeInfo={$this->typeInfo}]";
+        return "[SetterDeserialization method={$this->method} type={$this->realType} typeInfo={$this->typeInfo}]";
     }
 
 }

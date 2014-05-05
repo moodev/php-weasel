@@ -5,9 +5,12 @@
  * @license ISC
  */
 namespace Weasel\JsonMarshaller\Config\Serialization;
+
 use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonProperty;
 use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonSubTypes;
 use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonTypeInfo;
+use Weasel\JsonMarshaller\Config\Type\Type;
+use Weasel\JsonMarshaller\Config\Type\TypeParser;
 
 /**
  * Class PropertySerialization
@@ -16,7 +19,7 @@ use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonTypeInfo;
  * @JsonSubTypes\Type("\Weasel\JsonMarshaller\Config\Serialization\DirectSerialization"),
  * @JsonSubTypes\Type("\Weasel\JsonMarshaller\Config\Serialization\GetterSerialization"),
  * })
- * @JsonTypeInfo(use=JsonTypeInfo::ID_NAME, include=JsonTypeInfo::AS_PROPERTY, property="how")
+ * @JsonTypeInfo(use=JsonTypeInfo::ID_NAME, include=JsonTypeInfo::AS_PROPERTY, property="how", visible=true)
  */
 abstract class PropertySerialization
 {
@@ -28,10 +31,10 @@ abstract class PropertySerialization
     public $include;
 
     /**
-     * @var string
-     * @JsonProperty(type="string")
+     * @var Type
+     * @JsonProperty(type="\Weasel\JsonMarshaller\Config\Type\Type")
      */
-    public $type;
+    public $realType;
 
     /**
      * @var \Weasel\JsonMarshaller\Config\Serialization\TypeInfo
@@ -39,8 +42,27 @@ abstract class PropertySerialization
      */
     public $typeInfo;
 
+    public $how;
+
     /**
      * @return string
      */
     abstract public function __toString();
+
+    public function __set($key, $value)
+    {
+        if ($key == "type") {
+            $this->setType($value);
+        }
+    }
+
+    /**
+     * @param string $value
+     * @JsonProperty(type="string")
+     * @deprecated exists only for backwards compat, use realType.
+     */
+    public function setType($value)
+    {
+        $this->realType = TypeParser::parseTypeString($value);
+    }
 }
