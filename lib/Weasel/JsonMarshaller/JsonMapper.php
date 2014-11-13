@@ -13,6 +13,7 @@ use Weasel\JsonMarshaller\Config\Type\MapType;
 use Weasel\JsonMarshaller\Config\Type\ScalarType;
 use Weasel\JsonMarshaller\Config\Type\Type;
 use Weasel\JsonMarshaller\Config\Type\TypeParser;
+use Weasel\JsonMarshaller\Exception\BadConfigurationException;
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 use InvalidArgumentException;
 use Weasel\JsonMarshaller\Types;
@@ -172,11 +173,11 @@ class JsonMapper
         }
         $classconfig = $this->configProvider->getConfig($class);
         if (!isset($classconfig)) {
-            throw new \Exception("No configuration found for class $class");
+            throw new BadConfigurationException("No configuration found for class $class");
         }
         $config = $classconfig->serialization;
         if (!isset($config)) {
-            throw new \Exception("No serialization configuration found for class $class");
+            throw new BadConfigurationException("No serialization configuration found for class $class");
         }
 
         $properties = array();
@@ -212,7 +213,7 @@ class JsonMapper
                 $meth = $propConfig->method;
                 $value = $object->$meth();
             } else {
-                throw new \Exception("No idea how to serialize something with the given config");
+                throw new BadConfigurationException("No idea how to serialize something with the given config");
             }
 
             switch ($propConfig->include) {
@@ -273,7 +274,7 @@ class JsonMapper
                     break;
                 case Config\Serialization\TypeInfo::TI_USE_CUSTOM: // TODO
                 default:
-                    throw new \Exception("Unsupported type info at class level");
+                throw new BadConfigurationException("Unsupported type info at class level");
             }
             // Now where should we put this information?
             switch ($typeInfo->typeInfoAs) {
@@ -303,7 +304,7 @@ class JsonMapper
                     return '{' . $this->_encodeToString($classId) . ': ' . $this->_objectToJson($properties) . '}';
                     break;
                 default:
-                    throw new \Exception("Unsupported type info storage at class level");
+                    throw new BadConfigurationException("Unsupported type info storage at class level");
             }
         }
 
@@ -347,7 +348,7 @@ class JsonMapper
     {
         $classconfig = $this->configProvider->getConfig($class);
         if (!isset($classconfig)) {
-            throw new \Exception("No configuration found for class $class");
+            throw new BadConfigurationException("No configuration found for class $class");
         }
 
         $deconfig = $classconfig->deserialization;
@@ -375,20 +376,20 @@ class JsonMapper
                     break;
                 case Config\Deserialization\TypeInfo::TI_AS_WRAPPER_ARRAY:
                     if (count($array) !== 2) {
-                        throw new \Exception("Typeinfo is wrapper array, but array does not have exactly 2 elements");
+                        throw new InvalidTypeException("array(2)", $array);
                     }
                     $typeId = $array[0];
                     $array = $array[1];
                     break;
                 case Config\Deserialization\TypeInfo::TI_AS_WRAPPER_OBJECT:
                     if (count($array) !== 1) {
-                        throw new \Exception("Typeinfo is wrapper object, but object does not have exactly one property");
+                        throw new InvalidTypeException("array(1)", $array);
                     }
                     list($typeId) = array_keys($array);
                     $array = array_shift($array);
                     break;
                 default:
-                    throw new \Exception("Unsupported type info storage at class level");
+                    throw new BadConfigurationException("Unsupported type info storage at class level");
             }
 
             switch ($typeInfo->typeInfo) {
@@ -402,14 +403,14 @@ class JsonMapper
                     break;
                 case Config\Deserialization\TypeInfo::TI_USE_CUSTOM: // TODO
                 default:
-                    throw new \Exception("Unsupported type info at class level");
+                throw new BadConfigurationException("Unsupported type info at class level");
             }
 
         }
         $classconfig = $this->configProvider->getConfig($class);
 
         if (!isset($classconfig)) {
-            throw new InvalidArgumentException("No config found to decode $class");
+            throw new BadConfigurationException("No config found to decode $class");
         }
         $deconfig = $classconfig->deserialization;
 
@@ -427,7 +428,11 @@ class JsonMapper
                 }
             }
         } else {
-            $object = new $class();
+            if (class_exists($class)) {
+                $object = new $class();
+            } else {
+                throw new BadConfigurationException("Configured class $class is not an instantiable class.");
+            }
         }
 
         if (isset($deconfig->ignoreProperties)) {
