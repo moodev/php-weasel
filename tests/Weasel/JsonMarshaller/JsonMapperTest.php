@@ -691,9 +691,40 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase
         $result = $mapper->readString($json, $mtc);
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * @covers \Weasel\JsonMarshaller\JsonMapper
+     * @expectedException \Weasel\JsonMarshaller\Exception\BadConfigurationException
+     * @expectedExceptionMessage is not an instantiable class
+     */
+    public function testBadSubtypeOfInterface()
+    {
+        $configProvider = new MockedConfigProvider();
+        $mti = 'Weasel\JsonMarshaller\MockTestInterface';
+
+        $config = new Config\ClassMarshaller();
+
+        $configProvider->fakeConfig[$mti] = $config;
+
+        $mapper = new JsonMapper($configProvider);
+
+        $mapper->readString(json_encode(array(
+                    "blah" => "foo"
+                )
+            ),
+            $mti
+        );
+
+    }
+
 }
 
-class MockTestClass
+interface MockTestInterface
+{
+
+}
+
+class MockTestClass implements MockTestInterface
 {
     public $any = array();
 
@@ -757,9 +788,6 @@ class MockedConfigProvider implements JsonConfigProvider
      */
     public function getConfig($class)
     {
-        if (!class_exists($class)) {
-            throw new \ReflectionException("Unable to find class $class");
-        }
         if (isset($this->fakeConfig[$class])) {
             return $this->fakeConfig[$class];
         }
