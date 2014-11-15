@@ -16,6 +16,7 @@ use Weasel\JsonMarshaller\Config\Type\TypeParser;
 use Weasel\JsonMarshaller\Exception\BadConfigurationException;
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 use InvalidArgumentException;
+use Weasel\JsonMarshaller\Exception\UnknownPropertyException;
 use Weasel\JsonMarshaller\Types;
 use Weasel\JsonMarshaller\Types\JsonType;
 use Weasel\JsonMarshaller\Types\OldTypeWrapper;
@@ -36,9 +37,9 @@ class JsonMapper
     protected $typeHandlers = array();
 
     /**
-     * @var bool Should we use strict mode unless told otherwise.
+     * @var array Configuration parameters.
      */
-    protected $strict = true;
+    protected $mapperConfig = array();
 
     /**
      * Setup a JsonMapper from a config provider
@@ -49,7 +50,24 @@ class JsonMapper
     {
         $this->configProvider = $configProvider;
         $this->_registerBuiltInTypes();
-        $this->strict = $strict;
+        if (isset($strict)) {
+            // Legacy way to configure strict mode.
+            $this->configure(Config\Deserialization\Feature::STRICT_TYPES, $strict);
+        }
+    }
+
+    public function configure($key, $value)
+    {
+        $this->mapperConfig[$key] = $value;
+    }
+
+    protected function getConfigOption($key, $default, $permitsNull = false)
+    {
+        if (($permitsNull && array_key_exists($key, $this->mapperConfig)) || isset($this->mapperConfig[$key])) {
+            return $this->mapperConfig[$key];
+        } else {
+            return $default;
+        }
     }
 
     /**
@@ -82,7 +100,7 @@ class JsonMapper
             throw new InvalidArgumentException("Unable to decode JSON: $string");
         }
         if ($strict === null) {
-            $strict = $this->strict;
+            $strict = $this->getConfigOption(Config\Deserialization\Feature::STRICT_TYPES, true);
         }
         return $this->_decodeValue($decoded, $this->_parseTypeString($type), $strict);
     }
@@ -475,7 +493,12 @@ class JsonMapper
                 $object->$method($key, $value);
             } elseif (!$deconfig->ignoreUnknown) {
                 if (!isset($canIgnoreProperties[$key])) {
-                    trigger_error("Unknown property: $key", E_USER_WARNING);
+                    if ($this->getConfigOption(Config\Deserialization\Feature::WARN_ON_UNKNOWN_PROPERTIES, true)) {
+                        trigger_error("Unknown property $key on $class", E_USER_WARNING);
+                    }
+                    if ($this->getConfigOption(Config\Deserialization\Feature::FAIL_ON_UNKNOWN_PROPERTIES, false)) {
+                        throw new UnknownPropertyException("Unknown property $key on $class");
+                    }
                 }
             }
         }
