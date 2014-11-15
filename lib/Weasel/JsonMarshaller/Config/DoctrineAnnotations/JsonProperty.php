@@ -34,7 +34,7 @@ class JsonProperty extends NoUndeclaredProperties implements IJsonProperty
     /**
      * @var bool
      */
-    public $strict;
+    public $strict = true;
 
     /**
      * @return string
