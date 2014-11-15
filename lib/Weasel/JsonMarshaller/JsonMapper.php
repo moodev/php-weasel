@@ -56,6 +56,10 @@ class JsonMapper
         }
     }
 
+    /**
+     * @param string $key One of the Config\*\Feature:: constants.
+     * @param mixed $value Appropriate value for the config option. See their documentation.
+     */
     public function configure($key, $value)
     {
         $this->mapperConfig[$key] = $value;
