@@ -13,7 +13,8 @@
         "symfony/Console": ">=2.3"
     },
     "require-dev": {
-        "mockery/mockery": "dev-master"
+        "mockery/mockery": "dev-master",
+        "phpunit/phpunit": "4.3.*"
     },
     "suggest": {
         "monolog/monolog": "A logging framework that implements PSR 3"
