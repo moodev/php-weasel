@@ -7,7 +7,7 @@
 
 namespace Weasel\JsonMarshaller\Exception;
 
-class BadConfigurationException extends \Exception
+class BadConfigurationException extends JsonMarshallerException
 {
 
 } 
