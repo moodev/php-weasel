@@ -2,7 +2,7 @@
     "name": "moodev/Weasel",
     "type": "library",
     "description": "Object marshalling library for PHP supporting JSON and XML",
-    "keywords": ["marshall", "marshalling"],
+    "keywords": ["marshall", "marshalling", "json", "serialization", "deserialization", "jackson"],
     "homepage": "http://github.com/moodev/php-weasel",
     "license": "ISC",
     "require": {
