@@ -30,6 +30,7 @@ class DoctrineAnnotationReaderFactory implements IAnnotationReaderFactory
     {
         $this->annotationReader = $annotationReader;
         AnnotationRegistry::registerAutoloadNamespace('Weasel', array(__DIR__ . '/../../'));
+        AnnotationRegistry::registerAutoloadNamespace('\Weasel', array(__DIR__ . '/../../'));
     }
 
     /**
