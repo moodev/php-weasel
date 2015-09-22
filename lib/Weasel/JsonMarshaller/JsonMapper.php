@@ -189,6 +189,10 @@ class JsonMapper
      */
     protected function _encodeObject($object, $typeInfo = null, $type = null)
     {
+        if (!is_object($object)) {
+            throw new InvalidTypeException($type, $object);
+        }
+        
         $class = get_class($object);
         if (!$class) {
             throw new InvalidTypeException($type, $object);
