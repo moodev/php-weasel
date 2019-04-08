@@ -2,9 +2,10 @@
 namespace Weasel\Annotation;
 
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Weasel\Annotation\Config\Annotation;
 
-class AnnotationReaderTest extends \PHPUnit_Framework_TestCase {
+class AnnotationReaderTest extends TestCase {
 
 
     /**

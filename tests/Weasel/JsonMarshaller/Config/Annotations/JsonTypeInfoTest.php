@@ -6,7 +6,9 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
-class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class JsonTypeInfoTest extends TestCase
 {
 
     /**
@@ -27,39 +29,6 @@ class JsonTypeInfoTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals($expected, $annotationReader->getClassAnnotations());
-
-    }
-
-    /**
-     * @covers \Weasel\JsonMarshaller\Config\Annotations\JsonTypeInfo
-     */
-    public function testParsePropertyAnnotations()
-    {
-
-        $rClass = new \ReflectionClass('\Weasel\JsonMarshaller\Config\Annotations\JsonTypeInfo');
-        $annotationReader =
-            new \Weasel\Annotation\AnnotationReader($rClass, new \Weasel\Annotation\AnnotationConfigurator());
-
-
-        $found = array();
-        foreach ($rClass->getProperties() as $property) {
-            $name = $property->getName();
-            $found[$name] = $annotationReader->getPropertyAnnotations($name);
-        }
-
-        $expectedEnumId = new \Weasel\Annotation\Config\Annotations\Enum("Id");
-        $expectedEnumAs = new \Weasel\Annotation\Config\Annotations\Enum("As");
-
-        $this->assertEquals(array("enumId" => array('\Weasel\Annotation\Config\Annotations\Enum' => array($expectedEnumId),),
-                "enumAs" => array('\Weasel\Annotation\Config\Annotations\Enum' => array($expectedEnumAs),),
-                "use" => array(),
-                "include" => array(),
-                "property" => array(),
-                "visible" => array(),
-                "defaultImpl" => array()
-            ),
-            $found
-        );
 
     }
 

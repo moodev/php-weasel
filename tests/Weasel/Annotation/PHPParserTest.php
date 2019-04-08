@@ -6,10 +6,10 @@ namespace Weasel\Annotation;
  * @license ISC
  */
 
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use PHPUnit_Framework_TestCase;
 
-class PHPParserTest extends PHPUnit_Framework_TestCase
+class PHPParserTest extends TestCase
 {
 
 

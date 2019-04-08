@@ -6,9 +6,10 @@
  */
 namespace Weasel\Annotation\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Weasel\Annotation\DocblockLexer;
 
-class DocblockLexerTest extends \PHPUnit_Framework_TestCase
+class DocblockLexerTest extends TestCase
 {
 
     public function provideSimpleType()

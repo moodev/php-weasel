@@ -6,9 +6,10 @@
  */
 namespace Weasel\JsonMarshaller;
 
+use PHPUnit\Framework\TestCase;
 use Weasel\JsonMarshaller\Config\JsonConfigProvider;
 
-class JsonMapperTest extends \PHPUnit_Framework_TestCase
+class JsonMapperTest extends TestCase
 {
 
 

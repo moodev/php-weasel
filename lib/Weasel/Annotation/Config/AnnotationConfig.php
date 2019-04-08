@@ -42,6 +42,7 @@ class AnnotationConfig
 
     public function getAnnotation($class)
     {
+        $class = "\\" . ltrim($class, "\\");
         return isset($this->annotations[$class]) ? $this->annotations[$class] : null;
     }
 

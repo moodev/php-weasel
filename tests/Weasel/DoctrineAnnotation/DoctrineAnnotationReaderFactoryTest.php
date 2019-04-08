@@ -9,8 +9,9 @@
 namespace Weasel\DoctrineAnnotation {
 
     use Doctrine\Common\Annotations\AnnotationReader;
+    use PHPUnit\Framework\TestCase;
 
-    class DoctrineAnnotationReaderFactoryTest extends \PHPUnit_Framework_TestCase
+    class DoctrineAnnotationReaderFactoryTest extends TestCase
     {
 
         /**

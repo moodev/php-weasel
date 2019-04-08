@@ -85,6 +85,7 @@ class DocblockParser implements LoggerAwareInterface
                 // Skip because it doesn't have an annotation at the start
                 continue;
             }
+
             $pos = $lexer->cur();
             try {
                 $annotation = $this->_Annotation($lexer, $location, $namespaces);
@@ -105,6 +106,7 @@ class DocblockParser implements LoggerAwareInterface
                 }
             }
         }
+
         return $annotations;
     }
 
