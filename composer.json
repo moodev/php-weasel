@@ -1,0 +1,28 @@
+{
+    "name": "moodev/weasel",
+    "type": "library",
+    "description": "Object marshalling library for PHP supporting JSON and XML",
+    "keywords": ["marshall", "marshalling", "json", "serialization", "deserialization", "jackson"],
+    "homepage": "http://github.com/moodev/php-weasel",
+    "license": "ISC",
+    "require": {
+        "php": "^5.5.9|>=7.0.8",
+        "psr/log": "~1.1",
+        "doctrine/annotations": "~1.4",
+        "doctrine/cache": "~1.6",
+        "symfony/Console": "~3.4|~4.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "~1.2",
+        "phpunit/phpunit": "~5."
+    },
+    "suggest": {
+        "monolog/monolog": "A logging framework that implements PSR 3"
+    },
+    "autoload": {
+        "psr-0": {
+            "Weasel": "lib"
+        }
+    },
+    "bin": ["bin/buildJsonConfig.php"]
+}
