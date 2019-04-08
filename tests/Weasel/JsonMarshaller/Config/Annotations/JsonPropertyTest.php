@@ -6,7 +6,9 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
-class JsonPropertyTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class JsonPropertyTest extends TestCase
 {
 
     /**

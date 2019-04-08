@@ -7,10 +7,11 @@
 namespace Weasel\JsonMarshaller\Config\DoctrineAnnotations;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use PHPUnit\Framework\TestCase;
 use Weasel\JsonMarshaller\Config\DoctrineAnnotations\JsonCreator;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
-class JsonCreatorTest extends \PHPUnit_Framework_TestCase
+class JsonCreatorTest extends TestCase
 {
 
     /**

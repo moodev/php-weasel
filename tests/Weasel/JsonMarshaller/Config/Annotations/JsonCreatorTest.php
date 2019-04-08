@@ -6,12 +6,13 @@
  */
 namespace Weasel\JsonMarshaller\Config\Annotations;
 
+use PHPUnit\Framework\TestCase;
 use Weasel\Annotation\AnnotationReader;
 use Weasel\Annotation\AnnotationConfigurator;
 use Weasel\Annotation\Config\Annotations\AnnotationCreator;
 use Weasel\Annotation\Config\Annotations\Parameter;
 
-class JsonCreatorTest extends \PHPUnit_Framework_TestCase
+class JsonCreatorTest extends TestCase
 {
 
     /**

@@ -6,11 +6,12 @@
  */
 namespace Weasel\JsonMarshaller\Types;
 
+use PHPUnit\Framework\TestCase;
 use Weasel\JsonMarshaller\Exception\InvalidTypeException;
 use Weasel\JsonMarshaller\JsonMapper;
 use Weasel\WeaselDefaultAnnotationDrivenFactory;
 
-class OldTypeWrapperTest extends \PHPUnit_Framework_TestCase
+class OldTypeWrapperTest extends TestCase
 {
 
     public function provideDataForEncode()

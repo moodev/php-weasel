@@ -6,11 +6,12 @@
  */
 namespace Weasel\Annotation\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Weasel\Annotation\DocblockParser;
 use Weasel\Annotation\AnnotationConfigurator;
 use Weasel\Annotation\Config\AnnotationConfig;
 
-class DocblockParserTest extends \PHPUnit_Framework_TestCase
+class DocblockParserTest extends TestCase
 {
 
     public function provideSimpleClassAnnotation()

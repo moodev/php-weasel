@@ -1,6 +1,7 @@
 <?php
 namespace Weasel\JsonMarshaller\Config;
 
+use PHPUnit\Framework\TestCase;
 use Weasel\Annotation\AnnotationConfigurator;
 use Mockery as m;
 use Weasel\Annotation\AnnotationReaderFactory;
@@ -8,7 +9,7 @@ use Weasel\JsonMarshaller\Config\Annotations\JsonProperty;
 use Weasel\JsonMarshaller\Config\Serialization\ClassSerialization;
 use Weasel\JsonMarshaller\Config\Serialization\GetterSerialization;
 
-class ClassAnnotationDriverTest extends \PHPUnit_Framework_TestCase
+class ClassAnnotationDriverTest extends TestCase
 {
 
     /**

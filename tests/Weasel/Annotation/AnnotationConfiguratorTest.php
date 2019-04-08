@@ -6,10 +6,11 @@
  */
 namespace Weasel\Annotation;
 
+use PHPUnit\Framework\TestCase;
 use Weasel\Annotation\AnnotationReaderFactory;
 use Weasel\Annotation\Config\Annotations\Annotation;
 
-class AnnotationConfiguratorTest extends \PHPUnit_Framework_TestCase
+class AnnotationConfiguratorTest extends TestCase
 {
 
     /**
