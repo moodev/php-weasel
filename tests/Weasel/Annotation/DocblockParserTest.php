@@ -58,7 +58,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $parsed = $parser->parse(
             '/**
               * @Gloop(foo=' . $valueQuoted . ')
-              *',
+              */',
             "class",
             array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
         );
@@ -85,7 +85,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $parsed = $parser->parse(
             '/**
               * @Gloop
-              *',
+              */',
             "class",
             array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
         );
@@ -112,7 +112,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
             '/**
               * @Gloop
               * @Gloop
-              *',
+              */',
             "class",
             array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
         );
@@ -142,7 +142,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $parsed = $parser->parse(
             '/**
               * @Gloop()
-              *',
+              */',
             "class",
             array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
         );
@@ -168,7 +168,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $parsed = $parser->parse(
             '/**
               * @\Weasel\Annotation\Tests\Gloop
-              *',
+              */',
             "class",
             array()
         );
@@ -194,7 +194,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $parsed = $parser->parse(
             '/**
               * @\Weasel\Annotation\Tests\Gloop@glarp
-              *',
+              */',
             "class",
             array()
         );
@@ -218,7 +218,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $parsed = $parser->parse(
             '/**
               * @\Weasel\Annotation\Tests\Gloop()@glarp
-              *',
+              */',
             "class",
             array()
         );
@@ -243,7 +243,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $parsed = $parser->parse(
             '/**
               * @Gloop(foo={{"ab", "cd"}, {"ef"}, {}})
-              *',
+              */',
             "class",
             array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
         );
@@ -277,7 +277,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $parsed = $parser->parse(
             '/**
               * @Gloop(foo="bar")
-              *',
+              */',
             "class",
             array('Gloop' => 'Weasel\Annotation\Tests\Gloop')
         );
@@ -314,7 +314,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
         $parsed = $parser->parse(
             '/**
               * @Gloop(foo=@Glarp(bar=' . $valueQuoted . '))
-              *',
+              */',
             "class",
             array(
                 'Gloop' => 'Weasel\Annotation\Tests\Gloop',
@@ -358,7 +358,7 @@ class DocblockParserTest extends \PHPUnit_Framework_TestCase
               * @Multi(a=@Glarp(bar="foo"), b=@Glarp(bar="baa"), c=@Gloop(foo="fnord"))
               * @Multi(a=@Glarp(bar="foo")   , b=@Glarp(bar="baa")  ,  c=@Gloop(foo="fnord"))
               * @Multi(a=@Glarp(bar="foo"),b=@Glarp(bar="baa"),c=@Gloop(foo="fnord"))
-              *',
+              */',
             "class",
             array(
                 'Gloop' => 'Weasel\Annotation\Tests\Gloop',
